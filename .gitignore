@@ -1,3 +1,4 @@
+.idea
 *.iml
 .gradle
 /local.properties
@@ -6,4 +7,6 @@
 .DS_Store
 /build
 /captures
-.externalNativeBuild
+app/google-services.json
+*.keystore
+signing.properties
