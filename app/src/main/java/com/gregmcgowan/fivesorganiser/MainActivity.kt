@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
@@ -8,13 +9,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.gregmcgowan.fivesorganiser.authenication.Authentication
 import com.gregmcgowan.fivesorganiser.authenication.FirebaseAuthentication
-import com.gregmcgowan.fivesorganiser.players.*
+import com.gregmcgowan.fivesorganiser.players.PlayerListContract
+import com.gregmcgowan.fivesorganiser.players.PlayerListView
+import com.gregmcgowan.fivesorganiser.players.PlayerListViewPresenter
+import com.gregmcgowan.fivesorganiser.players.PlayersFirebaseRepo
+import com.gregmcgowan.fivesorganiser.players.import.ImportContactsActivity
 
 class MainActivity : AppCompatActivity() {
 
     var playerListViewPresenter: PlayerListContract.Presenter? = null
     val authentication = FirebaseAuthentication(FirebaseAuth.getInstance())
     val playersRepo = PlayersFirebaseRepo(FirebaseDatabase.getInstance(), authentication)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,20 +30,22 @@ class MainActivity : AppCompatActivity() {
 
         val fab = findViewById(R.id.fab) as FloatingActionButton?
         fab!!.setOnClickListener({ view ->
-            playerListViewPresenter?.handleAddPlayerSelected()
+            getContacts()
         })
 
         val playerListView = findViewById(R.id.player_list_view) as PlayerListView
         playerListViewPresenter = PlayerListViewPresenter(playerListView, playersRepo)
 
-        authentication.signInAnonymously(object : Authentication.AuthenticationStateListener{
+        authentication.signInAnonymously(object : Authentication.AuthenticationStateListener {
             override fun authStateChanged() {
                 playerListViewPresenter?.startPresenting()
             }
         })
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun getContacts() {
+        startActivity(Intent(this, ImportContactsActivity::class.java))
     }
+
 }
