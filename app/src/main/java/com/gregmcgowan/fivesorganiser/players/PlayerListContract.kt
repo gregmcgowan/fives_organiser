@@ -10,7 +10,6 @@ interface PlayerListContract {
 
     interface Presenter {
         fun startPresenting()
-        fun loadPlayers()
         fun handleAddPlayerSelected()
     }
 }

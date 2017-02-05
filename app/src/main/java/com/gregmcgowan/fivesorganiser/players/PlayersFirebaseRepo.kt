@@ -13,11 +13,7 @@ class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
     val PLAYERS_KEY = "Players"
     val USERS_KEY = "users"
 
-    val databaseReference: DatabaseReference
-
-    init {
-        databaseReference = firebaseDatabase.reference
-    }
+    val databaseReference: DatabaseReference = firebaseDatabase.reference
 
     override fun getPlayers(): Observable<List<Player>> {
         return getSinglValueObserable(getPlayersReference(), marhsallPlayers() )

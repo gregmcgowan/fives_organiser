@@ -7,7 +7,7 @@ import rx.schedulers.Schedulers
 class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
                               val playersRepo: PlayerRepo) : PlayerListContract.Presenter {
 
-    override fun loadPlayers() {
+    fun loadPlayers() {
         playerListView.showProgressBar(false)
         playersRepo.getPlayers()
                 .subscribeOn(Schedulers.io())

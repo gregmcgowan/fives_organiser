@@ -11,7 +11,7 @@ import java.util.*
 
 class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
-    var playerList: List<Player> = ArrayList<Player>()
+    var playerList: List<Player> = ArrayList()
 
     fun setPlayers(players: List<Player>) {
         this.playerList = players
