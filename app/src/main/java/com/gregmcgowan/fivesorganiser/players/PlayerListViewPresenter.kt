@@ -32,10 +32,4 @@ class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
         loadPlayers()
     }
 
-    override fun handleAddPlayerSelected() {
-        //TODO start add player activity
-        val player = Player("Player " + (System.currentTimeMillis()), "123r3243", "email")
-        playersRepo.addPlayer(player)
-        loadPlayers()
-    }
 }
