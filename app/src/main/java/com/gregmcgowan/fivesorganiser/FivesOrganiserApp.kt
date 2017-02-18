@@ -12,14 +12,14 @@ class FivesOrganiserApp : Application() {
 
     //TODO proper dependency injection
 
-    lateinit var dependacies: Dependancies
+    lateinit var dependencies: Dependencies
 
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
         val firebaseAuthentication = FirebaseAuthentication(FirebaseAuth.getInstance())
 
-        dependacies = Dependancies(firebaseAuthentication,
+        dependencies = Dependencies(firebaseAuthentication,
                 PlayersFirebaseRepo(FirebaseDatabase.getInstance(), firebaseAuthentication)
         )
     }
