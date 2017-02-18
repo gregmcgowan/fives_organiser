@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -26,6 +27,9 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.import_contacts)
+
+        val toolbar = findViewById(R.id.toolbar) as Toolbar?
+        setSupportActionBar(toolbar)
 
         contactList = findViewById(R.id.import_contacts_list) as RecyclerView
         progressBar = findViewById(R.id.import_contacts_progress_bar) as ProgressBar

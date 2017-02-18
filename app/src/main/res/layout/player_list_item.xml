@@ -12,4 +12,11 @@
             android:layout_height="wrap_content"
             tools:text="Reg"/>
 
+    <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/grey_400"/>
+
 </LinearLayout>
