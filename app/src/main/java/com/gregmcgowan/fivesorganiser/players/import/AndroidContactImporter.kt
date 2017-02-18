@@ -16,20 +16,7 @@ class AndroidContactImporter(val contentResolver: ContentResolver) : ContactImpo
             Contacts.DISPLAY_NAME_PRIMARY,
             Contacts.SORT_KEY_PRIMARY)
 
-
     override fun getAllContacts(): Observable<List<Contact>> {
-
-
-        // they are not displayed
-//        String select = "((" + Contacts.DISPLAY_NAME + " NOTNULL) AND ("
-//            + Contacts.HAS_PHONE_NUMBER + "=1) AND ("
-//            + Contacts.DISPLAY_NAME + " != '' ) AND ("
-//            + Contacts._ID + " not in (" + existingPlayerId + ")))";
-//        Log.d(FivesOrganiserConstants.TAG, select);
-//        contactsCursor = contentResolver.query(Contacts.CONTENT_URI,
-//            CONTACTS_SUMMARY_PROJECTION, select, null,
-//            Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
         val selectString = "((" + Contacts.DISPLAY_NAME + " NOTNULL) AND (" + Contacts.HAS_PHONE_NUMBER + "=1) AND (" + Contacts.DISPLAY_NAME + " != '' ) )"
 
         return defer {
@@ -71,7 +58,7 @@ class AndroidContactImporter(val contentResolver: ContentResolver) : ContactImpo
 
             val phoneNumber = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.NUMBER)
             val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-
+            phonesCursor.close()
             return Contact(name, phoneNumber, contactId.toInt())
         }
 
@@ -87,13 +74,4 @@ class AndroidContactImporter(val contentResolver: ContentResolver) : ContactImpo
         return ""
     }
 
-//
-//    Cursor emailCursor = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-//    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId, null, null);
-//    int numberOfEmails = emailCursor.getCount();
-//    String email = null;
-//    if (numberOfEmails > 0) {
-//        emailCursor.moveToFirst();
-//        email = DbUtils.getStringFromCursor(emailCursor, ContactsContract.CommonDataKinds.Email.ADDRESS);
-//    }
 }

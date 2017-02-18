@@ -1,25 +1,25 @@
 package com.gregmcgowan.fivesorganiser.players.import
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.authenication.FirebaseAuthentication
-import com.gregmcgowan.fivesorganiser.players.PlayersFirebaseRepo
 
 class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View {
 
     var importContactsPresenter: ImportContactsContract.Presenter? = null
 
+    var mainContent : View ? = null
     var contactList : RecyclerView? = null
-
     var progressBar : ProgressBar? = null
+    var addButton   : Button? = null
 
     val importPlayersAdapter : ImportPlayersAdapter = ImportPlayersAdapter()
 
@@ -29,23 +29,42 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
 
         contactList = findViewById(R.id.import_contacts_list) as RecyclerView
         progressBar = findViewById(R.id.import_contacts_progress_bar) as ProgressBar
+        mainContent = findViewById(R.id.import_contacts_main_content) as View
+        addButton   = findViewById(R.id.import_contacts_add_button) as Button
 
         contactList?.adapter = importPlayersAdapter
 
         val contactImporter = AndroidContactImporter(contentResolver)
-        val authentication = FirebaseAuthentication(FirebaseAuth.getInstance())
+        val playersRepo = getApp().dependencies.playersRepo
 
         importContactsPresenter = ImportContactsPresenter(this,
-                PlayersFirebaseRepo(FirebaseDatabase.getInstance(), authentication),
-                contactImporter
+                playersRepo, contactImporter
         )
 
         importContactsPresenter?.startPresenting()
+
+        addButton?.setOnClickListener { View -> importContactsPresenter?.handleAddButtonPressed() }
+    }
+
+    fun getApp () : FivesOrganiserApp {
+        return applicationContext as FivesOrganiserApp
+    }
+
+    override fun closeScreen() {
+        finish()
+    }
+
+    override fun returnToPlayersScreen() {
+        setResult(Activity.RESULT_OK)
+        closeScreen()
+    }
+
+    override fun setAddButtonEnabled(enabled: Boolean) {
+        addButton?.isEnabled = enabled
     }
 
     override fun showContacts(contacts: List<Contact>) {
         importPlayersAdapter.setContacts(contacts)
-        Log.d("GREG", "Number of contacts " + contacts.size)
     }
 
     override fun showProgress(show: Boolean) {
@@ -56,11 +75,11 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
         }
     }
 
-    override fun showContactList(show: Boolean) {
+    override fun showMainContent(show: Boolean) {
         if (show) {
-            contactList?.visibility = View.VISIBLE
+            mainContent?.visibility = View.VISIBLE
         } else {
-            contactList?.visibility = View.GONE
+            mainContent?.visibility = View.GONE
         }
     }
 

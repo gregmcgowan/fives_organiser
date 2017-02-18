@@ -1,34 +1,49 @@
 package com.gregmcgowan.fivesorganiser.players.import
 
+import com.gregmcgowan.fivesorganiser.players.Player
 import com.gregmcgowan.fivesorganiser.players.PlayerRepo
+import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 
-/**
- * Created by gregmcgowan on 05/02/2017.
- */
 class ImportContactsPresenter(val importContactsView: ImportContactsContract.View,
                               val playersRepo: PlayerRepo,
                               val contactsImporter: ContactImporter) : ImportContactsContract.Presenter,
-                                                                        ImportContactsContract.ContactItemListener {
+        ImportContactsContract.ContactItemListener {
 
-    var selectedItems : ArrayList<Int> = ArrayList()
+    var selectedItems: ArrayList<Int> = ArrayList()
+
+    override fun handleAddButtonPressed() {
+        contactsImporter.getAllContacts()
+                .flatMapIterable { l -> l }
+                .filter { contact -> selectedItems.contains(contact.contactId) }
+                .flatMap { contact -> Observable.just(playersRepo.addPlayer(Player(contact.name, contact.phoneNumber, contactId = contact.contactId))) }
+                .toCompletable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ -> importContactsView.returnToPlayersScreen() })
+
+    }
 
     override fun contactSelected(contactId: Int) {
         selectedItems.add(contactId)
+        importContactsView.setAddButtonEnabled(true)
     }
 
     override fun contactDeselected(contactId: Int) {
         selectedItems.remove(contactId)
+
+        if (selectedItems.size == 0) {
+            importContactsView.setAddButtonEnabled(false)
+        }
     }
 
-
     override fun startPresenting() {
+        importContactsView.setAddButtonEnabled(false)
         importContactsView.setContactItemListener(this)
-
         importContactsView.showProgress(true)
-        importContactsView.showContactList(false)
+        importContactsView.showMainContent(false)
 
         contactsImporter.getAllContacts()
                 .subscribeOn(Schedulers.io())
@@ -36,11 +51,12 @@ class ImportContactsPresenter(val importContactsView: ImportContactsContract.Vie
                 .subscribe({ contacts ->
                     importContactsView.showContacts(contacts)
                     importContactsView.showProgress(false)
-                    importContactsView.showContactList(true)
+                    importContactsView.showMainContent(true)
                 }, { e ->
                     importContactsView.showProgress(false)
-                    importContactsView.showContactList(false)
-                    importContactsView.showContactsError(e as Exception) })
+                    importContactsView.showMainContent(false)
+                    importContactsView.showContactsError(e as Exception)
+                })
 
 
     }
