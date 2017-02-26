@@ -10,5 +10,6 @@ interface PlayerListContract {
 
     interface Presenter {
         fun startPresenting()
+        fun stopPresenting();
     }
 }

@@ -43,6 +43,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        playerListViewPresenter?.stopPresenting()
+    }
+
     fun getApp () : FivesOrganiserApp {
         return applicationContext as FivesOrganiserApp
     }
