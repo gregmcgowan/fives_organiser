@@ -7,6 +7,7 @@
     <color name="green_900">#1B5E20</color>
     <color name="green_700">#388E3C</color>
     <color name="green_300">#81C784</color>
+    <color name="grey_300">#E0E0E0</color>
     <color name="grey_400">#BDBDBD</color>
     <color name="grey_600">#757575</color>
 </resources>

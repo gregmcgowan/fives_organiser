@@ -3,4 +3,18 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+
+    <dimen name="player_list_avatar_size">48dp</dimen>
+
+    <!-- player avatar drawable dimensours -->
+    <dimen name="player_avatar_main_circle_margin">1dp</dimen>
+    <dimen name="player_avatar_shadow_padding">0.5dp</dimen>
+    <dimen name="player_avatar_head_y_offset">4dp</dimen>
+    <dimen name="player_avatar_head_radius_offset">1dp</dimen>
+    <dimen name="player_avatar_body_oval_radius">8dp</dimen>
+    <dimen name="player_avatar_body_margin">5dp</dimen>
+    <dimen name="player_avatar_neck_margin">3dp</dimen>
+    <dimen name="player_avatar_body_cutoff_stroke_width">1dp</dimen>
+
 </resources>
