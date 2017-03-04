@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         playerListViewPresenter?.stopPresenting()
     }
 
-    fun getApp () : FivesOrganiserApp {
+    fun getApp(): FivesOrganiserApp {
         return applicationContext as FivesOrganiserApp
     }
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if( resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             playerListViewPresenter?.startPresenting()
         }
     }

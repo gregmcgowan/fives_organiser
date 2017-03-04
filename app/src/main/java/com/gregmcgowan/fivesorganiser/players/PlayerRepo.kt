@@ -5,8 +5,8 @@ import rx.Observable
 
 interface PlayerRepo {
 
-    fun getPlayers() : Observable<List<Player>>
+    fun getPlayers(): Observable<List<Player>>
 
-    fun addPlayer(player : Player)
+    fun addPlayer(player: Player)
 
 }

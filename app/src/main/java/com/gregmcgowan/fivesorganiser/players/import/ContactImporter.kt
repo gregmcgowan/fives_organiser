@@ -5,6 +5,6 @@ import rx.Observable
 
 interface ContactImporter {
 
-    fun getAllContacts() : Observable<List<Contact>>
+    fun getAllContacts(): Observable<List<Contact>>
 
 }

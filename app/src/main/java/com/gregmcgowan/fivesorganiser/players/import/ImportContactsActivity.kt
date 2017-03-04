@@ -17,12 +17,12 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
 
     var importContactsPresenter: ImportContactsContract.Presenter? = null
 
-    var mainContent : View ? = null
-    var contactList : RecyclerView? = null
-    var progressBar : ProgressBar? = null
-    var addButton   : Button? = null
+    var mainContent: View? = null
+    var contactList: RecyclerView? = null
+    var progressBar: ProgressBar? = null
+    var addButton: Button? = null
 
-    val importPlayersAdapter : ImportPlayersAdapter = ImportPlayersAdapter()
+    val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
         contactList = findViewById(R.id.import_contacts_list) as RecyclerView
         progressBar = findViewById(R.id.import_contacts_progress_bar) as ProgressBar
         mainContent = findViewById(R.id.import_contacts_main_content) as View
-        addButton   = findViewById(R.id.import_contacts_add_button) as Button
+        addButton = findViewById(R.id.import_contacts_add_button) as Button
 
         contactList?.adapter = importPlayersAdapter
 
@@ -50,7 +50,7 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
         addButton?.setOnClickListener { View -> importContactsPresenter?.handleAddButtonPressed() }
     }
 
-    fun getApp () : FivesOrganiserApp {
+    fun getApp(): FivesOrganiserApp {
         return applicationContext as FivesOrganiserApp
     }
 
@@ -89,7 +89,7 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
 
     override fun showContactsError(exception: Exception) {
         Log.d("GREG", "Get contacts exception " + exception.message)
-        Toast.makeText(this,"Error getting contacts", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Error getting contacts", Toast.LENGTH_SHORT).show()
     }
 
     override fun setContactItemListener(listener: ImportContactsContract.ContactItemListener) {

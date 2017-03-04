@@ -16,7 +16,7 @@ class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
     val databaseReference: DatabaseReference = firebaseDatabase.reference
 
     override fun getPlayers(): Observable<List<Player>> {
-        return getSinglValueObserable(getPlayersReference(), marhsallPlayers() )
+        return getSinglValueObserable(getPlayersReference(), marhsallPlayers())
     }
 
     private fun getPlayersReference() = getCurrentUserDatabase()
@@ -26,7 +26,7 @@ class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
             databaseReference.child(USERS_KEY)
                     .child(authentication.getCurrentUserId())
 
-    private fun marhsallPlayers() : Func1<DataSnapshot,List<Player>> = Func1 { dataSnapshot ->
+    private fun marhsallPlayers(): Func1<DataSnapshot, List<Player>> = Func1 { dataSnapshot ->
         val children = if (dataSnapshot != null) {
             dataSnapshot.children
         } else ArrayList<DataSnapshot>()
@@ -43,7 +43,7 @@ class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
     }
 
     //TODO move to common database class
-    private fun <T> getSinglValueObserable (databaseReference : DatabaseReference, dataMarshaller : Func1<DataSnapshot, T> ) : Observable<T> {
+    private fun <T> getSinglValueObserable(databaseReference: DatabaseReference, dataMarshaller: Func1<DataSnapshot, T>): Observable<T> {
         return Observable.fromEmitter<T>({ emitter ->
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
 
