@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.0"
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.gregmcgowan.fivesorganiser"
         minSdkVersion 21
@@ -30,9 +30,9 @@ dependencies {
     })
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.jakewharton.timber:timber:4.3.1'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:design:25.2.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.1'
 
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.google.firebase:firebase-database:10.0.1'
