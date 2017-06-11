@@ -18,49 +18,40 @@ class MainActivity : AppCompatActivity() {
         @JvmField val IMPORT_CONTACTS = 1
     }
 
-    var playerListViewPresenter: PlayerListContract.Presenter? = null
+    lateinit var playerListViewPresenter: PlayerListContract.Presenter
+    val fab: FloatingActionButton by find<FloatingActionButton>(R.id.fab)
+    val playerListView: PlayerListView by find<PlayerListView>(R.id.player_list_view)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar?
-        setSupportActionBar(toolbar)
-
-        val fab = findViewById(R.id.fab) as FloatingActionButton?
-        fab!!.setOnClickListener({ view ->
+        setSupportActionBar(find<Toolbar>(R.id.toolbar).value)
+        fab.setOnClickListener({
             getContacts()
         })
-
-        val playerListView = findViewById(R.id.player_list_view) as PlayerListView
         playerListViewPresenter = PlayerListViewPresenter(playerListView, getApp()
                 .dependencies.playersRepo)
 
         getApp().dependencies.authentication.signInAnonymously(object : Authentication.AuthenticationStateListener {
             override fun authStateChanged() {
-                playerListViewPresenter?.startPresenting()
+                playerListViewPresenter.startPresenting()
             }
         })
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        playerListViewPresenter?.stopPresenting()
-    }
-
-    fun getApp(): FivesOrganiserApp {
-        return applicationContext as FivesOrganiserApp
+        playerListViewPresenter.stopPresenting()
     }
 
     private fun getContacts() {
         startActivityForResult(Intent(this, ImportContactsActivity::class.java), IMPORT_CONTACTS)
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            playerListViewPresenter?.startPresenting()
+            playerListViewPresenter.startPresenting()
         }
     }
 }

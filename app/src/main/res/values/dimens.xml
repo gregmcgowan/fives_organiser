@@ -17,4 +17,12 @@
     <dimen name="player_avatar_neck_margin">3dp</dimen>
     <dimen name="player_avatar_body_cutoff_stroke_width">1dp</dimen>
 
+    <!-- pitch dimen -->
+    <dimen name="pitch_section_height">48dp</dimen>
+    <dimen name="pitch_line_thickness">2dp</dimen>
+
+
+    <dimen name="player_avatar_and_name_text_size">12sp</dimen>
+    <dimen name="player_avatar_and_name_icon_size">24sp</dimen>
+
 </resources>

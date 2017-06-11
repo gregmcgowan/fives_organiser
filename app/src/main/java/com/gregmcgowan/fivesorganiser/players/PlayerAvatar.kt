@@ -80,30 +80,33 @@ class PlayerAvatar : View {
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
 
-        // main circle with shadow
-        paint.style = Paint.Style.FILL
-        paint.color = mainCircleBackgroundColour
-        //canvas?.drawCircle(middleX, middleY, mainRadius + shadowPadding, shadowPaint)
-        canvas?.drawCircle(middleX, middleY, mainCircleRadius, paint)
+        canvas.let {
+            // main circle with shadow
+            paint.style = Paint.Style.FILL
+            paint.color = mainCircleBackgroundColour
+            //canvas?.drawCircle(middleX, middleY, mainRadius + shadowPadding, shadowPaint)
+            canvas?.drawCircle(middleX, middleY, mainCircleRadius, paint)
 
-        //Head circle
-        paint.color = Color.WHITE
-        canvas?.drawCircle(headX, headY, headRadius, paint)
+            //Head circle
+            paint.color = Color.WHITE
+            canvas?.drawCircle(headX, headY, headRadius, paint)
 
-        //Clip outside the main circle
-        path.addCircle(middleX, middleY, mainCircleRadius, Path.Direction.CW)
-        canvas?.clipPath(path)
+            //Clip outside the main circle
+            path.addCircle(middleX, middleY, mainCircleRadius, Path.Direction.CW)
+            canvas?.clipPath(path)
 
-        //Body oval
-        paint.color = Color.WHITE
-        canvas?.drawOval(bodyLeft, bodyTop,
-                bodyRight, bodyBottom, paint)
+            //Body oval
+            paint.color = Color.WHITE
+            canvas?.drawOval(bodyLeft, bodyTop,
+                    bodyRight, bodyBottom, paint)
 
-        //add a cut off circle around the body
-        paint.color = mainCircleBackgroundColour
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = strokeWidth
-        canvas?.drawCircle(middleX, middleY, mainCircleRadius - (strokeWidth / 2f), paint)
+            //add a cut off circle around the body
+            paint.color = mainCircleBackgroundColour
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = strokeWidth
+            canvas?.drawCircle(middleX, middleY, mainCircleRadius - (strokeWidth / 2f), paint)
+        }
+
 
     }
 

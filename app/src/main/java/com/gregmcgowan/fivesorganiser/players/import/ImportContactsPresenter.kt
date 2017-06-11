@@ -18,7 +18,9 @@ class ImportContactsPresenter(val importContactsView: ImportContactsContract.Vie
         contactsImporter.getAllContacts()
                 .flatMapIterable { l -> l }
                 .filter { contact -> selectedItems.contains(contact.contactId) }
-                .flatMap { contact -> Observable.just(playersRepo.addPlayer(Player(contact.name, contact.phoneNumber, contactId = contact.contactId))) }
+                .flatMap { contact -> Observable.just(playersRepo.addPlayer(Player(contact.name,
+                        contact.phoneNumber,
+                        contactId = contact.contactId))) }
                 .toCompletable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
