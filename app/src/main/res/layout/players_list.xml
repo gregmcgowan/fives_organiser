@@ -10,7 +10,6 @@
             android:id="@+id/player_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="16dp"
             tools:listitem="@layout/article_list_item"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 

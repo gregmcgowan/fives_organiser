@@ -2,4 +2,9 @@
     <string name="app_name">FivesOrganiser</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="add">Add</string>
+    <string name="home_title">Fives Organiser</string>
+    <string name="players_title">Players</string>
+    <string name="matches_title">Matches</string>
+    <string name="results_title">Results</string>
+    <string name="import_contacts_title">Import Contacts</string>
 </resources>

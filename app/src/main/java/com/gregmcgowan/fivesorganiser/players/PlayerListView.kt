@@ -19,7 +19,7 @@ class PlayerListView : FrameLayout, PlayerListContract.View {
 
     constructor(context: Context?) : this(context, null)
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs ) {
         rootView = LayoutInflater.from(context).inflate(R.layout.players_list, this, false) as ViewGroup
         addView(rootView)
         playerList.adapter = playerListAdapter

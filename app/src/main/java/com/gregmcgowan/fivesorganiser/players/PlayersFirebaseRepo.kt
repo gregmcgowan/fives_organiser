@@ -25,12 +25,22 @@ class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
             databaseReference.child(USERS_KEY)
                     .child(authentication.getCurrentUserId())
 
-    private fun marhsallPlayers(): Func1<DataSnapshot, List<Player>> = Func1 { dataSnapshot ->
-        val children = if (dataSnapshot != null) {
-            dataSnapshot.children
-        } else ArrayList<DataSnapshot>()
+    private fun marhsallPlayers(): Func1<DataSnapshot, List<Player>> {
 
-        children.mapTo(ArrayList<Player>()) { it.getValue(Player::class.java) }
+        return Func1 { dataSnapshot ->
+            val children = if (dataSnapshot != null) {
+                dataSnapshot.children
+            } else ArrayList<DataSnapshot>()
+
+            val players = mutableListOf<Player>()
+            children.map { it.getValue(Player::class.java) }
+                    .forEach {
+                        it?.let {
+                            players.add(it)
+                        }
+                    }
+            players.toList()
+        }
     }
 
 

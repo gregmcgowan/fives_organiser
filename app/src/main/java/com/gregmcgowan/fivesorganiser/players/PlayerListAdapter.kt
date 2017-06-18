@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
+import com.gregmcgowan.fivesorganiser.find
 import java.util.*
 
 
@@ -27,23 +28,17 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder?, position: Int) {
-        val player = playerList.get(position)
-        holder?.playerNameTextView?.text = player.name
+        holder?.let { holder.playerNameTextView.text = playerList[position].name }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): PlayerViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.player_list_item, parent, false)
+        val view = LayoutInflater.from(parent?.context)
+                .inflate(R.layout.player_list_item, parent, false)
         return PlayerViewHolder(view)
     }
 
     class PlayerViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-
-        var playerNameTextView: TextView? = null
-
-        init {
-            playerNameTextView = itemView?.findViewById(R.id.player_name) as TextView?
-        }
-
+        val playerNameTextView: TextView by find<TextView>(R.id.player_name)
     }
 
 }

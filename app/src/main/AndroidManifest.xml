@@ -15,20 +15,20 @@
                 android:name=".MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-
-        <activity android:name=".players.import.ImportContactsActivity"
-                  android:label="Import Contacts"/>
-
-        <activity android:name=".team.SelectTeamActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".players.import.ImportContactsActivity"
+                  android:label="@string/import_contacts_title"/>
+
+        <activity android:name=".team.SelectTeamActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name=".players.PlayersActivity"
+                  android:label="@string/players_title"/>
 
     </application>
 

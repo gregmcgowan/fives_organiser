@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorganiser.players.import
 
-import com.gregmcgowan.fivesorganiser.players.Player
 import com.gregmcgowan.fivesorganiser.players.PlayerRepo
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -18,9 +17,13 @@ class ImportContactsPresenter(val importContactsView: ImportContactsContract.Vie
         contactsImporter.getAllContacts()
                 .flatMapIterable { l -> l }
                 .filter { contact -> selectedItems.contains(contact.contactId) }
-                .flatMap { contact -> Observable.just(playersRepo.addPlayer(Player(contact.name,
-                        contact.phoneNumber,
-                        contactId = contact.contactId))) }
+                .flatMap { (name, phoneNumber, emailAddress, contactId) ->
+                    Observable.just(playersRepo.addPlayer(name,
+                            emailAddress,
+                            phoneNumber,
+                            contactId
+                            ))
+                }
                 .toCompletable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
