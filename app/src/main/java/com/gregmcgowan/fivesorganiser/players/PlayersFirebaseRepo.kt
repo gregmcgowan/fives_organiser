@@ -7,7 +7,6 @@ import rx.Observable
 import rx.functions.Func1
 import java.util.*
 
-
 class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
                           val authentication: Authentication) : PlayerRepo {
     val PLAYERS_KEY = "Players"
@@ -34,12 +33,12 @@ class PlayersFirebaseRepo(firebaseDatabase: FirebaseDatabase,
         children.mapTo(ArrayList<Player>()) { it.getValue(Player::class.java) }
     }
 
-    override fun addPlayer(player: Player) {
-        val id = player.name + System.currentTimeMillis()
 
+    override fun addPlayer(name: String, email: String, phoneNumber: String, contactId: Int) {
+        val playerId = getPlayersReference().push().key
         getPlayersReference()
-                .child(id)
-                .setValue(player)
+                .child(playerId)
+                .setValue(Player(playerId, name, phoneNumber, email, contactId))
     }
 
     //TODO move to common database class

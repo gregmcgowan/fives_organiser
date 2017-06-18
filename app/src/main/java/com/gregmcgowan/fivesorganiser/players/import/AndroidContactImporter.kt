@@ -59,7 +59,8 @@ class AndroidContactImporter(val contentResolver: ContentResolver) : ContactImpo
             val phoneNumber = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.NUMBER)
             val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
             phonesCursor.close()
-            return Contact(name, phoneNumber, contactId.toInt())
+            //TODO
+            return Contact(name, phoneNumber, "", contactId.toInt())
         }
 
         phonesCursor.close()

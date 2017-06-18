@@ -7,6 +7,6 @@ interface PlayerRepo {
 
     fun getPlayers(): Observable<List<Player>>
 
-    fun addPlayer(player: Player)
+    fun addPlayer(name: String, email: String, phoneNumber: String, contactId: Int)
 
 }
