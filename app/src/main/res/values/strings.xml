@@ -1,10 +1,13 @@
 <resources>
-    <string name="app_name">FivesOrganiser</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="app_name">Fives Organiser</string>
     <string name="add">Add</string>
     <string name="home_title">Fives Organiser</string>
     <string name="players_title">Players</string>
     <string name="matches_title">Matches</string>
     <string name="results_title">Results</string>
     <string name="import_contacts_title">Import Contacts</string>
+    <string name="create_match_label">Create Match</string>
+    <string name="enter_location_hint">Enter location</string>
+    <string name="no_results_message">No results yet!</string>
+    <string name="no_matches_message">No matches</string>
 </resources>

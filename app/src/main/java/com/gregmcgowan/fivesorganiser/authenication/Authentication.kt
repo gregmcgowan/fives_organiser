@@ -3,15 +3,8 @@ package com.gregmcgowan.fivesorganiser.authenication
 
 interface Authentication {
 
-    fun addAuthenticationStateListener(listener: AuthenticationStateListener)
+    fun isInitialised(): Boolean
+    fun initialise(onInitAction: () -> Unit)
+    fun getUserId(): String?
 
-    fun removeAuthenticationStateListener(listener: AuthenticationStateListener)
-
-    fun signInAnonymously(listener: Authentication.AuthenticationStateListener)
-
-    fun getCurrentUserId(): String?
-
-    interface AuthenticationStateListener {
-        fun authStateChanged()
-    }
 }

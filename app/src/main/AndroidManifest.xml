@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.gregmcgowan.fivesorganiser">
+
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
@@ -10,25 +11,22 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-
         <activity
-                android:name=".MainActivity"
+                android:name=".main.MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".players.import.ImportContactsActivity"
-                  android:label="@string/import_contacts_title"/>
-
-        <activity android:name=".team.SelectTeamActivity"
-                  android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".players.PlayersActivity"
-                  android:label="@string/players_title"/>
+        <activity
+                android:name=".players.import.ImportContactsActivity"
+                android:label="@string/import_contacts_title"/>
+        <activity
+                android:name=".team.SelectTeamActivity"
+                android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>
 

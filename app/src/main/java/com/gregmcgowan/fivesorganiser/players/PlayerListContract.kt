@@ -1,15 +1,15 @@
 package com.gregmcgowan.fivesorganiser.players
 
+import com.gregmcgowan.fivesorganiser.core.ViewState
+import com.gregmcgowan.fivesorganiser.main.MainContract
+
 interface PlayerListContract {
 
+    data class PlayerListModel(val players : List<Player>)
+
     interface View {
-        fun showPlayers(players: List<Player>)
-        fun showProgressBar(show: Boolean)
-        fun showPlayerList(show: Boolean)
+        var viewState : ViewState
     }
 
-    interface Presenter {
-        fun startPresenting()
-        fun stopPresenting();
-    }
+    interface Presenter : MainContract.BaseViewPresenter
 }

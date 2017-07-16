@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.gregmcgowan.fivesorganiser.authenication.FirebaseAuthentication
 import com.gregmcgowan.fivesorganiser.players.PlayersFirebaseRepo
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 
 class FivesOrganiserApp : Application() {
@@ -16,11 +17,12 @@ class FivesOrganiserApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AndroidThreeTen.init(this);
         FirebaseApp.initializeApp(this)
         val firebaseAuthentication = FirebaseAuthentication(FirebaseAuth.getInstance())
 
         dependencies = Dependencies(firebaseAuthentication,
-                PlayersFirebaseRepo(FirebaseDatabase.getInstance(), firebaseAuthentication)
+                PlayersFirebaseRepo(firebaseAuthentication, FirebaseDatabase.getInstance())
         )
     }
 }

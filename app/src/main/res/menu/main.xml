@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/main_players_menu_item"
+            android:enabled="true"
+            android:title="@string/players_title"
+            app:showAsAction="ifRoom" />
+    <item
+            android:id="@+id/main_matches_menu_item"
+            android:enabled="true"
+            android:title="@string/matches_title"
+            app:showAsAction="ifRoom" />
+    <item
+            android:id="@+id/main_results_menu_item"
+            android:enabled="true"
+            android:title="@string/results_title"
+            app:showAsAction="ifRoom" />
+</menu>
