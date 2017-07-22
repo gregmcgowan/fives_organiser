@@ -1,15 +1,14 @@
 package com.gregmcgowan.fivesorganiser.players
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.util.DiffUtil.*
+import android.support.v7.util.DiffUtil.calculateDiff
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
+import com.gregmcgowan.fivesorganiser.core.DiffUtilCallback
 import com.gregmcgowan.fivesorganiser.find
-
 
 class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
@@ -22,9 +21,7 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
         calculateDiff.dispatchUpdatesTo(this)
     }
 
-    override fun getItemCount(): Int {
-        return playerList.size
-    }
+    override fun getItemCount(): Int = playerList.size
 
     override fun onBindViewHolder(holder: PlayerViewHolder?, position: Int) {
         holder?.let { holder.playerNameTextView.text = playerList[position].name }
@@ -38,21 +35,6 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
 
     class PlayerViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         val playerNameTextView: TextView by find<TextView>(R.id.player_name)
-    }
-
-    class DiffUtilCallback(val oldList: List<Player>,
-                           val newList: List<Player>) : DiffUtil.Callback() {
-
-        override fun areItemsTheSame(oldListPosition: Int, newListPosition: Int): Boolean =
-                oldList[oldListPosition] === newList[newListPosition]
-
-        override fun getOldListSize(): Int = oldList.size
-
-        override fun getNewListSize(): Int = newList.size
-
-        override fun areContentsTheSame(oldListPosition: Int, newListPosition: Int): Boolean {
-            return oldList[oldListPosition] == (newList[newListPosition])
-        }
     }
 
 }
