@@ -3,12 +3,10 @@ package com.gregmcgowan.fivesorganiser.main
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.authenication.Authentication
 import com.gregmcgowan.fivesorganiser.core.ViewState
-import com.gregmcgowan.fivesorganiser.players.PlayerListViewPresenter
 import rx.Subscription
 
-
-class MainPresenter(val mainView: MainContract.View,
-                    val playerListViewPresenter: PlayerListViewPresenter,
+class MainPresenter(val mainParentView: MainContract.ParentView,
+                    val mainViewPresenters : List<MainContract.MainViewPresenter>,
                     val authentication: Authentication) : MainContract.Presenter {
 
     private var currentSelection: Int = -1
@@ -16,7 +14,7 @@ class MainPresenter(val mainView: MainContract.View,
 
     override fun startPresenting() {
         if (authentication.isInitialised()) {
-            subscription = mainView.menuSelected()
+            subscription = mainParentView.menuSelected()
                     .subscribe({ menuID -> handleMenuSelection(menuID) })
 
             if (currentSelection == -1) {
@@ -24,7 +22,7 @@ class MainPresenter(val mainView: MainContract.View,
             }
             handleMenuSelection(currentSelection)
         } else {
-            mainView.viewState = ViewState.Loading()
+            mainParentView.viewState = ViewState.Loading()
             authentication.initialise({ startPresenting() })
         }
     }
@@ -35,12 +33,13 @@ class MainPresenter(val mainView: MainContract.View,
 
     fun handleMenuSelection(menuItemID: Int) {
         this.currentSelection = menuItemID
-        mainView.viewState = ViewState.Success(MainContract.MainModel(menuItemID))
-        //TODO generalise this for other sub presenters
-        if(menuItemID == R.id.main_players_menu_item) {
-            playerListViewPresenter.startPresenting()
-        } else {
-            playerListViewPresenter.stopPresenting()
+        mainParentView.viewState = ViewState.Success(MainContract.MainModel(menuItemID))
+        for(mainViewPresenter : MainContract.MainViewPresenter in mainViewPresenters) {
+            if(mainViewPresenter.menuId() == menuItemID) {
+                mainViewPresenter.startPresenting()
+            } else {
+                mainViewPresenter.stopPresenting()
+            }
         }
     }
 

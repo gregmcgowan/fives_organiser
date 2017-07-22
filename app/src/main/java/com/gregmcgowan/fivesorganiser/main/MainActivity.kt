@@ -18,7 +18,7 @@ import com.gregmcgowan.fivesorganiser.players.PlayerListViewPresenter
 import rx.Emitter
 import rx.Observable
 
-class MainActivity : AppCompatActivity(), MainContract.View {
+class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
     //val rootView: ViewGroup by find<ViewGroup>(R.id.main_root)
     val content: View by find<View>(R.id.main_content)
@@ -41,11 +41,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         setSupportActionBar(find<Toolbar>(R.id.main_toolbar).value)
 
         //TODO maybe move to Dagger
+        val mainViewPresenters = listOf<MainContract.MainViewPresenter>(
+                PlayerListViewPresenter(PlayerListView(playersView, this),
+                        dependencies.playersRepo))
+
         mainPresenter = MainPresenter(
-                mainView = this,
-                playerListViewPresenter = PlayerListViewPresenter(
-                        PlayerListView(playersView, this),
-                        dependencies.playersRepo),
+                mainParentView = this,
+                mainViewPresenters = mainViewPresenters,
                 authentication = dependencies.authentication)
 
         menuItemObservable = Observable.fromEmitter<Int>({

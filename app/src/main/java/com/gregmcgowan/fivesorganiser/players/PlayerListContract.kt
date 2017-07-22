@@ -11,5 +11,4 @@ interface PlayerListContract {
         var viewState : ViewState
     }
 
-    interface Presenter : MainContract.BaseViewPresenter
 }

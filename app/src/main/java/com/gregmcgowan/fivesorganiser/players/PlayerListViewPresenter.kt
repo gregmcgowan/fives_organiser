@@ -1,12 +1,14 @@
 package com.gregmcgowan.fivesorganiser.players
 
+import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.ViewState
+import com.gregmcgowan.fivesorganiser.main.MainContract
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
 class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
-                              val playersRepo: PlayerRepo) : PlayerListContract.Presenter {
+                              val playersRepo: PlayerRepo) : MainContract.MainViewPresenter {
 
     var subscription: Subscription? = null
 
@@ -43,4 +45,5 @@ class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
         subscription = null
     }
 
+    override fun menuId(): Int = R.id.main_players_menu_item
 }
