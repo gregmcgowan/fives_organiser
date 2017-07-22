@@ -20,9 +20,9 @@ import rx.Observable
 
 class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
-    //val rootView: ViewGroup by find<ViewGroup>(R.id.main_root)
+   // val rootView: ViewGroup by find<ViewGroup>(R.id.main_content)
     val content: View by find<View>(R.id.main_content)
-    val progresBar: View by find<ProgressBar>(R.id.main_progress_bar)
+    val progressBar: View by find<ProgressBar>(R.id.main_progress_bar)
     val playersView: View by find<View>(R.id.main_players_list_layout)
     val matchesView: View by find<View>(R.id.main_create_match_layout)
     val resultsView: View by find<View>(R.id.main_results_layout)
@@ -42,8 +42,10 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
         //TODO maybe move to Dagger
         val mainViewPresenters = listOf<MainContract.MainViewPresenter>(
-                PlayerListViewPresenter(PlayerListView(playersView, this),
-                        dependencies.playersRepo))
+                PlayerListViewPresenter(
+                        playerListView = PlayerListView(rootView = playersView,
+                                                        context = this),
+                        playersRepo = dependencies.playersRepo))
 
         mainPresenter = MainPresenter(
                 mainParentView = this,
@@ -61,6 +63,7 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
         }, Emitter.BackpressureMode.LATEST)
     }
+
     override fun onStart() {
         super.onStart()
         mainPresenter.startPresenting()
@@ -91,12 +94,12 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
     private fun showLoading() {
         content.visibility = View.GONE
-        progresBar.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
     }
 
     private fun showError() {
         content.visibility = View.GONE
-        progresBar.visibility = View.GONE
+        progressBar.visibility = View.GONE
         //TODO show error
         Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
                 .show()
@@ -104,7 +107,7 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
     private fun showSuccess(it: ViewState.Success<*>) {
         content.visibility = View.VISIBLE
-        progresBar.visibility= View.GONE
+        progressBar.visibility = View.GONE
         if (it.item is MainContract.MainModel) {
             when (it.item.menuIdToShow) {
                 R.id.main_players_menu_item ->
@@ -120,15 +123,15 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
         }
     }
 
-    fun showMatchesView() {
-        matchesView.visibility = View.VISIBLE
-        playersView.visibility = View.GONE
-        resultsView.visibility = View.GONE
-    }
-
     fun showPlayersView() {
         matchesView.visibility = View.GONE
         playersView.visibility = View.VISIBLE
+        resultsView.visibility = View.GONE
+    }
+
+    fun showMatchesView() {
+        matchesView.visibility = View.VISIBLE
+        playersView.visibility = View.GONE
         resultsView.visibility = View.GONE
     }
 
@@ -137,7 +140,5 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
         playersView.visibility = View.GONE
         resultsView.visibility = View.VISIBLE
     }
-
-
 
 }
