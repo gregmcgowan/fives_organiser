@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.main
 
 import com.gregmcgowan.fivesorganiser.core.ViewPresenter
 import com.gregmcgowan.fivesorganiser.core.ViewState
-import rx.Observable
+import io.reactivex.Observable
 
 interface MainContract {
 

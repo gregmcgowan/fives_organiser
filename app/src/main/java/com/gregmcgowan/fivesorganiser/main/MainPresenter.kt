@@ -3,14 +3,14 @@ package com.gregmcgowan.fivesorganiser.main
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.authenication.Authentication
 import com.gregmcgowan.fivesorganiser.core.ViewState
-import rx.Subscription
+import io.reactivex.disposables.Disposable
 
 class MainPresenter(val mainParentView: MainContract.ParentView,
-                    val mainViewPresenters : List<MainContract.MainViewPresenter>,
+                    val mainViewPresenters: List<MainContract.MainViewPresenter>,
                     val authentication: Authentication) : MainContract.Presenter {
 
     private var currentSelection: Int = -1
-    private var subscription: Subscription? = null
+    private var subscription: Disposable? = null
 
     override fun startPresenting() {
         if (authentication.isInitialised()) {
@@ -28,14 +28,14 @@ class MainPresenter(val mainParentView: MainContract.ParentView,
     }
 
     override fun stopPresenting() {
-        subscription?.unsubscribe()
+        subscription?.dispose()
     }
 
     fun handleMenuSelection(menuItemID: Int) {
         this.currentSelection = menuItemID
         mainParentView.viewState = ViewState.Success(MainContract.MainModel(menuItemID))
-        for(mainViewPresenter : MainContract.MainViewPresenter in mainViewPresenters) {
-            if(mainViewPresenter.menuId() == menuItemID) {
+        for (mainViewPresenter: MainContract.MainViewPresenter in mainViewPresenters) {
+            if (mainViewPresenter.menuId() == menuItemID) {
                 mainViewPresenter.startPresenting()
             } else {
                 mainViewPresenter.stopPresenting()

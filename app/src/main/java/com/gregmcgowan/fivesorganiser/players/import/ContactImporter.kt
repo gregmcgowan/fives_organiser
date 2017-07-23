@@ -1,10 +1,10 @@
 package com.gregmcgowan.fivesorganiser.players.import
 
-import rx.Observable
+import io.reactivex.Single
 
 
 interface ContactImporter {
 
-    fun getAllContacts(): Observable<List<Contact>>
+    fun getAllContacts(): Single<List<Contact>>
 
 }

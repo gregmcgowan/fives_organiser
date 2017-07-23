@@ -1,21 +1,21 @@
 package com.gregmcgowan.fivesorganiser.players.import
 
+import com.gregmcgowan.fivesorganiser.core.ViewPresenter
+import com.gregmcgowan.fivesorganiser.core.ViewState
+
 
 interface ImportContactsContract {
 
     interface View {
-        fun showContacts(contacts: List<Contact>)
-        fun showProgress(show: Boolean)
-        fun showMainContent(show: Boolean)
-        fun showContactsError(exception: Exception)
+        var viewState : ViewState
+
         fun setContactItemListener(listener: ContactItemListener)
         fun setAddButtonEnabled(enabled: Boolean)
         fun closeScreen()
         fun returnToPlayersScreen()
     }
 
-    interface Presenter {
-        fun startPresenting()
+    interface Presenter : ViewPresenter{
         fun handleAddButtonPressed()
     }
 
@@ -25,5 +25,7 @@ interface ImportContactsContract {
         fun contactDeselected(contactId: Int)
         fun getSelectedItems(): List<Int>
     }
+
+    data class ImportContactsModel(val contacts : List<Contact>)
 
 }

@@ -15,8 +15,7 @@ import com.gregmcgowan.fivesorganiser.find
 import com.gregmcgowan.fivesorganiser.getApp
 import com.gregmcgowan.fivesorganiser.players.PlayerListView
 import com.gregmcgowan.fivesorganiser.players.PlayerListViewPresenter
-import rx.Emitter
-import rx.Observable
+import io.reactivex.Observable
 
 class MainActivity : AppCompatActivity(), MainContract.ParentView {
 
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
                 mainViewPresenters = mainViewPresenters,
                 authentication = dependencies.authentication)
 
-        menuItemObservable = Observable.fromEmitter<Int>({
+        menuItemObservable = Observable.create<Int>({
             emitter ->
             bottomNavigation.setOnNavigationItemSelectedListener { menuItem ->
                 //TODO find out why this causes problems with the player list
@@ -60,8 +59,8 @@ class MainActivity : AppCompatActivity(), MainContract.ParentView {
                 emitter.onNext(menuItem.itemId)
                 true
             }
-
-        }, Emitter.BackpressureMode.LATEST)
+            emitter.setCancellable { bottomNavigation.setOnNavigationItemSelectedListener(null) }
+        })
     }
 
     override fun onStart() {

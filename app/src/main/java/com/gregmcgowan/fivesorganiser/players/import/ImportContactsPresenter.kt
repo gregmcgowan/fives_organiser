@@ -1,9 +1,13 @@
 package com.gregmcgowan.fivesorganiser.players.import
 
+import com.gregmcgowan.fivesorganiser.core.ViewState
+import com.gregmcgowan.fivesorganiser.core.ViewState.*
 import com.gregmcgowan.fivesorganiser.players.PlayerRepo
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import com.gregmcgowan.fivesorganiser.players.import.ImportContactsContract.ImportContactsModel
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 class ImportContactsPresenter(val importContactsView: ImportContactsContract.View,
@@ -12,9 +16,12 @@ class ImportContactsPresenter(val importContactsView: ImportContactsContract.Vie
         ImportContactsContract.ContactItemListener {
 
     var selectedItems: ArrayList<Int> = ArrayList()
+    var disposables: CompositeDisposable = CompositeDisposable()
 
     override fun handleAddButtonPressed() {
-        contactsImporter.getAllContacts()
+        setViewState(Loading())
+        val disposable = contactsImporter.getAllContacts()
+                .toObservable()
                 .flatMapIterable { l -> l }
                 .filter { contact -> selectedItems.contains(contact.contactId) }
                 .flatMap { (name, phoneNumber, emailAddress, contactId) ->
@@ -22,13 +29,24 @@ class ImportContactsPresenter(val importContactsView: ImportContactsContract.Vie
                             emailAddress,
                             phoneNumber,
                             contactId
-                            ))
+                    ))
                 }
-                .toCompletable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ -> importContactsView.returnToPlayersScreen() })
+                .subscribe(
+                        this::handlePlayerCreated,
+                        this::handleError,
+                        importContactsView::returnToPlayersScreen)
+        disposables.add(disposable)
 
+    }
+
+    private fun handlePlayerCreated(it: Unit) {
+        //TODO
+    }
+
+    private fun handleError(t: Throwable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun contactSelected(contactId: Int) {
@@ -47,23 +65,23 @@ class ImportContactsPresenter(val importContactsView: ImportContactsContract.Vie
     override fun startPresenting() {
         importContactsView.setAddButtonEnabled(false)
         importContactsView.setContactItemListener(this)
-        importContactsView.showProgress(true)
-        importContactsView.showMainContent(false)
 
-        contactsImporter.getAllContacts()
+        importContactsView.viewState = Loading()
+
+        val disposable = contactsImporter.getAllContacts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ contacts ->
-                    importContactsView.showContacts(contacts)
-                    importContactsView.showProgress(false)
-                    importContactsView.showMainContent(true)
-                }, { e ->
-                    importContactsView.showProgress(false)
-                    importContactsView.showMainContent(false)
-                    importContactsView.showContactsError(e as Exception)
-                })
+                .subscribe({ setViewState(Success(ImportContactsModel(it))) },
+                        { _ -> setViewState(Error("Error getting contacts")) })
+        disposables.add(disposable)
+    }
 
+    private fun setViewState(viewState: ViewState) {
+        importContactsView.viewState = viewState
+    }
 
+    override fun stopPresenting() {
+        disposables.clear()
     }
 
     override fun getSelectedItems(): List<Int> {

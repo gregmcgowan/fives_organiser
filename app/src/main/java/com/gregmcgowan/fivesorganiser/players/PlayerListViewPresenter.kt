@@ -3,14 +3,15 @@ package com.gregmcgowan.fivesorganiser.players
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.ViewState
 import com.gregmcgowan.fivesorganiser.main.MainContract
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+
 
 class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
                               val playersRepo: PlayerRepo) : MainContract.MainViewPresenter {
 
-    var subscription: Subscription? = null
+    var subscription: Disposable? = null
 
     override fun startPresenting() {
         loadPlayers()
@@ -23,8 +24,8 @@ class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { players -> handlePlayers(players) },
-                        { error -> handleError(error) }
+                        this::handlePlayers,
+                        this::handleError
                 )
     }
 
@@ -41,7 +42,7 @@ class PlayerListViewPresenter(val playerListView: PlayerListContract.View,
     }
 
     override fun stopPresenting() {
-        subscription?.unsubscribe()
+        subscription?.dispose()
         subscription = null
     }
 

@@ -1,13 +1,15 @@
 package com.gregmcgowan.fivesorganiser.players
 
-import rx.Observable
-import rx.Single
+import io.reactivex.Single
 
 
 interface PlayerRepo {
 
     fun getPlayers(): Single<List<Player>>
 
-    fun addPlayer(name: String, email: String, phoneNumber: String, contactId: Int)
+    fun addPlayer(name: String,
+                  email: String,
+                  phoneNumber: String,
+                  contactId: Int)
 
 }

@@ -4,9 +4,7 @@ import android.content.ContentResolver
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.provider.ContactsContract.Contacts
-import rx.Observable
-import rx.Observable.defer
-import rx.Observable.just
+import io.reactivex.Single
 import java.util.*
 
 class AndroidContactImporter(val contentResolver: ContentResolver) : ContactImporter {
@@ -16,17 +14,22 @@ class AndroidContactImporter(val contentResolver: ContentResolver) : ContactImpo
             Contacts.DISPLAY_NAME_PRIMARY,
             Contacts.SORT_KEY_PRIMARY)
 
-    override fun getAllContacts(): Observable<List<Contact>> {
-        val selectString = "((" + Contacts.DISPLAY_NAME + " NOTNULL) AND (" + Contacts.HAS_PHONE_NUMBER + "=1) AND (" + Contacts.DISPLAY_NAME + " != '' ) )"
+    override fun getAllContacts(): Single<List<Contact>> {
+        val selectString = "((" + Contacts.DISPLAY_NAME +
+                " NOTNULL) AND (" +
+                Contacts.HAS_PHONE_NUMBER + "=1) AND (" +
+                Contacts.DISPLAY_NAME + " != '' ) )"
 
-        return defer {
-            just(contentResolver.query(Contacts.CONTENT_URI,
-                    PROJECTION, selectString, null,
-                    Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC")
-            )
-        }.flatMap { cursor ->
-            just(createContactList(cursor))
-        }
+        return Single.fromCallable(
+                {
+                    contentResolver.query(
+                            Contacts.CONTENT_URI,
+                            PROJECTION,
+                            selectString,
+                            null,
+                            Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC")
+                })
+                .map { createContactList(cursor = it) }
     }
 
     private fun createContactList(cursor: Cursor): ArrayList<Contact> {

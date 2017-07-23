@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.gregmcgowan.fivesorganiser.R
+import com.gregmcgowan.fivesorganiser.core.ViewBinder
+import com.gregmcgowan.fivesorganiser.core.ViewState
 import com.gregmcgowan.fivesorganiser.find
 import com.gregmcgowan.fivesorganiser.getApp
 
@@ -27,17 +28,52 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.import_contacts)
         setSupportActionBar(find<Toolbar>(R.id.toolbar).value)
 
         addButton.setOnClickListener { importContactsPresenter.handleAddButtonPressed() }
         contactList.adapter = importPlayersAdapter
 
-        importContactsPresenter = ImportContactsPresenter(this,
-                getApp().dependencies.playersRepo, AndroidContactImporter(contentResolver)
+        importContactsPresenter = ImportContactsPresenter(
+                this,
+                getApp().dependencies.playersRepo,
+                AndroidContactImporter(contentResolver)
         )
         importContactsPresenter.startPresenting()
 
+    }
+    override var viewState: ViewState by ViewBinder {
+        when (it) {
+            is ViewState.Loading -> {
+                showLoading()
+            }
+            is ViewState.Error -> {
+                showError(it.errorMessage ?: "Error")
+            }
+            is ViewState.Success<*> -> {
+                showSuccess(it)
+            }
+        }
+    }
+
+    private fun  showSuccess(it: ViewState.Success<*>) {
+        if (it.item is ImportContactsContract.ImportContactsModel) {
+            showContacts(it.item.contacts)
+            showProgress(false)
+            showMainContent(true)
+        }
+    }
+
+    private fun showError(message: String) {
+        showProgress(false)
+        showMainContent(false)
+        showContactsError(message)
+    }
+
+    private fun showLoading() {
+        showProgress(true)
+        showMainContent(false)
     }
 
     override fun closeScreen() = finish()
@@ -51,9 +87,9 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
         addButton.isEnabled = enabled
     }
 
-    override fun showContacts(contacts: List<Contact>) = importPlayersAdapter.setContacts(contacts)
+    fun showContacts(contacts: List<Contact>) = importPlayersAdapter.setContacts(contacts)
 
-    override fun showProgress(show: Boolean) {
+    fun showProgress(show: Boolean) {
         if (show) {
             progressBar.visibility = View.VISIBLE
         } else {
@@ -61,7 +97,7 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
         }
     }
 
-    override fun showMainContent(show: Boolean) {
+    fun showMainContent(show: Boolean) {
         if (show) {
             mainContent.visibility = View.VISIBLE
         } else {
@@ -69,9 +105,8 @@ class ImportContactsActivity : AppCompatActivity(), ImportContactsContract.View 
         }
     }
 
-    override fun showContactsError(exception: Exception) {
-        Log.d("GREG", "Get contacts exception " + exception.message)
-        Toast.makeText(this, "Error getting contacts", Toast.LENGTH_SHORT).show()
+    fun showContactsError(message : String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun setContactItemListener(listener: ImportContactsContract.ContactItemListener) {
