@@ -1,22 +1,50 @@
 package com.gregmcgowan.fivesorganiser.main
 
-import com.gregmcgowan.fivesorganiser.core.ViewPresenter
-import com.gregmcgowan.fivesorganiser.core.ViewState
+import android.arch.lifecycle.LifecycleObserver
 import io.reactivex.Observable
+
+typealias MainScreenUiModelReducer = (MainContract.MainScreenUiModel) -> MainContract.MainScreenUiModel
 
 interface MainContract {
 
-    data class MainModel(val menuIdToShow : Int)
+    data class MainScreenUiModel(
+            val selectedScreen: MainScreen,
+            val showMatchesView: Boolean,
+            val showPlayersView: Boolean,
+            val showResultsView: Boolean,
+            val showLoading: Boolean,
+            val showContent: Boolean)
 
-    interface ParentView {
-        var viewState : ViewState
+    interface ParentUi {
 
-        fun menuSelected () : Observable<Int>
+        fun menuSelected(): Observable<MainScreenUiEvent>
+
+        fun render(mainScreenUiModel: MainScreenUiModel);
     }
 
-    interface Presenter : ViewPresenter
+    interface Presenter : LifecycleObserver {
+        fun startPresenting()
+        fun stopPresenting()
+    }
 
-    interface MainViewPresenter : ViewPresenter {
-        fun menuId() : Int
+    interface MainUiPresenter {
+        fun screenName(): MainScreen
+        fun startPresenting()
+        fun stopPresenting()
+    }
+
+    sealed class MainScreenUiEvent {
+        class MenuSelectedEvent(val selectedScreen : MainScreen) : MainScreenUiEvent()
+        class MainScreenShown : MainScreenUiEvent()
+    }
+
+    sealed class MainScreen {
+        object PlayersScreen : MainScreen()
+        object MatchesScreen : MainScreen()
+        object ResultsScreen : MainScreen()
+    }
+
+    sealed class MainScreenActions {
+        class AuthenticationFinished : MainScreenActions()
     }
 }

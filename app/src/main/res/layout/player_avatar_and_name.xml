@@ -5,7 +5,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content">
 
-    <com.gregmcgowan.fivesorganiser.players.PlayerAvatar
+    <com.gregmcgowan.fivesorganiser.core.ui.PlayerAvatar
             android:id="@+id/player_icon"
             android:layout_width="36dp"
             android:layout_height="36dp"

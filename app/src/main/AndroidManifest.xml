@@ -22,12 +22,14 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".players.import.ImportContactsActivity"
+                android:name=".importContacts.ImportContactsActivity"
                 android:label="@string/import_contacts_title"/>
         <activity
                 android:name=".team.SelectTeamActivity"
                 android:theme="@style/AppTheme.NoActionBar"/>
 
+        <activity android:name=".match.MatchActivity"
+                  android:label="@string/create_match_label"/>
     </application>
 
 </manifest>

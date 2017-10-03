@@ -5,28 +5,25 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".main.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-            android:id="@+id/main_appbar_layout"
-            android:layout_height="wrap_content"
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
-            android:theme="@style/AppTheme.AppBarOverlay"
-            android:layout_alignParentTop="true">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="?attr/actionBarTheme"
+            app:popupTheme="?attr/actionBarPopupTheme"/>
 
-        <android.support.v7.widget.Toolbar
-                android:id="@+id/main_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:titleTextColor="@android:color/white"/>
-    </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/main_appbar_layout">
+            android:layout_below="@id/main_toolbar">
         <include
                 android:id="@+id/main_players_list_layout"
                 android:layout_width="match_parent"
@@ -70,6 +67,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"/>
-
 
 </RelativeLayout>
