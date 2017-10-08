@@ -9,13 +9,13 @@ import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.data.player.PlayerEntity
+import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListItemUiModel
 
 class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
-    private var playerList: List<PlayerEntity> = mutableListOf()
+    private var playerList: List<PlayerListItemUiModel> = mutableListOf()
 
-    fun setPlayers(newPlayers: List<PlayerEntity>) {
+    fun setPlayers(newPlayers: List<PlayerListItemUiModel>) {
         this.playerList = newPlayers
         val calculateDiff = calculateDiff(
                 DiffUtilCallback(

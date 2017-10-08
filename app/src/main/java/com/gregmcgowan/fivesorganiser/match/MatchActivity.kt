@@ -26,7 +26,6 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-
 class MatchActivity : BaseActivity(), MatchContract.Ui {
 
     private val timeField: TextView by find(R.id.match_time)

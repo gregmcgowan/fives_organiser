@@ -3,7 +3,6 @@ package com.gregmcgowan.fivesorganiser.main
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreen.*
 import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreenActions.AuthenticationFinished
 import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreenUiEvent
 import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreenUiEvent.MainScreenShown
@@ -19,14 +18,14 @@ import timber.log.Timber
 
 class MainPresenter(val mainParentUi: MainContract.ParentUi,
                     val mainViewPresenters: List<MainContract.MainUiPresenter>,
-                    val authentication: Authentication) : MainContract.Presenter {
+                    val authentication: Authentication,
+                    val mainScreenStore: MainScreenStateStore) : MainContract.Presenter {
 
     private val disposables = CompositeDisposable()
-    private val mainScreenStore = MainScreenStateStore()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     override fun startPresenting() {
-        val disposable = model(events(mainParentUi), mainScreenStore, authentication)
+        val disposable = process(events(mainParentUi), mainScreenStore, authentication)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { uiModel ->
                     mainParentUi.render(uiModel)
@@ -48,9 +47,9 @@ class MainPresenter(val mainParentUi: MainContract.ParentUi,
                 .share()
     }
 
-    private fun model(events: Observable<MainScreenUiEvent>,
-                      mainScreenStore: MainScreenStateStore,
-                      authentication: Authentication): Observable<MainScreenUiModel> {
+    private fun process(events: Observable<MainScreenUiEvent>,
+                        mainScreenStore: MainScreenStateStore,
+                        authentication: Authentication): Observable<MainScreenUiModel> {
         val initialUilModel = MainScreenUiModel(
                 mainScreenStore.currentScreen,
                 showMatchesView = false,
@@ -75,7 +74,7 @@ class MainPresenter(val mainParentUi: MainContract.ParentUi,
                                         .toObservable()
                                         .map { authCompleteReducer(mainScreenStore.currentScreen) }
                             }
-                        is MenuSelectedEvent -> setCurrentScreen(event.selectedScreen)
+                        is MenuSelectedEvent -> mainScreenStore.setCurrentScreen(event.selectedScreen)
                                 .map { menuSelectedReducer(it) }
                     }
                 }
@@ -84,44 +83,8 @@ class MainPresenter(val mainParentUi: MainContract.ParentUi,
                 .doAfterNext({ model -> Timber.d("Rendering  $model") })
     }
 
-    private fun setCurrentScreen(mainScreen: MainContract.MainScreen): Observable<MainContract.MainScreen> {
-        this.mainScreenStore.currentScreen = mainScreen
-        return just(mainScreen)
-    }
-
-    private fun authCompleteReducer(selectedScreen: MainContract.MainScreen)
-            : MainScreenUiModelReducer = { model ->
-        mainScreenUiModel(selectedScreen, model.copy(showLoading = false, showContent = true))
-    }
-
-    private fun menuSelectedReducer(selectedScreen: MainContract.MainScreen)
-            : MainScreenUiModelReducer = { model ->
-        mainScreenUiModel(selectedScreen, model)
-    }
-
-    private fun mainScreenUiModel(selectedScreen: MainContract.MainScreen,
-                                  model: MainScreenUiModel): MainScreenUiModel {
-        return when (selectedScreen) {
-            is MatchesScreen -> model.copy(
-                    selectedScreen = selectedScreen,
-                    showMatchesView = true,
-                    showPlayersView = false,
-                    showResultsView = false
-            )
-            is PlayersScreen -> model.copy(
-                    selectedScreen = selectedScreen,
-                    showMatchesView = false,
-                    showPlayersView = true,
-                    showResultsView = false)
-            is ResultsScreen -> model.copy(
-                    selectedScreen = selectedScreen,
-                    showMatchesView = false,
-                    showPlayersView = false,
-                    showResultsView = true
-            )
-        }
-    }
-
+    //TODO should we pass the MainScreenStateStore to the subpresenters and the observe that
+    //instead?
     private fun updateMainUiPresenters(uiModel: MainScreenUiModel) {
         if (!uiModel.showLoading && uiModel.showContent) {
             for (presenter in mainViewPresenters) {
@@ -134,9 +97,6 @@ class MainPresenter(val mainParentUi: MainContract.ParentUi,
         }
     }
 
-    private class MainScreenStateStore {
-        //default to players
-        var currentScreen: MainContract.MainScreen = MainContract.MainScreen.PlayersScreen
-    }
+
 
 }

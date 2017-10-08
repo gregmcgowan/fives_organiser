@@ -11,9 +11,9 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.getApp
+import com.gregmcgowan.fivesorganiser.core.setVisible
 import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsContract.ImportContactsUiEvent
 import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsContract.ImportContactsUiModel
-import com.gregmcgowan.fivesorganiser.core.setVisible
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -44,8 +44,10 @@ class ImportContactsActivity : BaseActivity(), ImportContactsContract.Ui {
 
         importContactsPresenter = ImportContactsPresenter(
                 importContactsUi = this,
-                playersRepo = getApp().dependencies.playersRepo,
-                contactsImporter = AndroidContactImporter(contentResolver)
+                importContactsStore = ImportContactsStore(
+                        getApp().dependencies.playersRepo,
+                        AndroidContactImporter(contentResolver)
+                )
         )
         lifecycle.addObserver(importContactsPresenter)
     }
@@ -59,7 +61,7 @@ class ImportContactsActivity : BaseActivity(), ImportContactsContract.Ui {
     }
 
     override fun render(uiModel: ImportContactsUiModel) {
-        if(!uiModel.closeScreen) {
+        if (!uiModel.closeScreen) {
             progressBar.setVisible(uiModel.showLoading)
             mainContent.setVisible(uiModel.showContent)
             importPlayersAdapter.setContacts(uiModel.contacts)

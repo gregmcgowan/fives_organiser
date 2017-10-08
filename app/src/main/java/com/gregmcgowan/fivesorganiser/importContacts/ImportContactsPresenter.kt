@@ -58,7 +58,7 @@ class ImportContactsPresenter(private val importContactsUi: ImportContactsContra
                     when (event) {
                         is ImportContactsUiEvent.UiShown -> {
                             Single.zip(importContactsStore.getContacts(),
-                                    importContactsStore.getSelectedContactsState(),
+                                    importContactsStore.getSelectedContacts(),
                                     BiFunction<List<Contact>, Set<Int>, ImportContactsUiModelReducer> { contacts, selectedContacts ->
                                         uiModelReducer(contacts, selectedContacts)
                                     }

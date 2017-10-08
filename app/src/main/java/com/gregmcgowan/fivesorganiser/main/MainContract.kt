@@ -3,7 +3,6 @@ package com.gregmcgowan.fivesorganiser.main
 import android.arch.lifecycle.LifecycleObserver
 import io.reactivex.Observable
 
-typealias MainScreenUiModelReducer = (MainContract.MainScreenUiModel) -> MainContract.MainScreenUiModel
 
 interface MainContract {
 

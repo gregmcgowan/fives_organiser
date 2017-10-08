@@ -53,7 +53,8 @@ class MainActivity : BaseActivity(), MainContract.ParentUi {
         mainPresenter = MainPresenter(
                 mainParentUi = this,
                 mainViewPresenters = mainViewPresenters,
-                authentication = dependencies.authentication)
+                authentication = dependencies.authentication,
+                mainScreenStore = MainScreenStateStore())
 
         lifecycle.addObserver(mainPresenter)
 

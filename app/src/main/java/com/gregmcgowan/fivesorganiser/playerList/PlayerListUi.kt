@@ -10,9 +10,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.playerList.PlayerListUiEvent.*
 import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsActivity
-import com.gregmcgowan.fivesorganiser.core.data.player.PlayerEntity
+import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListItemUiModel
+import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListUiEvent
+import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListUiEvent.*
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 
@@ -28,7 +29,7 @@ class PlayerListUi(rootView: View,
     private val playerListAdapter: PlayerListAdapter = PlayerListAdapter()
     private val emptyState: View by find(R.id.player_list_empty_view_group, rootView)
     private val emptyStateMessage: TextView by find(R.id.player_list_empty_message, rootView)
-    private val fab: FloatingActionButton by find(R.id.fab, rootView)
+    private val fab: FloatingActionButton by find(R.id.player_list_fab, rootView)
     private val addPlayerButtonClicks : Observable<PlayerListUiEvent>
 
     init {
@@ -37,7 +38,7 @@ class PlayerListUi(rootView: View,
                 .map { _ -> AddPlayerEvent() }
     }
 
-    override fun render(uiModel: PlayerListUiModel) {
+    override fun render(uiModel: PlayerListContract.PlayerListUiModel) {
         if(!uiModel.showAddPlayers) {
             showProgressBar(uiModel.showLoading)
             setEmptyState(uiModel.errorMessage)
@@ -59,7 +60,7 @@ class PlayerListUi(rootView: View,
                 IMPORT_CONTACTS)
     }
 
-    private fun showPlayers(players: List<PlayerEntity>) {
+    private fun showPlayers(players: List<PlayerListItemUiModel>) {
         playerListAdapter.setPlayers(players)
     }
 

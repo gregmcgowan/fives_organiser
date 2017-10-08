@@ -40,7 +40,7 @@ class ImportContactsStore(private val playersRepo: PlayerRepo,
         return Single.just(selectedContacts)
     }
 
-    fun getSelectedContactsState(): Single<Set<Int>> {
+    fun getSelectedContacts(): Single<Set<Int>> {
         return Single.just(selectedContacts)
     }
 
