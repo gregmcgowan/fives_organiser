@@ -1,15 +1,16 @@
 package com.gregmcgowan.fivesorganiser.matchList
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
-import com.gregmcgowan.fivesorganiser.main.MainContract
 import com.gregmcgowan.fivesorganiser.core.data.match.MatchRepo
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.AddMatchSelected
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.UiShown
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiModel
+import com.gregmcgowan.fivesorganiser.main.MainContract
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.*
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiResult.FinishLoading
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiResult.StartLoading
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class MatchListUiPresenter(val matchListUi: MatchListContract.Ui,
@@ -24,12 +25,16 @@ class MatchListUiPresenter(val matchListUi: MatchListContract.Ui,
                 showProgressBar = true,
                 showEmptyView = false,
                 emptyMessage = null,
-                matchList = emptyList(),
-                goToMatchScreen = false
+                matches = emptyList(),
+                goToMatchScreen = false,
+                matchIdSelected = null
         )
 
         val events = Observable.merge(
-                Observable.just(UiShown()), matchListUi.uiEvents())
+                Observable.just(UiShown()),
+                matchListUi.uiEvents(),
+                matchListUi.matchSelected()
+        )
                 .share()
 
         disposables.add(
@@ -46,10 +51,22 @@ class MatchListUiPresenter(val matchListUi: MatchListContract.Ui,
                         is UiShown -> {
                             matchRepo.getAllMatches()
                                     .toObservable()
-                                    .map { matches -> loadMatchesReducer(matches, dateTimeFormatter) }
+                                    .flatMap { matches -> Observable.just<MatchListUiResult?>(FinishLoading(matches)) }
+                                    .startWith(Observable.just<MatchListUiResult?>(StartLoading()))
+                                    .map {
+                                        when (it) {
+                                            is StartLoading -> loadingReducer()
+                                            is FinishLoading -> loadMatchesReducer(it.matches, dateTimeFormatter)
+                                        }
+                                    }
+                                    .subscribeOn(Schedulers.io())
+
                         }
                         is AddMatchSelected -> {
                             Observable.just(showMatchScreenReducer())
+                        }
+                        is MatchSelectedEvent -> {
+                            Observable.just(showEditMatchScreenReducer(event.matchId))
                         }
                     }
                 }

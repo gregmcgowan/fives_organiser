@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser.matchList
 
+import com.gregmcgowan.fivesorganiser.core.data.match.Match
 import com.gregmcgowan.fivesorganiser.main.MainContract
 import io.reactivex.Observable
 
@@ -11,7 +12,7 @@ interface MatchListContract {
 
         fun render(matchListUIModel: MatchListUiModel)
 
-        fun showCreateMatch()
+        fun matchSelected() : Observable<MatchListUiEvent>
     }
 
     interface Presenter : MainContract.MainUiPresenter
@@ -19,6 +20,13 @@ interface MatchListContract {
     sealed class MatchListUiEvent {
         class AddMatchSelected : MatchListUiEvent()
         class UiShown : MatchListUiEvent()
+        class MatchSelectedEvent(val matchId : String) : MatchListUiEvent()
+    }
+
+
+    sealed class MatchListUiResult {
+        class StartLoading : MatchListUiResult()
+        class FinishLoading(val matches : List<Match>) : MatchListUiResult()
     }
 
     data class MatchListUiModel(
@@ -26,11 +34,13 @@ interface MatchListContract {
             val showProgressBar: Boolean,
             val showEmptyView: Boolean,
             val emptyMessage: String?,
-            val matchList: List<MatchListItemUiModel>,
-            val goToMatchScreen : Boolean
+            val matches: List<MatchListItemUiModel>,
+            val goToMatchScreen : Boolean,
+            val matchIdSelected : String?
     )
 
-    data class MatchListItemUiModel(val location: String,
+    data class MatchListItemUiModel(val matchId : String,
+                                    val location: String,
                                     val dateAndTime: String)
 
 }

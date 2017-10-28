@@ -18,7 +18,6 @@ interface MatchContract {
         fun savePressed(): Observable<MatchUiEvent>
 
         fun backPressed(): Observable<MatchUiEvent>
-
     }
 
     interface Presenter : LifecycleObserver {
@@ -45,7 +44,6 @@ interface MatchContract {
         class SaveButtonPressedEvent : MatchUiEvent()
 
         class BackArrowPressedEvent : MatchUiEvent()
-
     }
 
     sealed class MatchEventResults {
@@ -61,7 +59,8 @@ interface MatchContract {
                             val location: String,
                             val closeScreen: Boolean = false,
                             val timePickerUiModel: TimePickerUiModel,
-                            val datePickerUiModel: DatePickerUiModel, val loading: Boolean)
+                            val datePickerUiModel: DatePickerUiModel,
+                            val loading: Boolean)
 
     sealed class TimePickerUiModel {
         object Idle : TimePickerUiModel()

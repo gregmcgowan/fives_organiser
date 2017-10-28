@@ -18,7 +18,7 @@ interface MainContract {
 
         fun menuSelected(): Observable<MainScreenUiEvent>
 
-        fun render(mainScreenUiModel: MainScreenUiModel);
+        fun render(mainScreenUiModel: MainScreenUiModel)
     }
 
     interface Presenter : LifecycleObserver {

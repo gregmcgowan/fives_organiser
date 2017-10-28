@@ -50,7 +50,7 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
     }
 
     fun contactSelectedObservable(): Observable<ImportContactsUiEvent> {
-        return contactSelectedObservable;
+        return contactSelectedObservable
     }
 
     override fun getItemCount(): Int {

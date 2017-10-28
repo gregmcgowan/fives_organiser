@@ -36,6 +36,7 @@
             android:scaleType="centerInside"
             android:src="@drawable/fives"
             android:layout_marginEnd="8dp"
+            android:visibility="gone"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

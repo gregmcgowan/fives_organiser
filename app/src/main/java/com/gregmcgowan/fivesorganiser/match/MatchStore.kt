@@ -65,6 +65,7 @@ class MatchStore(val matchId: String?,
             Single.just(match)
         } else {
             matchRepo.getMatch(matchId)
+                    .doAfterSuccess({ loadedMatch -> this.match = loadedMatch })
         }
     }
 

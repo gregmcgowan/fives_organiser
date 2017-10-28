@@ -11,12 +11,23 @@ internal fun showMatchScreenReducer(): MatchListUiModelReducer = { uiModel ->
     uiModel.copy(goToMatchScreen = true)
 }
 
+internal fun loadingReducer() : MatchListUiModelReducer = { uiModel ->
+    uiModel.copy(
+            showEmptyView = false,
+            showProgressBar = true,
+            showList = false,
+            emptyMessage = null
+    )
+}
+
 internal fun loadMatchesReducer(matches: List<Match>,
                                 dateTimeFormatter: ZonedDateTimeFormatter): MatchListUiModelReducer = { uiModel ->
     val matchesUiModels = mutableListOf<MatchListItemUiModel>()
     for (match in matches) {
-        matchesUiModels += MatchListItemUiModel(match.location,
-                dateTimeFormatter.formatDate(match.dateTime))
+        matchesUiModels += MatchListItemUiModel(
+                matchId = match.matchId,
+                location = match.location,
+                dateAndTime = dateTimeFormatter.formatDate(match.dateTime))
     }
     var errorMessage: String? = null
     var showEmptyView = false
@@ -29,7 +40,12 @@ internal fun loadMatchesReducer(matches: List<Match>,
             showEmptyView = showEmptyView,
             showProgressBar = false,
             showList = true,
-            matchList = matchesUiModels,
+            matches = matchesUiModels,
             emptyMessage = errorMessage
     )
+}
+
+
+internal fun showEditMatchScreenReducer(matchId: String): MatchListUiModelReducer = { uiModel ->
+    uiModel.copy(goToMatchScreen = true, matchIdSelected = matchId)
 }

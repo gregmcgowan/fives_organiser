@@ -2,18 +2,18 @@ package com.gregmcgowan.fivesorganiser.matchList
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.*
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiModel
-import com.gregmcgowan.fivesorganiser.match.MatchActivity
 import com.gregmcgowan.fivesorganiser.core.setVisible
+import com.gregmcgowan.fivesorganiser.match.createMatchIntent
+import com.gregmcgowan.fivesorganiser.match.editMatchIntent
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.AddMatchSelected
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiModel
 import io.reactivex.Observable
 
 class MatchListUi(rootView: View,
@@ -36,22 +36,28 @@ class MatchListUi(rootView: View,
         matchList.adapter = matchListAdapter
     }
 
-    override fun showCreateMatch() {
-        val activity = context as Activity
-        activity.startActivity(Intent(activity, MatchActivity::class.java))
-    }
-
     override fun uiEvents(): Observable<MatchListUiEvent> = userActionsObservable
 
     override fun render(matchListUIModel: MatchListUiModel) {
         if(matchListUIModel.goToMatchScreen) {
-            showCreateMatch()
+            val activity = context as Activity
+            if(matchListUIModel.matchIdSelected != null) {
+                activity.startActivity(context.editMatchIntent(matchListUIModel.matchIdSelected))
+            } else {
+                activity.startActivity(context.createMatchIntent())
+            }
+
             return
         }
+
+        matchListAdapter.setMatches(matchListUIModel.matches.toMutableList())
         matchList.setVisible(matchListUIModel.showList)
         progressView.setVisible(matchListUIModel.showProgressBar)
         emptyView.setVisible(matchListUIModel.showEmptyView)
         emptyMessage.text = matchListUIModel.emptyMessage
-        matchListAdapter.setMatches(matchListUIModel.matchList)
+    }
+
+    override fun matchSelected(): Observable<MatchListUiEvent> {
+        return matchListAdapter.matchSelectedObservable as Observable<MatchListUiEvent>
     }
 }

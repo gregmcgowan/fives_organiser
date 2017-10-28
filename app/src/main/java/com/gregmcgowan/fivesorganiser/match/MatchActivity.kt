@@ -1,10 +1,10 @@
 package com.gregmcgowan.fivesorganiser.match
 
-import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
-import com.gregmcgowan.fivesorganiser.core.ui.TimePickerFragment
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.TimePickerDialog.OnTimeSetListener
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -14,17 +14,28 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.BaseActivity
-import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
-import com.gregmcgowan.fivesorganiser.core.find
+import com.gregmcgowan.fivesorganiser.core.*
+import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
+import com.gregmcgowan.fivesorganiser.core.ui.TimePickerFragment
 import com.gregmcgowan.fivesorganiser.match.MatchContract.*
 import com.gregmcgowan.fivesorganiser.match.MatchContract.DatePickerUiModel.ShowDatePickerUi
 import com.gregmcgowan.fivesorganiser.match.MatchContract.MatchUiEvent.*
-import com.gregmcgowan.fivesorganiser.core.setTextIfNotEqual
-import com.gregmcgowan.fivesorganiser.core.setVisible
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+
+
+fun Context.editMatchIntent(matchId: String): Intent {
+    return Intent(this, MatchActivity::class.java).apply {
+        putExtra(MATCH_ID_INTENT_EXTRA, matchId)
+    }
+}
+
+fun Context.createMatchIntent(): Intent {
+    return Intent(this, MatchActivity::class.java);
+}
+
+private const val MATCH_ID_INTENT_EXTRA = "match_id"
 
 class MatchActivity : BaseActivity(), MatchContract.Ui {
 
@@ -93,7 +104,7 @@ class MatchActivity : BaseActivity(), MatchContract.Ui {
                 ui = this,
                 matchStore = MatchStore(
                         matchRepo = dependencies.matchRepo,
-                        matchId = null
+                        matchId = intent.getStringExtra(MATCH_ID_INTENT_EXTRA)
                 ),
                 reducers = Reducers(ZonedDateTimeFormatter())
         )

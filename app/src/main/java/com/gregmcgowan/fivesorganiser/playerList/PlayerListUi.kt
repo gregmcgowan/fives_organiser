@@ -61,7 +61,7 @@ class PlayerListUi(rootView: View,
     }
 
     private fun showPlayers(players: List<PlayerListItemUiModel>) {
-        playerListAdapter.setPlayers(players)
+        playerListAdapter.setPlayers(players.toMutableList())
     }
 
     private fun showProgressBar(show: Boolean) {

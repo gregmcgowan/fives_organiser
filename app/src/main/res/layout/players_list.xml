@@ -36,6 +36,7 @@
             android:layout_height="256dp"
             android:scaleType="centerInside"
             android:src="@drawable/peter_beardsley"
+            android:visibility="gone"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/player_list_empty_message"

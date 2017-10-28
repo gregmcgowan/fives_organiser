@@ -10,18 +10,22 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListItemUiModel
+import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.MatchSelectedEvent
+import io.reactivex.subjects.PublishSubject
 
 class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>() {
 
-    private var matches: List<MatchListItemUiModel> = mutableListOf()
+    private var matches: MutableList<MatchListItemUiModel> = mutableListOf()
 
-    fun setMatches(newMatches: List<MatchListItemUiModel>) {
-        this.matches = newMatches
+    val matchSelectedObservable : PublishSubject<MatchSelectedEvent> = PublishSubject.create()
+
+    fun setMatches(newMatches: MutableList<MatchListItemUiModel>) {
         val calculateDiff = DiffUtil.calculateDiff(
                 DiffUtilCallback(
                         oldList = matches,
                         newList = newMatches
                 ))
+        matches = newMatches
         calculateDiff.dispatchUpdatesTo(this)
     }
 
@@ -31,6 +35,9 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
         holder?.let {
             holder.locationTextView.text = matches[position].location
             holder.dateAndTimeTextView.text = matches[position].dateAndTime
+            holder.itemView.setOnClickListener {
+                matchSelectedObservable.onNext(MatchSelectedEvent(matches[position].matchId))
+            }
         }
     }
 

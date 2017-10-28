@@ -13,15 +13,15 @@ import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListIt
 
 class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
-    private var playerList: List<PlayerListItemUiModel> = mutableListOf()
+    private var playerList: MutableList<PlayerListItemUiModel> = mutableListOf()
 
-    fun setPlayers(newPlayers: List<PlayerListItemUiModel>) {
-        this.playerList = newPlayers
+    fun setPlayers(newPlayers: MutableList<PlayerListItemUiModel>) {
         val calculateDiff = calculateDiff(
                 DiffUtilCallback(
                         oldList = playerList,
                         newList = newPlayers
                 ))
+        this.playerList = newPlayers
         calculateDiff.dispatchUpdatesTo(this)
     }
 
