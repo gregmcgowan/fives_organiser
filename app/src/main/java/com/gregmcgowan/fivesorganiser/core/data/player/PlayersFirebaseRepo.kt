@@ -1,39 +1,60 @@
 package com.gregmcgowan.fivesorganiser.core.data.player
 
-import com.google.firebase.database.*
-import com.gregmcgowan.fivesorganiser.core.data.FirebaseDatabaseHelper
-import io.reactivex.Single
-import io.reactivex.functions.Function
+import com.google.firebase.firestore.CollectionReference
+import com.gregmcgowan.fivesorganiser.core.data.FirestoreHelper
+import com.gregmcgowan.fivesorganiser.core.data.ID_KEY
+import kotlinx.coroutines.experimental.runBlocking
 
-class PlayersFirebaseRepo(private val firebaseDatabaseHelper: FirebaseDatabaseHelper) : PlayerRepo {
-    private val PLAYERS_KEY = "Players"
+private const val PLAYERS_KEY = "Players"
+private const val NAME_KEY = "Name"
+private const val EMAIL_KEY = "Email"
+private const val PHONE_NUMBER = "PhoneNumber"
+private const val CONTACT_ID = "ContactId"
+private const val TIMESTAMP_KEY = "timestamp"
 
+class PlayersFirebaseRepo(private val firestoreHelper: FirestoreHelper) : PlayerRepo {
 
-    override fun getPlayers(): Single<List<PlayerEntity>>
-            = firebaseDatabaseHelper.getSingleValue(getPlayersReference(), marshallPlayers())
+    suspend override fun getPlayers(): List<Player> {
+        return firestoreHelper
+                .runQuery(getPlayersRef().orderBy(NAME_KEY))
+                .documents
+                .mapTo(mutableListOf()) {
+                    val data = it.data
+                    data.put(ID_KEY, it.id)
+                    mapToPlayer(data)
+                }
 
-    override fun addPlayer(name: String, email: String, phoneNumber: String, contactId: Int) {
-        val playerId = getPlayersReference().push().key
-
-        getPlayersReference()
-                .child(playerId)
-                .setValue(PlayerEntity(playerId, name, phoneNumber, email, contactId))
     }
 
-    private fun getPlayersReference() = firebaseDatabaseHelper.getCurrentUserDatabase()
-            .child(PLAYERS_KEY)
+    override suspend fun addPlayer(name: String,
+                                   email: String,
+                                   phoneNumber: String,
+                                   contactId: Long) {
+        val map = mutableMapOf<String, Any>()
+        map.put(NAME_KEY, name)
+        map.put(EMAIL_KEY, email)
+        map.put(PHONE_NUMBER, phoneNumber)
+        map.put(CONTACT_ID, contactId)
+        map.put(TIMESTAMP_KEY, System.currentTimeMillis())
 
-    private fun marshallPlayers(): Function<DataSnapshot, List<PlayerEntity>> {
-        return Function({ dataSnapshot ->
-            val players: MutableList<PlayerEntity> = mutableListOf()
-            dataSnapshot.children.map { it.getValue(PlayerEntity::class.java) }
-                    .forEach {
-                        it?.let {
-                            players.add(it)
-                        }
-                    }
-            players.toList()
-        })
+        runBlocking {
+            getPlayersRef()
+                    .add(map)
+        }
+    }
+
+    private fun getPlayersRef(): CollectionReference {
+        return firestoreHelper.getUserDocRef().collection(PLAYERS_KEY)
+    }
+
+    private fun mapToPlayer(map: Map<String, Any>): Player {
+        return Player(
+                playerId = map[ID_KEY] as String,
+                name = map[NAME_KEY] as String,
+                phoneNumber = map[PHONE_NUMBER] as String,
+                email = map[EMAIL_KEY] as String,
+                contactId = map[CONTACT_ID] as Long
+        )
     }
 
 

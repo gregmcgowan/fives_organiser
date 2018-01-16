@@ -1,17 +1,12 @@
-package com.gregmcgowan.fivesorganiser.matchList
+package com.gregmcgowan.fivesorganiser.main.matchList
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
 import com.gregmcgowan.fivesorganiser.core.data.match.Match
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListItemUiModel
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiModel
 
 typealias MatchListUiModelReducer = (MatchListUiModel) -> MatchListUiModel
 
-internal fun showMatchScreenReducer(): MatchListUiModelReducer = { uiModel ->
-    uiModel.copy(goToMatchScreen = true)
-}
 
-internal fun loadingReducer() : MatchListUiModelReducer = { uiModel ->
+internal fun loadingMatchListUiModel() : MatchListUiModelReducer = { uiModel ->
     uiModel.copy(
             showEmptyView = false,
             showProgressBar = true,
@@ -20,8 +15,8 @@ internal fun loadingReducer() : MatchListUiModelReducer = { uiModel ->
     )
 }
 
-internal fun loadMatchesReducer(matches: List<Match>,
-                                dateTimeFormatter: ZonedDateTimeFormatter): MatchListUiModelReducer = { uiModel ->
+internal fun matchListUiModel(matches: List<Match>,
+                              dateTimeFormatter: ZonedDateTimeFormatter): MatchListUiModelReducer = { uiModel ->
     val matchesUiModels = mutableListOf<MatchListItemUiModel>()
     for (match in matches) {
         matchesUiModels += MatchListItemUiModel(
@@ -45,7 +40,3 @@ internal fun loadMatchesReducer(matches: List<Match>,
     )
 }
 
-
-internal fun showEditMatchScreenReducer(matchId: String): MatchListUiModelReducer = { uiModel ->
-    uiModel.copy(goToMatchScreen = true, matchIdSelected = matchId)
-}

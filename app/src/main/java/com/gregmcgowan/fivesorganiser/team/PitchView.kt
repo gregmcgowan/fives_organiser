@@ -27,9 +27,9 @@ class PitchView : View {
     private var smallMargin = 0f
     private var lineThickness = 0f
 
-    constructor(context: Context?) : this(context, null)
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         this.mainGreen = ContextCompat.getColor(context, R.color.green_700)
         this.alternateGreen = ContextCompat.getColor(context, R.color.green_600)
     }

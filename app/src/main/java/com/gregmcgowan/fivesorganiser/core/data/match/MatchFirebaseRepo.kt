@@ -1,79 +1,71 @@
 package com.gregmcgowan.fivesorganiser.core.data.match
 
-import com.google.firebase.database.DataSnapshot
-import com.gregmcgowan.fivesorganiser.core.data.FirebaseDatabaseHelper
-import io.reactivex.Single
-import io.reactivex.functions.Function
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.SetOptions
+import com.gregmcgowan.fivesorganiser.core.data.FirestoreHelper
+import com.gregmcgowan.fivesorganiser.core.data.ID_KEY
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
 private const val MATCHES_KEY = "Matches"
+private const val DATE_TIME_KEY = "dateTime"
+private const val LOCATION_KEY = "location"
+private const val NUMBER_OF_PLAYERS_KEY = "numberOfPlayers"
+private const val TIMESTAMP_KEY = "timestamp"
 
-class MatchFirebaseRepo(private val firebaseDatabaseHelper: FirebaseDatabaseHelper) : MatchRepo {
+class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRepo {
 
     private val dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
-    override fun createMatch(dateTime: ZonedDateTime,
-                             location: String) {
-        val matchID = getMatchesReference().push().key
+    override suspend fun createMatch(dateTime: ZonedDateTime,
+                                     location: String,
+                                     numberOfPlayers: Int) {
+        val map = mutableMapOf<String, Any>()
+        map.put(DATE_TIME_KEY, dateTime.format(dateTimeFormatter))
+        map.put(LOCATION_KEY, location)
+        map.put(NUMBER_OF_PLAYERS_KEY, numberOfPlayers)
+        map.put(TIMESTAMP_KEY, System.currentTimeMillis())
 
-        val formattedDateTime = dateTime.format(dateTimeFormatter)
-
-        getMatchesReference()
-                .child(matchID)
-                .setValue(MatchEntity(matchID, formattedDateTime, location))
-
+        matches().add(map)
     }
 
-    override fun saveMatch(match: Match) {
-        getMatchesReference()
-                .child(match.matchId)
-                .setValue(MatchEntity(match.matchId,
-                        match.dateTime.format(dateTimeFormatter),
-                        match.location))
+    override suspend fun saveMatch(match: Match) {
+        val map = mutableMapOf<String, Any>()
+        map.put(DATE_TIME_KEY, match.dateTime.format(dateTimeFormatter))
+        map.put(LOCATION_KEY, match.location)
+        map.put(NUMBER_OF_PLAYERS_KEY, match.numberOfPlayers)
+
+        firestoreHelper.setData(matches().document(match.matchId), map, SetOptions.merge())
     }
 
-    override fun getMatch(matchID: String): Single<Match> {
-        return firebaseDatabaseHelper.getSingleValue(getMatchesReference().child(matchID), marshallMatch())
-                .map { matchEntity ->
-                    map(matchEntity)
+    private fun matches(): CollectionReference {
+        return firestoreHelper.getUserDocRef().collection(MATCHES_KEY)
+    }
+
+    suspend override fun getMatch(matchID: String): Match {
+        val data = firestoreHelper.getData(matches().document(matchID))
+        return mapToMatch(data)
+    }
+
+    suspend override fun getAllMatches(): List<Match> {
+        return firestoreHelper.runQuery(matches().orderBy(TIMESTAMP_KEY))
+                .documents
+                .mapTo(mutableListOf()) {
+                    val data = it.data
+                    data.put(ID_KEY, it.id)
+                    mapToMatch(data)
                 }
     }
 
-    override fun getAllMatches(): Single<List<Match>> {
-        return firebaseDatabaseHelper.getSingleValue(getMatchesReference(), marshallMatches())
-                .flatMap { matchEntities ->
-                    val matches = mutableListOf<Match>()
-                    for (matchEntity in matchEntities) {
-                        matches.add(map(matchEntity))
-                    }
-                    Single.just(matches.toList())
-                }
+    private fun mapToMatch(map: Map<String, Any>): Match {
+        return Match(
+                matchId = map[ID_KEY] as String,
+                location = map[LOCATION_KEY] as String,
+                dateTime = ZonedDateTime.parse(map[DATE_TIME_KEY] as String),
+                numberOfPlayers = (map[NUMBER_OF_PLAYERS_KEY] as Long).toInt()
+        )
     }
 
-    private fun map(matchEntity: MatchEntity) =
-            Match(matchEntity.matchId, matchEntity.location,
-                    ZonedDateTime.parse(matchEntity.dateTime))
-
-    private fun marshallMatch(): Function<DataSnapshot, MatchEntity> {
-        return Function { dataSnapshot ->
-            dataSnapshot.getValue<MatchEntity>(MatchEntity::class.java) ?:
-                    throw IllegalStateException()
-        }
-    }
-
-    private fun marshallMatches(): Function<DataSnapshot, List<MatchEntity>> {
-        return Function({ dataSnapshot ->
-            val players: MutableList<MatchEntity> = mutableListOf()
-            dataSnapshot.children.map { it.getValue(MatchEntity::class.java) }
-                    .forEach {
-                        it?.let {
-                            players.add(it)
-                        }
-                    }
-            players.toList()
-        })
-    }
-
-    private fun getMatchesReference() = firebaseDatabaseHelper.getCurrentUserDatabase().child(MATCHES_KEY)
 }
+
+

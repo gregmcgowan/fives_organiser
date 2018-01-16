@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.playerList
+package com.gregmcgowan.fivesorganiser.main.playerList
 
 import android.support.v7.util.DiffUtil.calculateDiff
 import android.support.v7.widget.RecyclerView
@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListItemUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 
 class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
@@ -19,9 +18,13 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
         val calculateDiff = calculateDiff(
                 DiffUtilCallback(
                         oldList = playerList,
-                        newList = newPlayers
+                        newList = newPlayers,
+                        //TODO change to id
+                        itemsAreTheSame = { p1, p2 -> p1.name == p2.name }
                 ))
-        this.playerList = newPlayers
+        this.playerList.clear()
+        this.playerList.addAll(newPlayers)
+
         calculateDiff.dispatchUpdatesTo(this)
     }
 

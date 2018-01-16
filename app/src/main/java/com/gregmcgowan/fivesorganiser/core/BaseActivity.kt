@@ -1,23 +1,17 @@
 package com.gregmcgowan.fivesorganiser.core
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.os.Bundle
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
+import com.gregmcgowan.fivesorganiser.BuildConfig
 import com.gregmcgowan.fivesorganiser.Dependencies
 
-abstract class BaseActivity : AppCompatActivity(), LifecycleRegistryOwner {
+abstract class BaseActivity : AppCompatActivity() {
 
     val dependencies: Dependencies get() = getApp().dependencies
 
-    private lateinit var lifecycleRegistry: LifecycleRegistry
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleRegistry = LifecycleRegistry(this)
-    }
-
-    override fun getLifecycle(): LifecycleRegistry {
-        return lifecycleRegistry
+        //FragmentManager.enableDebugLogging(BuildConfig.DEBUG)
     }
 }

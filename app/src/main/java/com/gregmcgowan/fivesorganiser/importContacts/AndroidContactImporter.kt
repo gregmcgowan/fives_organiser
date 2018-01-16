@@ -4,32 +4,29 @@ import android.content.ContentResolver
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.provider.ContactsContract.Contacts
-import io.reactivex.Single
 import java.util.*
 
 class AndroidContactImporter(private val contentResolver: ContentResolver) : ContactImporter {
 
+    //TODO fix
     private val PROJECTION = arrayOf(Contacts._ID,
             Contacts.LOOKUP_KEY,
             Contacts.DISPLAY_NAME_PRIMARY,
             Contacts.SORT_KEY_PRIMARY)
 
-    override fun getAllContacts(): Single<List<Contact>> {
+    override suspend fun getAllContacts(): List<Contact> {
         val selectString = "((" + Contacts.DISPLAY_NAME +
                 " NOTNULL) AND (" +
                 Contacts.HAS_PHONE_NUMBER + "=1) AND (" +
                 Contacts.DISPLAY_NAME + " != '' ) )"
 
-        return Single.fromCallable(
-                {
-                    contentResolver.query(
-                            Contacts.CONTENT_URI,
-                            PROJECTION,
-                            selectString,
-                            null,
-                            Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC")
-                })
-                .map { createContactList(cursor = it) }
+        val cursor = contentResolver.query(
+                Contacts.CONTENT_URI,
+                PROJECTION,
+                selectString,
+                null,
+                Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC")
+        return createContactList(cursor)
     }
 
     private fun createContactList(cursor: Cursor): ArrayList<Contact> {
@@ -63,7 +60,7 @@ class AndroidContactImporter(private val contentResolver: ContentResolver) : Con
             val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
             phonesCursor.close()
             //TODO
-            return Contact(name, phoneNumber, "", contactId.toInt())
+            return Contact(name, phoneNumber, "", contactId.toLong())
         }
 
         phonesCursor.close()

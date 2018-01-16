@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.matchList
+package com.gregmcgowan.fivesorganiser.main.matchList
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -7,25 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListItemUiModel
-import com.gregmcgowan.fivesorganiser.matchList.MatchListContract.MatchListUiEvent.MatchSelectedEvent
-import io.reactivex.subjects.PublishSubject
+import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 
 class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>() {
 
     private var matches: MutableList<MatchListItemUiModel> = mutableListOf()
-
-    val matchSelectedObservable : PublishSubject<MatchSelectedEvent> = PublishSubject.create()
+    var matchListInteraction: MatchListInteraction? = null
 
     fun setMatches(newMatches: MutableList<MatchListItemUiModel>) {
         val calculateDiff = DiffUtil.calculateDiff(
                 DiffUtilCallback(
                         oldList = matches,
-                        newList = newMatches
+                        newList = newMatches,
+                        itemsAreTheSame = { m1, m2 -> m1.matchId == m2.matchId }
                 ))
-        matches = newMatches
+        matches.clear()
+        matches.addAll(newMatches)
         calculateDiff.dispatchUpdatesTo(this)
     }
 
@@ -36,7 +34,7 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
             holder.locationTextView.text = matches[position].location
             holder.dateAndTimeTextView.text = matches[position].dateAndTime
             holder.itemView.setOnClickListener {
-                matchSelectedObservable.onNext(MatchSelectedEvent(matches[position].matchId))
+                matchListInteraction?.matchSelected(matchId = matches[position].matchId)
             }
         }
     }
@@ -49,7 +47,12 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
 
     class MatchViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         val locationTextView: TextView by find(R.id.match_list_item_match_location)
-        val dateAndTimeTextView : TextView by find(R.id.match_list_item_date_and_time)
+        val dateAndTimeTextView: TextView by find(R.id.match_list_item_date_and_time)
+    }
+
+    interface MatchListInteraction {
+
+        fun matchSelected(matchId: String)
     }
 
 }

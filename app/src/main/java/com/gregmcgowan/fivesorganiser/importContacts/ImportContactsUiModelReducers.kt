@@ -1,17 +1,12 @@
 package com.gregmcgowan.fivesorganiser.importContacts
 
-import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsContract.ContactItemUiModel
 
-internal fun loadingReducer(): ImportContactsUiModelReducer = { uiModel ->
+internal fun loadingUiModel(): ImportContactsUiModelReducer = { uiModel ->
     uiModel.copy(showLoading = true, showContent = false)
 }
 
-internal fun importCompleteReducer(): ImportContactsUiModelReducer = { uiModel ->
-    uiModel.copy(closeScreen = true)
-}
-
-internal fun uiModelReducer(contacts: List<Contact>,
-                            contactsState: Set<Int>): ImportContactsUiModelReducer = { uiModel ->
+internal fun contactListUiModel(contacts: List<Contact>,
+                                contactsState: Set<Long>): ImportContactsUiModelReducer = { uiModel ->
     val contactUiModels = contacts.map {
         ContactItemUiModel(
                 name = it.name,
@@ -29,7 +24,7 @@ internal fun uiModelReducer(contacts: List<Contact>,
     )
 }
 
-internal fun contactSelectedReducer(contactId: Int): ImportContactsUiModelReducer = { uiModel ->
+internal fun contactSelectedUiModel(contactId: Long): ImportContactsUiModelReducer = { uiModel ->
     val mutableList = uiModel.contacts.toMutableList()
     for (itemModel in uiModel.contacts) {
         if (itemModel.contactId == contactId) {
@@ -40,7 +35,7 @@ internal fun contactSelectedReducer(contactId: Int): ImportContactsUiModelReduce
     uiModel.copy(contacts = mutableList.toList(), importContactsButtonEnabled = true)
 }
 
-internal fun contactDeselectedReducer(contactId: Int, selectedContacts : Set<Int>):
+internal fun contactDeselectedUiModel(contactId: Long, selectedContacts : Set<Long>):
         ImportContactsUiModelReducer = { uiModel ->
     val mutableList = uiModel.contacts.toMutableList()
     for (itemModel in uiModel.contacts) {

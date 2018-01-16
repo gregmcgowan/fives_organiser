@@ -1,18 +1,17 @@
-package com.gregmcgowan.fivesorganiser.playerList
+package com.gregmcgowan.fivesorganiser.main.playerList
 
-import com.gregmcgowan.fivesorganiser.core.data.player.PlayerEntity
-import com.gregmcgowan.fivesorganiser.playerList.PlayerListContract.PlayerListUiModel
+import com.gregmcgowan.fivesorganiser.core.data.player.Player
 
 typealias PlayerListUiModelReducer = (PlayerListUiModel) -> PlayerListUiModel
 
-internal fun addPlayersModelReducer(): PlayerListUiModelReducer = { playerListUiModel ->
-    playerListUiModel.copy(
-            showAddPlayers = true
-    )
+
+internal fun loadingPlayersUiModel(): PlayerListUiModelReducer = { playerListUiModel ->
+    playerListUiModel.copy(showLoading = true, showPlayers = false,
+            showErrorMessage = false, errorMessage = null)
 }
 
-internal fun playersLoadedModelReducer(players: List<PlayerEntity>): PlayerListUiModelReducer = { playerListUiModel ->
-    val playerListItemUiModels = players.map { PlayerListContract.PlayerListItemUiModel(it.name) }
+internal fun playersLoadedUiModel(players: List<Player>): PlayerListUiModelReducer = { playerListUiModel ->
+    val playerListItemUiModels = players.map { PlayerListItemUiModel(it.name) }
 
     if (players.isNotEmpty()) {
         playerListUiModel.copy(
@@ -31,7 +30,7 @@ internal fun playersLoadedModelReducer(players: List<PlayerEntity>): PlayerListU
     }
 }
 
-fun playersLoadErrorModelReducer(): PlayerListUiModelReducer = { _ ->
+fun playersLoadErrorUiModel(): PlayerListUiModelReducer = { _ ->
     PlayerListUiModel(
             emptyList(),
             showLoading = false,

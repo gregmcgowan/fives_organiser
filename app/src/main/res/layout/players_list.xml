@@ -5,7 +5,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/player_list_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" tools:layout_editor_absoluteY="25dp"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteY="25dp"
         tools:layout_editor_absoluteX="0dp">
 
     <android.support.v7.widget.RecyclerView
@@ -26,8 +27,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible"
             android:visibility="gone"/>
 
     <ImageView
@@ -74,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:srcCompat="@drawable/ic_add_white_24dp"
-            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
 

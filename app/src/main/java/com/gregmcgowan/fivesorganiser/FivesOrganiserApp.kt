@@ -3,9 +3,9 @@ package com.gregmcgowan.fivesorganiser
 import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.gregmcgowan.fivesorganiser.core.authenication.FirebaseAuthentication
-import com.gregmcgowan.fivesorganiser.core.data.FirebaseDatabaseHelper
+import com.gregmcgowan.fivesorganiser.core.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.core.data.match.MatchFirebaseRepo
 import com.gregmcgowan.fivesorganiser.core.data.player.PlayersFirebaseRepo
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -25,9 +25,9 @@ class FivesOrganiserApp : Application() {
         FirebaseApp.initializeApp(this)
 
         val firebaseAuthentication = FirebaseAuthentication(FirebaseAuth.getInstance())
-        val database = FirebaseDatabaseHelper(
+        val database = FirestoreHelper(
                 authentication = firebaseAuthentication,
-                firebaseDatabase = FirebaseDatabase.getInstance()
+                firebaseFirestore = FirebaseFirestore.getInstance()
         )
 
         dependencies = Dependencies(

@@ -25,11 +25,14 @@ class DatePickerFragment : DialogFragment() {
     var dateListener: DatePickerDialog.OnDateSetListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return DatePickerDialog(activity,
-                dateListener,
-                arguments.getInt("year"),
-                arguments.getInt("month"),
-                arguments.getInt("date"))
+        arguments?.let {
+            return DatePickerDialog(activity,
+                    dateListener,
+                    it.getInt("year"),
+                    it.getInt("month"),
+                    it.getInt("date"))
+        }
+        throw IllegalStateException()
     }
 }
 
@@ -51,11 +54,15 @@ class TimePickerFragment : DialogFragment() {
     var timePickerListener: TimePickerDialog.OnTimeSetListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return TimePickerDialog(activity,
-                timePickerListener,
-                arguments.getInt("hour"),
-                arguments.getInt("minute"),
-                arguments.getBoolean("is24Hour")
-        )
+        arguments?.let {
+            return TimePickerDialog(activity,
+                    timePickerListener,
+                    it.getInt("hour"),
+                    it.getInt("minute"),
+                    it.getBoolean("is24Hour"))
+
+        }
+        throw IllegalStateException()
+
     }
 }

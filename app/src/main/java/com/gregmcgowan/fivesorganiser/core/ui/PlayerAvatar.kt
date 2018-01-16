@@ -39,9 +39,9 @@ class PlayerAvatar : View {
     private var bodyRight: Float = 0f
     private var bodyBottom: Float = 0f
 
-    constructor(context: Context?) : this(context, null)
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         mainCircleBackgroundColour = ContextCompat.getColor(context, R.color.grey_300)
         shadowColor = ContextCompat.getColor(context, R.color.grey_400)
         shadowPaint.color = shadowColor

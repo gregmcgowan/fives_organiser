@@ -5,23 +5,22 @@ buildscript {
     ext {
         // Sdk and tools
         minSdkVersion = 21
-        targetSdkVersion = 25
-        compileSdkVersion = 26
+        targetSdkVersion = 27
+        compileSdkVersion = 27
         buildToolsVersion = '26.0.2'
 
         // App dependencies
-        kotlinVersion = '1.1.51'
-        supportLibraryVersion = '26.1.0'
-        constraintLayoutVersion = '1.1.0-beta1'
+        kotlinVersion = '1.2.10'
+        coroutinesVersion = '0.21'
+        supportLibraryVersion = '27.0.2'
+        constraintLayoutVersion = '1.1.0-beta4'
         lifeCyclesRuntimesVersion = '1.0.0'
-        lifeCyclesExtensionsVersion = '1.0.0-alpha9-1'
-        lifeCyclesCompilerVersion = '1.0.0-alpha9-1'
-        firebaseVersion = '11.4.2'
+        lifeCyclesExtensionsVersion = '1.0.0'
+        lifeCyclesCompilerVersion = '1.0.0'
+        lifeCyclesReativeStreamsVersion = '1.0.0'
+        firebaseVersion = '11.8.0'
 
-        rxJavaVersion = '2.1.1'
-        rxAndroidVersion = '2.0.1'
-        rxBindingVersion = '2.0.0'
-        timberVersion = '4.5.1'
+        timberVersion = '4.6.0'
         threeTenAbpVersion = '1.0.5'
 
         junitVersion = '4.12'
@@ -39,11 +38,11 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.0'
     }
 }
 

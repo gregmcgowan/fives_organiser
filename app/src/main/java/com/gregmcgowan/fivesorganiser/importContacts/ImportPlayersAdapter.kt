@@ -8,24 +8,20 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsContract.ContactItemUiModel
-import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsContract.ImportContactsUiEvent
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
-import java.util.*
+import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 
 class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactViewHolder>() {
 
-    private var contactList: List<ContactItemUiModel> = ArrayList()
+    private var contactList: MutableList<ContactItemUiModel> = mutableListOf()
 
-    private var contactSelectedObservable: PublishSubject<ImportContactsUiEvent>
-            = PublishSubject.create()
+    var contactListInteractions: ContactListInteraction? = null
 
-    fun setContacts(contacts: List<ContactItemUiModel>) {
-        this.contactList = contacts
-        val calculateDiff = DiffUtil.calculateDiff(DiffUtilCallback(contactList, contacts))
+    fun setContacts(newContacts: List<ContactItemUiModel>) {
+        val calculateDiff = DiffUtil.calculateDiff(DiffUtilCallback(contactList, newContacts,
+                { c1, c2 -> c1.contactId == c2.contactId }))
+        this.contactList.clear()
+        this.contactList.addAll(newContacts)
         calculateDiff.dispatchUpdatesTo(this)
     }
 
@@ -36,21 +32,13 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
             holder.contactName.text = contact.name
             holder.contactCheckBox.setOnCheckedChangeListener { _, selected ->
                 if (selected) {
-                    contactSelectedObservable.onNext(
-                            ImportContactsUiEvent.ContactSelected(contactId = contact.contactId)
-                    )
+                    contactListInteractions?.contactSelected(contact.contactId)
                 } else {
-                    contactSelectedObservable.onNext(
-                            ImportContactsUiEvent.ContactDeselected(contactId = contact.contactId)
-                    )
+                    contactListInteractions?.contactDeselected(contact.contactId)
                 }
             }
             holder.contactCheckBox.isChecked = contact.isSelected
         }
-    }
-
-    fun contactSelectedObservable(): Observable<ImportContactsUiEvent> {
-        return contactSelectedObservable
     }
 
     override fun getItemCount(): Int {
@@ -70,5 +58,10 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
         val contactName: TextView by find(R.id.import_contacts_list_item_name)
         val contactCheckBox: CheckBox by find(R.id.import_contacts_checkbox)
 
+    }
+
+    interface ContactListInteraction {
+        fun contactSelected(contactId: Long)
+        fun contactDeselected(contactId: Long)
     }
 }

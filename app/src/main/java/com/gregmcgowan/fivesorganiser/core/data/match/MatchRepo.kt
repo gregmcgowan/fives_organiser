@@ -1,16 +1,16 @@
 package com.gregmcgowan.fivesorganiser.core.data.match
 
-import io.reactivex.Single
 import org.threeten.bp.ZonedDateTime
 
 interface MatchRepo {
 
-    fun createMatch(dateTime: ZonedDateTime,
-                    location: String)
+    suspend fun createMatch(dateTime: ZonedDateTime,
+                            location: String,
+                            numberOfPlayers: Int)
 
-    fun saveMatch(match: Match)
+    suspend fun saveMatch(match: Match)
 
-    fun getMatch(matchID: String): Single<Match>
+    suspend fun getMatch(matchID: String): Match
 
-    fun getAllMatches(): Single<List<Match>>
+    suspend fun getAllMatches(): List<Match>
 }

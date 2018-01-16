@@ -1,7 +1,11 @@
 package com.gregmcgowan.fivesorganiser.core
 
 import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.support.annotation.IdRes
+import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +18,9 @@ fun Activity.getApp(): FivesOrganiserApp = this.application as FivesOrganiserApp
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : View> Activity.find(@IdRes id: Int): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(id) }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T : View> Fragment.find(@IdRes id: Int): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { activity!!.findViewById<T>(id) }
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : View> ViewGroup.find(@IdRes id: Int): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(id) }
@@ -39,10 +46,14 @@ fun EditText.setTextIfNotEqual(text: CharSequence) {
     }
 }
 
-fun View.setVisible(visible : Boolean) {
-    if(visible) {
+fun View.setVisible(visible: Boolean) {
+    if (visible) {
         this.visibility = View.VISIBLE
     } else {
         this.visibility = View.GONE
     }
 }
+
+fun Context.hasPermission(permission: String): Boolean =
+        ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+

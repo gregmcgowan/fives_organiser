@@ -10,4 +10,5 @@
     <string name="enter_location_hint">Enter location</string>
     <string name="no_results_message">No results yet!</string>
     <string name="no_matches_message">No matches</string>
+    <string name="match_number_of_players_label">Number of players</string>
 </resources>

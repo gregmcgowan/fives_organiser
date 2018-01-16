@@ -1,88 +1,90 @@
 package com.gregmcgowan.fivesorganiser.main
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.view.ViewGroup
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
-import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreen.*
-import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreenUiEvent
-import com.gregmcgowan.fivesorganiser.main.MainContract.MainScreenUiEvent.MenuSelectedEvent
-import com.gregmcgowan.fivesorganiser.matchList.MatchListUi
-import com.gregmcgowan.fivesorganiser.matchList.MatchListUiPresenter
-import com.gregmcgowan.fivesorganiser.playerList.PlayerListUi
-import com.gregmcgowan.fivesorganiser.playerList.PlayerListUiPresenter
+import com.gregmcgowan.fivesorganiser.core.getApp
 import com.gregmcgowan.fivesorganiser.core.setVisible
-import io.reactivex.Observable
-import io.reactivex.Observable.create
+import com.gregmcgowan.fivesorganiser.main.MainScreen.*
+import com.gregmcgowan.fivesorganiser.main.matchList.MatchListFragment
+import com.gregmcgowan.fivesorganiser.main.playerList.PlayerListFragment
+import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
 
-class MainActivity : BaseActivity(), MainContract.ParentUi {
+class MainActivity : BaseActivity() {
 
-    private val rootView: ViewGroup by find(R.id.main_content)
-    private val content: View by find(R.id.main_content)
+    private val content: View by find(R.id.main_content_group)
     private val progressBar: View by find(R.id.main_progress_bar)
-    private val playersView: View by find(R.id.main_players_list_layout)
-    private val matchesView: View by find(R.id.main_create_match_layout)
-    private val resultsView: View by find(R.id.main_results_layout)
     private val bottomNavigation: BottomNavigationView by find(R.id.main_bottom_navigation)
 
-    private lateinit var mainPresenter: MainContract.Presenter
-    private lateinit var menuItemObservable: Observable<MainScreenUiEvent>
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setSupportActionBar(find<Toolbar>(R.id.main_toolbar).value)
 
-        //TODO maybe move to Dagger
-        val mainViewPresenters = listOf(
-                PlayerListUiPresenter(
-                        playerListUi = PlayerListUi(rootView = playersView, context = this),
-                        playersRepo = dependencies.playersRepo),
-                MatchListUiPresenter(
-                        matchListUi = MatchListUi(rootView = matchesView, context = this),
-                        matchRepo = dependencies.matchRepo,
-                        dateTimeFormatter = ZonedDateTimeFormatter()
-                )
-        )
 
-        mainPresenter = MainPresenter(
-                mainParentUi = this,
-                mainViewPresenters = mainViewPresenters,
-                authentication = dependencies.authentication,
-                mainScreenStore = MainScreenStateStore())
+        mainViewModel = ViewModelProviders
+                .of(this, MainViewModelFactory(getApp().dependencies, UI, CommonPool))
+                .get(MainViewModel::class.java)
 
-        lifecycle.addObserver(mainPresenter)
+        mainViewModel.uiModelLiveData().observe(this,
+                Observer<MainScreenUiModel> { uiModel ->
+                    uiModel?.let {
+                        render(it)
+                    }
+                })
 
-        menuItemObservable = create<MainScreenUiEvent>({ emitter ->
-            bottomNavigation.setOnNavigationItemSelectedListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.main_matches_menu_item -> emitter.onNext(MenuSelectedEvent(MatchesScreen))
-                    R.id.main_players_menu_item -> emitter.onNext(MenuSelectedEvent(PlayersScreen))
-                    R.id.main_results_menu_item -> emitter.onNext(MenuSelectedEvent(ResultsScreen))
-                    else -> throw IllegalArgumentException()
-                }
-                true
+        bottomNavigation.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.main_matches_menu_item -> mainViewModel.handleMenuSelection(MatchesScreen)
+                R.id.main_players_menu_item -> mainViewModel.handleMenuSelection(PlayersScreen)
+                R.id.main_results_menu_item -> mainViewModel.handleMenuSelection(ResultsScreen)
+                else -> throw IllegalArgumentException()
             }
-            emitter.setCancellable { bottomNavigation.setOnNavigationItemSelectedListener(null) }
-        })
+            true
+        }
+        mainViewModel.onViewCreated()
     }
 
-    override fun menuSelected(): Observable<MainScreenUiEvent> {
-        return menuItemObservable
-    }
-
-    override fun render(mainScreenUiModel: MainContract.MainScreenUiModel) {
-        content.setVisible(mainScreenUiModel.showContent)
+    private fun render(mainScreenUiModel: MainScreenUiModel) {
         progressBar.setVisible(mainScreenUiModel.showLoading)
-        //TransitionManager.beginDelayedTransition(rootView)
-        matchesView.setVisible(mainScreenUiModel.showMatchesView)
-        playersView.setVisible(mainScreenUiModel.showPlayersView)
-        resultsView.setVisible(mainScreenUiModel.showResultsView)
+        content.setVisible(mainScreenUiModel.showContent)
+        if (mainScreenUiModel.showContent) {
+            when (mainScreenUiModel.screenToShow) {
+                is PlayersScreen -> showFragment(PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG)
+                is MatchesScreen -> showFragment(MatchListFragment.MATCH_LIST_FRAGMENT_TAG)
+                is ResultsScreen -> showFragment(ResultsFragment.RESULTS_FRAGMENT_TAG)
+            }
+        }
+    }
+
+    private fun showFragment(tag: String) {
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.main_content_container, getFragment(tag))
+                .commit()
+    }
+
+    private fun getFragment(tag: String): Fragment {
+        return supportFragmentManager.findFragmentByTag(tag).let {
+            it ?: when (tag) {
+                PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG -> PlayerListFragment()
+                MatchListFragment.MATCH_LIST_FRAGMENT_TAG -> MatchListFragment()
+                ResultsFragment.RESULTS_FRAGMENT_TAG -> ResultsFragment()
+                else -> {
+                    throw IllegalArgumentException("Unknown fragment $tag")
+                }
+            }
+        }
     }
 
 }
