@@ -56,7 +56,7 @@ class MatchActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.create_match)
+        setContentView(R.layout.match_container)
 
         val toolbar = find<Toolbar>(R.id.match_toolbar).value
         setSupportActionBar(toolbar)

@@ -20,7 +20,7 @@
 
     <include
             android:id="@+id/match_content"
-            layout="@layout/create_match_content"
+            layout="@layout/match_content"
             android:layout_below="@id/match_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
