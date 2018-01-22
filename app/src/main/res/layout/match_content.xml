@@ -8,6 +8,22 @@
         android:layout_height="match_parent"
         tools:showIn="@layout/match_container">
 
+    <android.support.constraint.Guideline
+            android:id="@+id/vertical_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+    <android.support.constraint.Guideline
+            android:id="@+id/vertical_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="56dp"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     <ImageView
             android:id="@+id/match_date_time_icon"
@@ -15,76 +31,85 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_access_time_black_24dp"
             android:tint="@color/colorPrimary"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_one"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_two"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/vertical_one"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_two"
+            />
+
+    <TextView
+            android:id="@+id/match_date_and_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/match_date_and_time_title"
+            android:textAppearance="@style/Medium.Bold"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@+id/match_date_time_icon"
+            app:layout_constraintStart_toStartOf="@id/vertical_two"/>
 
     <TextView
             android:id="@+id/match_date"
             tools:text="Sat 24 June 2017"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:gravity="start|center"
-            app:layout_constraintStart_toEndOf="@+id/match_date_time_icon"
-            android:layout_marginStart="24dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_one"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_two"
-            app:layout_constraintEnd_toStartOf="@+id/match_time"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:textAppearance="@style/Body"
+            app:layout_constraintStart_toStartOf="@+id/match_date_and_time_title"
+            app:layout_constraintTop_toBottomOf="@+id/match_date_and_time_title"
+            app:layout_constraintEnd_toStartOf="@+id/match_start_time"/>
 
     <TextView
-            android:id="@+id/match_time"
+            android:id="@+id/match_start_time"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:textAppearance="@style/Body"
+            app:layout_constraintBaseline_toBaselineOf="@id/match_date"
+            app:layout_constraintEnd_toStartOf="@+id/match_end_time"
+            tools:text="19:00"/>
+
+    <TextView
+            android:id="@+id/match_end_time"
             android:layout_height="0dp"
             android:layout_width="wrap_content"
             android:gravity="center"
-            tools:text="19:00"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_one"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_two"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp"/>
+            android:paddingEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:textAppearance="@style/Body"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/match_date"
+            tools:text="21:00"
+            />
 
     <View
+            android:id="@+id/horizontal_divider_one"
             android:layout_width="wrap_content"
             android:layout_height="2dp"
             android:background="@color/grey_300"
-            android:id="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_two"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            android:layout_marginStart="8dp"/>
-
-    <android.support.constraint.Guideline
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/horiztonal_one"
-            app:layout_constraintGuide_begin="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="16dp"/>
-
-    <android.support.constraint.Guideline
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/left_vertical"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"/>
-
-    <android.support.constraint.Guideline
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/horiztonal_two"
-            app:layout_constraintGuide_begin="68dp"
-            android:orientation="horizontal"/>
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/match_date"
+            app:layout_constraintStart_toStartOf="@+id/vertical_one"/>
 
 
     <ImageView
@@ -93,47 +118,50 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_location_on_black_24dp"
             android:tint="@color/colorPrimary"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_two"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_three"/>
+            app:layout_constraintTop_toTopOf="@+id/horizontal_divider_one"
+            app:layout_constraintStart_toStartOf="@+id/vertical_one"
+            app:layout_constraintEnd_toEndOf="@id/vertical_two"
+            />
 
-    <EditText
-            android:id="@+id/match_location_edit_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="0dp"
-            android:hint="@string/enter_location_hint"
-            android:singleLine="true"
-            tools:text="Finsbury Leisure Center"
-            app:layout_constraintStart_toEndOf="@+id/match_location_icon"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_two"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_three"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="24dp"/>
-
-    <android.support.constraint.Guideline
+    <TextView
+            android:id="@+id/match_location_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/horiztonal_three"
-            app:layout_constraintGuide_begin="142dp"
-            android:orientation="horizontal"/>
+            android:textAppearance="@style/Medium.Bold"
+            android:layout_marginStart="16dp"
+            android:text="@string/match_location_title"
+            app:layout_constraintTop_toTopOf="@id/match_location_icon"
+            app:layout_constraintStart_toEndOf="@id/match_location_icon"/>
 
+    <EditText
+            android:id="@+id/match_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/match_enter_location_hint"
+            android:maxLines="3"
+            android:inputType="textMultiLine"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:textAppearance="@style/Body"
+            app:layout_constraintTop_toBottomOf="@id/match_location_title"
+            app:layout_constraintStart_toEndOf="@+id/vertical_two"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Finsbury Leisure Center"/>
 
     <View
-            android:id="@+id/view2"
+            android:id="@+id/horizontal_diver_two"
             android:layout_width="wrap_content"
             android:layout_height="2dp"
             android:background="@color/grey_300"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_three"/>
-
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/vertical_one"
+            app:layout_constraintTop_toBottomOf="@id/match_location"/>
 
     <ImageView
             android:id="@+id/match_players_icon"
@@ -141,45 +169,139 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_people_black_24dp"
             android:tint="@color/colorPrimary"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_three"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_four"/>
-
-    <EditText
-            android:id="@+id/match_number_of_players"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="@string/match_number_of_players_label"
-            android:ems="10"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintStart_toEndOf="@+id/match_players_icon"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_three"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/horiztonal_four"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/horizontal_diver_two"
+            app:layout_constraintStart_toStartOf="@+id/vertical_one"
+            app:layout_constraintEnd_toEndOf="@id/vertical_two"
             />
 
+    <TextView
+            android:id="@+id/match_squad_section_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textAppearance="@style/Medium.Bold"
+            app:layout_constraintStart_toStartOf="@+id/vertical_two"
+            app:layout_constraintTop_toTopOf="@+id/match_players_icon"
+            android:text="@string/match_squad_title"/>
+
+    <TextView
+            android:id="@+id/match_squad_required_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:textAllCaps="true"
+            android:textAppearance="@style/Body"
+            android:text="@string/match_squad_size_required_label"
+            app:layout_constraintStart_toStartOf="@+id/vertical_two"
+            app:layout_constraintTop_toBottomOf="@id/match_squad_section_title"
+            />
+    <EditText
+            android:id="@+id/match_squad_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="64dp"
+            android:inputType="number"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:singleLine="true"
+            android:textAppearance="@style/Body"
+            app:layout_constraintStart_toEndOf="@+id/match_squad_required_label"
+            app:layout_constraintBaseline_toBaselineOf="@+id/match_squad_required_label"
+            tools:text="10"/>
+
+    <TextView
+            android:id="@+id/match_squad_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:text="@string/match_current_status_label_text"
+            android:textAppearance="@style/Body"
+            app:layout_constraintStart_toStartOf="@+id/vertical_two"
+            app:layout_constraintTop_toBottomOf="@id/match_squad_required_label"/>
+
+    <TextView
+            android:id="@+id/match_confirmed_players_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:drawableStart="@drawable/ic_sentiment_satisfied"
+            app:layout_constraintStart_toStartOf="@+id/match_squad_size"
+            app:layout_constraintBaseline_toBaselineOf="@id/match_squad_status"
+            app:layout_constraintEnd_toStartOf="@+id/match_unknown_players_count"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            tools:text="10"/>
+
+    <TextView
+            android:id="@+id/match_unknown_players_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:drawableStart="@drawable/ic_sentiment_neutral"
+            tools:text="2"
+            app:layout_constraintStart_toEndOf="@+id/match_confirmed_players_count"
+            app:layout_constraintBaseline_toBaselineOf="@id/match_squad_status"
+            app:layout_constraintEnd_toStartOf="@+id/match_declined_players_count"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+
+    <TextView
+            android:id="@+id/match_declined_players_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:drawablePadding="2dp"
+            android:drawableStart="@drawable/ic_sentiment_dissatisfied"
+            tools:text="5"
+            app:layout_constraintStart_toEndOf="@+id/match_unknown_players_count"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/match_squad_status"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            />
+
+    <Button
+            android:id="@+id/match_update_squad_button"
+            android:text="@string/match_update_squad_button_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/match_squad_status"
+            app:layout_constraintTop_toBottomOf="@+id/match_squad_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"/>
+
     <View
-            android:id="@+id/view3"
+            android:id="@+id/horizontal_divder_view_three"
             android:layout_width="wrap_content"
             android:layout_height="2dp"
             android:background="@color/grey_300"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toTopOf="@+id/horiztonal_four"/>
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/vertical_one"
+            app:layout_constraintTop_toBottomOf="@+id/match_update_squad_button"/>
 
-    <android.support.constraint.Guideline
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/horiztonal_four"
-            app:layout_constraintGuide_begin="222dp"
-            android:orientation="horizontal"/>
 
 
 </android.support.constraint.ConstraintLayout>

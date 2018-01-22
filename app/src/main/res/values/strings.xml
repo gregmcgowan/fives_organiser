@@ -5,10 +5,24 @@
     <string name="players_title">Players</string>
     <string name="matches_title">Matches</string>
     <string name="results_title">Results</string>
+
     <string name="import_contacts_title">Import Contacts</string>
-    <string name="create_match_label">Create Match</string>
-    <string name="enter_location_hint">Enter location</string>
+
+
+
     <string name="no_results_message">No results yet!</string>
     <string name="no_matches_message">No matches</string>
-    <string name="match_number_of_players_label">Number of players</string>
+
+    <string name="match_title_new">New Match</string>
+    <string name="match_title_update">Update Match</string>
+    <string name="match_enter_location_hint">Enter location</string>
+    <string name="match_squad_size_hint">Required size</string>
+    <string name="match_squad_title">Squad</string>
+    <string name="match_date_and_time_title">Date and Time</string>
+    <string name="match_location_title">Location</string>
+    <string name="match_squad_status">Status</string>
+    <string name="match_update_squad_button_text">Update Squad</string>
+    <string name="match_squad_size_required_label">required</string>
+    <string name="match_current_status_label_text">Current</string>
+
 </resources>

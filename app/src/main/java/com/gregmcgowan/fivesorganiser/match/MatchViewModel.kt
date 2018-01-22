@@ -19,12 +19,14 @@ class MatchViewModel(ui: CoroutineContext,
 
     private val matchUiModelLiveData = NonNullMutableLiveData(
             MatchUiModel(
+                    title = "",
                     showContent = false,
                     loading = true,
                     success = false,
                     errorMessage = null,
                     date = "",
-                    time = "",
+                    startTime = "",
+                    endTime = "",
                     location = "",
                     numberOfPLayers = ""
             )
@@ -39,14 +41,15 @@ class MatchViewModel(ui: CoroutineContext,
         match = Match("",
                 "",
                 ZonedDateTime.now(),
-                0)
+                ZonedDateTime.now().plusHours(1),
+                10)
         if (matchId != null) {
             runOnBackgroundAndUpdateOnUI(
                     { match = matchRepo.getMatch(matchId) },
-                    { updateUiModel(matchUiModelReducers.displayMatchReducer(match)) }
+                    { updateUiModel(matchUiModelReducers.displayMatchReducer(match, false)) }
             )
         } else {
-            updateUiModel(matchUiModelReducers.displayMatchReducer(match))
+            updateUiModel(matchUiModelReducers.displayMatchReducer(match, true))
         }
     }
 
@@ -69,18 +72,25 @@ class MatchViewModel(ui: CoroutineContext,
         }
     }
 
-    fun timeSelected() {
-        matchUiNavigationLiveData.value = MatchUiNavigationEvent.ShowTimePicker(
-                match.dateTime.hour,
-                match.dateTime.minute
+    fun startTimeSelected() {
+        matchUiNavigationLiveData.value = MatchUiNavigationEvent.ShowStartTimePicker(
+                match.start.hour,
+                match.start.minute
+        )
+    }
+
+    fun endTimeSelected() {
+        matchUiNavigationLiveData.value = MatchUiNavigationEvent.ShowEndTimePicker(
+                match.end.hour,
+                match.end.minute
         )
     }
 
     fun dateSelected() {
         matchUiNavigationLiveData.value = MatchUiNavigationEvent.ShowDatePicker(
-                match.dateTime.year,
-                match.dateTime.month.value - 1,
-                match.dateTime.dayOfMonth
+                match.start.year,
+                match.start.month.value - 1,
+                match.start.dayOfMonth
         )
     }
 
@@ -91,41 +101,58 @@ class MatchViewModel(ui: CoroutineContext,
                 year,
                 month + 1,
                 date,
-                match.dateTime.hour,
-                match.dateTime.minute,
-                match.dateTime.second,
-                match.dateTime.nano,
-                match.dateTime.zone
+                match.start.hour,
+                match.start.minute,
+                match.start.second,
+                match.start.nano,
+                match.start.zone
         )
-        match = match.copy(dateTime = dateTime)
+        match = match.copy(start = dateTime)
         matchUiNavigationLiveData.value = MatchUiNavigationEvent.Idle
         updateUiModel(matchUiModelReducers.dateUpdatedReducer(match))
     }
 
-    fun timeUpdated(hour: Int,
-                    minute: Int) {
+    fun startTimeUpdated(hour: Int,
+                         minute: Int) {
         match = match.copy(
-                dateTime = ZonedDateTime.of(
-                        match.dateTime.year,
-                        match.dateTime.month.value,
-                        match.dateTime.dayOfMonth,
+                start = ZonedDateTime.of(
+                        match.start.year,
+                        match.start.month.value,
+                        match.start.dayOfMonth,
                         hour,
                         minute,
-                        match.dateTime.second,
-                        match.dateTime.nano,
-                        match.dateTime.zone
+                        match.start.second,
+                        match.start.nano,
+                        match.start.zone
                 ))
         matchUiNavigationLiveData.value = MatchUiNavigationEvent.Idle
-        updateUiModel(matchUiModelReducers.timeUpdatedReducer(match))
+        updateUiModel(matchUiModelReducers.startTimeUpdated(match))
     }
+
+    fun endTimeUpdated(hour: Int, minute: Int) {
+        match = match.copy(
+                end = ZonedDateTime.of(
+                        match.end.year,
+                        match.end.month.value,
+                        match.end.dayOfMonth,
+                        hour,
+                        minute,
+                        match.end.second,
+                        match.end.nano,
+                        match.end.zone
+                ))
+        matchUiNavigationLiveData.value = MatchUiNavigationEvent.Idle
+        updateUiModel(matchUiModelReducers.endTimeUpdated(match))
+    }
+
 
     fun locationUpdated(location: String) {
         match = match.copy(location = location)
         updateUiModel(matchUiModelReducers.locationUpdatedReducer(match))
     }
 
-    fun numberOfPlayersUpdated(numberOfPlayers: Int) {
-        match = match.copy(numberOfPlayers = numberOfPlayers)
+    fun squadSizeUpdated(numberOfPlayers: Int) {
+        match = match.copy(squadSize = numberOfPlayers)
         updateUiModel(matchUiModelReducers.numberOfPlayersUpdatedReduce(match))
     }
 
@@ -135,18 +162,21 @@ class MatchViewModel(ui: CoroutineContext,
     }
 
     private fun saveOrCreate() {
-        runOnBackgroundAndUpdateOnUI({
-            if (matchId == null) {
-                matchRepo.createMatch(match.dateTime, match.location, match.numberOfPlayers)
-            } else {
-                matchRepo.saveMatch(match)
-            }
-        },
-                { matchUiNavigationLiveData.value = MatchUiNavigationEvent.CloseScreen })
+        runOnBackgroundAndUpdateOnUI(
+                {
+                    if (matchId == null) {
+                        matchRepo.createMatch(match.start, match.end, match.squadSize, match.location)
+                    } else {
+                        matchRepo.saveMatch(match)
+                    }
+                },
+                { matchUiNavigationLiveData.value = MatchUiNavigationEvent.CloseScreen }
+        )
     }
 
     fun closeButtonPressed() {
         matchUiNavigationLiveData.value = MatchUiNavigationEvent.CloseScreen
     }
+
 
 }

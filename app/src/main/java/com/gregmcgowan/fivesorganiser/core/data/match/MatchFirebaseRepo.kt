@@ -8,7 +8,8 @@ import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
 private const val MATCHES_KEY = "Matches"
-private const val DATE_TIME_KEY = "dateTime"
+private const val START_DATE_TIME_KEY = "startDateTime"
+private const val END_DATE_TIME_KEY = "endDateTime"
 private const val LOCATION_KEY = "location"
 private const val NUMBER_OF_PLAYERS_KEY = "numberOfPlayers"
 private const val TIMESTAMP_KEY = "timestamp"
@@ -17,23 +18,26 @@ class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRep
 
     private val dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
-    override suspend fun createMatch(dateTime: ZonedDateTime,
-                                     location: String,
-                                     numberOfPlayers: Int) {
+    override suspend fun createMatch(startTime: ZonedDateTime,
+                                     endTime: ZonedDateTime,
+                                     squadSize: Int,
+                                     location: String) {
         val map = mutableMapOf<String, Any>()
-        map.put(DATE_TIME_KEY, dateTime.format(dateTimeFormatter))
-        map.put(LOCATION_KEY, location)
-        map.put(NUMBER_OF_PLAYERS_KEY, numberOfPlayers)
-        map.put(TIMESTAMP_KEY, System.currentTimeMillis())
+        map[START_DATE_TIME_KEY] = startTime.format(dateTimeFormatter)
+        map[END_DATE_TIME_KEY] = endTime.format(dateTimeFormatter)
+        map[LOCATION_KEY] = location
+        map[NUMBER_OF_PLAYERS_KEY] = squadSize
+        map[TIMESTAMP_KEY] = System.currentTimeMillis()
 
         matches().add(map)
     }
 
     override suspend fun saveMatch(match: Match) {
         val map = mutableMapOf<String, Any>()
-        map.put(DATE_TIME_KEY, match.dateTime.format(dateTimeFormatter))
-        map.put(LOCATION_KEY, match.location)
-        map.put(NUMBER_OF_PLAYERS_KEY, match.numberOfPlayers)
+        map[START_DATE_TIME_KEY] = match.start.format(dateTimeFormatter)
+        map[END_DATE_TIME_KEY] = match.end.format(dateTimeFormatter)
+        map[LOCATION_KEY] = match.location
+        map[NUMBER_OF_PLAYERS_KEY] = match.squadSize
 
         firestoreHelper.setData(matches().document(match.matchId), map, SetOptions.merge())
     }
@@ -42,12 +46,12 @@ class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRep
         return firestoreHelper.getUserDocRef().collection(MATCHES_KEY)
     }
 
-    suspend override fun getMatch(matchID: String): Match {
+    override suspend fun getMatch(matchID: String): Match {
         val data = firestoreHelper.getData(matches().document(matchID))
         return mapToMatch(data)
     }
 
-    suspend override fun getAllMatches(): List<Match> {
+    override suspend fun getAllMatches(): List<Match> {
         return firestoreHelper.runQuery(matches().orderBy(TIMESTAMP_KEY))
                 .documents
                 .mapTo(mutableListOf()) {
@@ -61,8 +65,9 @@ class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRep
         return Match(
                 matchId = map[ID_KEY] as String,
                 location = map[LOCATION_KEY] as String,
-                dateTime = ZonedDateTime.parse(map[DATE_TIME_KEY] as String),
-                numberOfPlayers = (map[NUMBER_OF_PLAYERS_KEY] as Long).toInt()
+                start = ZonedDateTime.parse(map[START_DATE_TIME_KEY] as String),
+                end = ZonedDateTime.parse(map[END_DATE_TIME_KEY] as String),
+                squadSize = (map[NUMBER_OF_PLAYERS_KEY] as Long).toInt()
         )
     }
 

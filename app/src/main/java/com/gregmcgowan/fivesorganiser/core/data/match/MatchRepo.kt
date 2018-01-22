@@ -4,9 +4,10 @@ import org.threeten.bp.ZonedDateTime
 
 interface MatchRepo {
 
-    suspend fun createMatch(dateTime: ZonedDateTime,
-                            location: String,
-                            numberOfPlayers: Int)
+    suspend fun createMatch(startTime: ZonedDateTime,
+                            endTime: ZonedDateTime,
+                            squadSize: Int,
+                            location: String)
 
     suspend fun saveMatch(match: Match)
 

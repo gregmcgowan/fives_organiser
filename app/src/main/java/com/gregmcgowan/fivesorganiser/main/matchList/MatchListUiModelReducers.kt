@@ -22,7 +22,7 @@ internal fun matchListUiModel(matches: List<Match>,
         matchesUiModels += MatchListItemUiModel(
                 matchId = match.matchId,
                 location = match.location,
-                dateAndTime = dateTimeFormatter.formatDate(match.dateTime))
+                dateAndTime = dateTimeFormatter.formatDate(match.start))
     }
     var errorMessage: String? = null
     var showEmptyView = false

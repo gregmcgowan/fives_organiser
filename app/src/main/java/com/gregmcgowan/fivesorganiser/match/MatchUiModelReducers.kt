@@ -10,11 +10,11 @@ class MatchUiModelReducers(private val instantFormatter: ZonedDateTimeFormatter)
     }
 
     internal fun dateUpdatedReducer(match: Match): MatchUiModelReducer = { model ->
-        model.copy(date = instantFormatter.formatDate(match.dateTime))
+        model.copy(date = instantFormatter.formatDate(match.start))
     }
 
-    internal fun timeUpdatedReducer(match: Match): MatchUiModelReducer = { model ->
-        model.copy(time = instantFormatter.formatTime(match.dateTime))
+    internal fun startTimeUpdated(match: Match): MatchUiModelReducer = { model ->
+        model.copy(startTime = instantFormatter.formatTime(match.start))
     }
 
     internal fun locationUpdatedReducer(match: Match): MatchUiModelReducer = { model ->
@@ -22,30 +22,43 @@ class MatchUiModelReducers(private val instantFormatter: ZonedDateTimeFormatter)
     }
 
     internal fun numberOfPlayersUpdatedReduce(match: Match): MatchUiModelReducer = { model ->
-        if (match.numberOfPlayers > 0) {
-            model.copy(numberOfPLayers = match.numberOfPlayers.toString())
+        if (match.squadSize > 0) {
+            model.copy(numberOfPLayers = match.squadSize.toString())
         } else {
             model
         }
     }
 
-    internal fun displayMatchReducer(match: Match): MatchUiModelReducer = { model ->
+    internal fun displayMatchReducer(match: Match, new: Boolean): MatchUiModelReducer = { model ->
         val numberOfPlayers: String
-        if (match.numberOfPlayers > 0) {
-            numberOfPlayers = match.numberOfPlayers.toString()
+        if (match.squadSize > 0) {
+            numberOfPlayers = match.squadSize.toString()
         } else {
             numberOfPlayers = ""
         }
 
+        val title: String = if (new) {
+            "New match"
+        } else {
+            "Update match"
+        }
+
+
         model.copy(
+                title = title,
                 loading = false,
                 showContent = true,
                 success = true,
                 location = match.location,
-                date = instantFormatter.formatDate(match.dateTime),
-                time = instantFormatter.formatTime(match.dateTime),
+                date = instantFormatter.formatDate(match.start),
+                startTime = instantFormatter.formatTime(match.start),
+                endTime = instantFormatter.formatTime(match.end),
                 numberOfPLayers = numberOfPlayers
         )
+    }
+
+    fun endTimeUpdated(match: Match): MatchUiModelReducer = { model ->
+        model.copy(endTime = instantFormatter.formatTime(match.end))
     }
 
 }

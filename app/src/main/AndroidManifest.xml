@@ -30,7 +30,7 @@
 
         <activity
                 android:name=".match.MatchActivity"
-                android:label="@string/create_match_label"/>
+                android:label="@string/match_title_new"/>
     </application>
 
 </manifest>

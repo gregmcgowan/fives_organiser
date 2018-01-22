@@ -44,15 +44,21 @@ class MatchActivity : BaseActivity() {
 
     private val content: View by find(R.id.match_content)
     private val progressBar: ProgressBar by find(R.id.match_progress_bar)
-    private val timeField: TextView by find(R.id.match_time)
-    private val dateField: TextView by find(R.id.match_date)
-    private val locationField: EditText by find(R.id.match_location_edit_text)
-    private val numberOfPlayersField: EditText by find(R.id.match_number_of_players)
+    private val startTime: TextView by find(R.id.match_start_time)
+    private val endTime: TextView by find(R.id.match_end_time)
+    private val date: TextView by find(R.id.match_date)
+    private val location: EditText by find(R.id.match_location)
+    private val squadSize: EditText by find(R.id.match_squad_size)
+    private val confirmedPlayers: TextView by find(R.id.match_confirmed_players_count)
+    private val unknownPlayers: TextView by find(R.id.match_unknown_players_count)
+    private val declinedPlayers: TextView by find(R.id.match_declined_players_count)
 
     private lateinit var matchViewModel: MatchViewModel
 
     private lateinit var dateListener: OnDateSetListener
-    private lateinit var timeListener: OnTimeSetListener
+    private lateinit var startTimeListener: OnTimeSetListener
+    private lateinit var endTimeListener: OnTimeSetListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,15 +92,17 @@ class MatchActivity : BaseActivity() {
                         render(model)
                     }
                 })
-        timeListener = OnTimeSetListener { _, hour, minute -> matchViewModel.timeUpdated(hour, minute) }
+        startTimeListener = OnTimeSetListener { _, hour, minute -> matchViewModel.startTimeUpdated(hour, minute) }
+        endTimeListener = OnTimeSetListener { _, hour, minute -> matchViewModel.endTimeUpdated(hour, minute) }
         dateListener = OnDateSetListener { _, year, month, date -> matchViewModel.dateUpdated(year, month, date) }
 
-        timeField.setOnClickListener { matchViewModel.timeSelected() }
-        dateField.setOnClickListener { matchViewModel.dateSelected() }
+        startTime.setOnClickListener { matchViewModel.startTimeSelected() }
+        endTime.setOnClickListener { matchViewModel.endTimeSelected() }
+        date.setOnClickListener { matchViewModel.dateSelected() }
 
-        locationField.addTextChangedListener(object : TextWatcher {
+        location.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                matchViewModel.locationUpdated(locationField.text.toString())
+                matchViewModel.locationUpdated(location.text.toString())
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -103,10 +111,10 @@ class MatchActivity : BaseActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
-        numberOfPlayersField.addTextChangedListener(object : TextWatcher {
+        squadSize.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                if (numberOfPlayersField.text.isNotEmpty()) {
-                    matchViewModel.numberOfPlayersUpdated(numberOfPlayersField.text.toString().toInt())
+                if (squadSize.text.isNotEmpty()) {
+                    matchViewModel.squadSizeUpdated(squadSize.text.toString().toInt())
                 }
             }
 
@@ -127,13 +135,20 @@ class MatchActivity : BaseActivity() {
                     navEvent.month,
                     navEvent.date
             )
-            is MatchUiNavigationEvent.ShowTimePicker -> showTimePicker(
+            is MatchUiNavigationEvent.ShowStartTimePicker -> showTimePicker(
                     navEvent.hour,
                     navEvent.minute,
-                    true
+                    true,
+                    startTimeListener
             )
-            is MatchUiNavigationEvent.CloseScreen -> finish()
-            is MatchUiNavigationEvent.Idle -> {
+            is MatchUiNavigationEvent.ShowEndTimePicker -> showTimePicker(
+                    navEvent.hour,
+                    navEvent.minute,
+                    true,
+                    endTimeListener
+            )
+            MatchUiNavigationEvent.CloseScreen -> finish()
+            MatchUiNavigationEvent.Idle -> {
                 //Do nothing
             }
         }
@@ -161,10 +176,14 @@ class MatchActivity : BaseActivity() {
     private fun render(uiModel: MatchUiModel) {
         content.setVisible(uiModel.showContent)
         progressBar.setVisible(uiModel.loading)
-        timeField.setTextIfNotEqual(uiModel.time)
-        dateField.setTextIfNotEqual(uiModel.date)
-        locationField.setTextIfNotEqual(uiModel.location)
-        numberOfPlayersField.setTextIfNotEqual(uiModel.numberOfPLayers)
+        startTime.setTextIfNotEqual(uiModel.startTime)
+        endTime.setTextIfNotEqual(uiModel.endTime)
+        date.setTextIfNotEqual(uiModel.date)
+        location.setTextIfNotEqual(uiModel.location)
+        squadSize.setTextIfNotEqual(uiModel.numberOfPLayers)
+        confirmedPlayers.setTextIfNotEqual(uiModel.confirmedPlayersCount.toString())
+        unknownPlayers.setTextIfNotEqual(uiModel.unknownPlayersCount.toString())
+        declinedPlayers.setTextIfNotEqual(uiModel.declinedPlayersCount.toString())
     }
 
     private fun showDatePickerDialog(year: Int, month: Int, day: Int) {
@@ -173,9 +192,9 @@ class MatchActivity : BaseActivity() {
         newFragment.show(supportFragmentManager, "datePicker")
     }
 
-    private fun showTimePicker(hour: Int, minute: Int, is24Hr: Boolean) {
+    private fun showTimePicker(hour: Int, minute: Int, is24Hr: Boolean, onTimeSetListener: OnTimeSetListener) {
         val newFragment = TimePickerFragment.newInstance(hour, minute, is24Hr)
-        newFragment.timePickerListener = timeListener
+        newFragment.timePickerListener = onTimeSetListener
         newFragment.show(supportFragmentManager, "timePicker")
     }
 
