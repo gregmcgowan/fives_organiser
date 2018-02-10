@@ -1,28 +1,30 @@
 package com.gregmcgowan.fivesorganiser.main.playerList
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.data.player.PlayerRepo
-import com.gregmcgowan.fivesorganiser.core.ui.NonNullMutableLiveData
-import kotlin.coroutines.experimental.CoroutineContext
+import com.gregmcgowan.fivesorganiser.core.getNonNull
+import javax.inject.Inject
 
-class PlayerListViewModel(
-        ui: CoroutineContext,
-        background: CoroutineContext,
-        private val playersRepo: PlayerRepo) : CoroutinesViewModel(ui, background) {
+class PlayerListViewModel @Inject constructor(coroutineContext: CoroutineContexts,
+                                              private val playersRepo: PlayerRepo) : CoroutinesViewModel(coroutineContext) {
 
-    private val playerUiModelLiveData = NonNullMutableLiveData(
-            PlayerListUiModel(
-                    players = emptyList(),
-                    showLoading = true,
-                    showErrorMessage = false,
-                    showPlayers = false,
-                    errorMessage = null
-            )
-    )
-    private val playerListNavigationLiveData = NonNullMutableLiveData<PlayerListNavigationEvents>(
-            PlayerListNavigationEvents.Idle
-    )
+    private val playerUiModelLiveData = MutableLiveData<PlayerListUiModel>()
+    private val playerListNavigationLiveData = MutableLiveData<PlayerListNavigationEvents>()
+
+    init {
+        playerUiModelLiveData.value = PlayerListUiModel(
+                players = emptyList(),
+                showLoading = true,
+                showErrorMessage = false,
+                showPlayers = false,
+                errorMessage = null
+        )
+
+        playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
+    }
 
     fun uiModel(): LiveData<PlayerListUiModel> {
         return playerUiModelLiveData
@@ -46,7 +48,7 @@ class PlayerListViewModel(
     }
 
     private fun updateUiModel(reducer: PlayerListUiModelReducer) {
-        playerUiModelLiveData.value = reducer.invoke(playerUiModelLiveData.getNonNullValue())
+        playerUiModelLiveData.value = reducer.invoke(playerUiModelLiveData.getNonNull())
     }
 
 }

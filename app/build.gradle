@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -54,8 +58,12 @@ dependencies {
 
     compile "android.arch.lifecycle:runtime:$rootProject.ext.lifeCyclesRuntimesVersion"
     compile "android.arch.lifecycle:extensions:$rootProject.ext.lifeCyclesExtensionsVersion"
-    compile "android.arch.lifecycle:reactivestreams:$rootProject.ext.lifeCyclesReativeStreamsVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.ext.lifeCyclesCompilerVersion"
+    kapt "android.arch.lifecycle:compiler:$rootProject.ext.lifeCyclesCompilerVersion"
+
+    implementation "com.google.dagger:dagger-android:$rootProject.ext.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$rootProject.ext.daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
 
     compile "com.google.firebase:firebase-core:$rootProject.ext.firebaseVersion"
     compile "com.google.firebase:firebase-database:$rootProject.ext.firebaseVersion"

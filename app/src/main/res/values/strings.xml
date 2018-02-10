@@ -25,4 +25,7 @@
     <string name="match_squad_size_required_label">required</string>
     <string name="match_current_status_label_text">Current</string>
 
+    <string name="squad_not_invited_players_tab_text">Still to invite</string>
+    <string name="squad_invited_players_tab_text">Invited</string>
+
 </resources>

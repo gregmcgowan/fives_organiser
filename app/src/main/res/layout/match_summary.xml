@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+            tools:showIn="com.gregmcgowan.fivesorganiser.match.MatchActivity">
+
+    <include
+            android:id="@+id/match_content"
+            layout="@layout/match_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    <ProgressBar
+            android:id="@+id/match_progress_bar"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:visibility="gone"/>
+
+</FrameLayout>

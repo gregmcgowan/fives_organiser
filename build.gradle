@@ -10,14 +10,14 @@ buildscript {
         buildToolsVersion = '26.0.2'
 
         // App dependencies
-        kotlinVersion = '1.2.20'
+        daggerVersion = '2.14.1'
+        kotlinVersion = '1.2.21'
         coroutinesVersion = '0.21'
         supportLibraryVersion = '27.0.2'
         constraintLayoutVersion = '1.1.0-beta4'
-        lifeCyclesRuntimesVersion = '1.0.0'
-        lifeCyclesExtensionsVersion = '1.0.0'
-        lifeCyclesCompilerVersion = '1.0.0'
-        lifeCyclesReativeStreamsVersion = '1.0.0'
+        lifeCyclesRuntimesVersion = '1.1.0'
+        lifeCyclesExtensionsVersion = '1.1.0'
+        lifeCyclesCompilerVersion = '1.1.0'
         firebaseVersion = '11.8.0'
 
         timberVersion = '4.6.0'

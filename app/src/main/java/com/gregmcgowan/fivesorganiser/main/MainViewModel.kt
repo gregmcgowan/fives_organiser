@@ -1,24 +1,28 @@
 package com.gregmcgowan.fivesorganiser.main
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import com.gregmcgowan.fivesorganiser.core.ui.NonNullMutableLiveData
-import kotlin.coroutines.experimental.CoroutineContext
+import com.gregmcgowan.fivesorganiser.core.getNonNull
+import javax.inject.Inject
 
-class MainViewModel(ui: CoroutineContext,
-                    background: CoroutineContext,
-                    private val authentication: Authentication) : CoroutinesViewModel(ui, background) {
+class MainViewModel @Inject constructor(coroutineContext: CoroutineContexts,
+                                        private val authentication: Authentication) : CoroutinesViewModel(coroutineContext) {
 
     private var currentScreen: MainScreen = MainScreen.PlayersScreen
 
-    private val uiModelLiveData = NonNullMutableLiveData(
-            MainScreenUiModel(
-                    screenToShow = currentScreen,
-                    showContent = false,
-                    showLoading = true
-            )
-    )
+    var uiModelLiveData: MutableLiveData<MainScreenUiModel> = MutableLiveData<MainScreenUiModel>()
+        private set
+
+    init {
+        uiModelLiveData.value = MainScreenUiModel(
+                screenToShow = currentScreen,
+                showContent = false,
+                showLoading = true
+        )
+    }
 
     fun onViewCreated() {
         runOnBackgroundAndUpdateOnUI(
@@ -32,7 +36,7 @@ class MainViewModel(ui: CoroutineContext,
     }
 
     private fun updateUiModel(reducer: MainScreenUiModelReducer) {
-        uiModelLiveData.value = reducer.invoke(uiModelLiveData.getNonNullValue())
+        uiModelLiveData.value = reducer.invoke(uiModelLiveData.getNonNull())
     }
 
     fun handleMenuSelection(selectedScreen: MainScreen) {

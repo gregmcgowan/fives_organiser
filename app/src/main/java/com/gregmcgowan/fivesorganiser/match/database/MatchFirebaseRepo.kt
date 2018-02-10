@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.core.data.match
+package com.gregmcgowan.fivesorganiser.match.database
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.SetOptions
@@ -6,6 +6,7 @@ import com.gregmcgowan.fivesorganiser.core.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.core.data.ID_KEY
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
+import javax.inject.Inject
 
 private const val MATCHES_KEY = "Matches"
 private const val START_DATE_TIME_KEY = "startDateTime"
@@ -14,14 +15,14 @@ private const val LOCATION_KEY = "location"
 private const val NUMBER_OF_PLAYERS_KEY = "numberOfPlayers"
 private const val TIMESTAMP_KEY = "timestamp"
 
-class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRepo {
+class MatchFirebaseRepo @Inject constructor(private val firestoreHelper: FirestoreHelper) : MatchRepo {
 
     private val dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
     override suspend fun createMatch(startTime: ZonedDateTime,
                                      endTime: ZonedDateTime,
-                                     squadSize: Int,
-                                     location: String) {
+                                     squadSize: Long,
+                                     location: String): MatchEntity {
         val map = mutableMapOf<String, Any>()
         map[START_DATE_TIME_KEY] = startTime.format(dateTimeFormatter)
         map[END_DATE_TIME_KEY] = endTime.format(dateTimeFormatter)
@@ -29,15 +30,18 @@ class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRep
         map[NUMBER_OF_PLAYERS_KEY] = squadSize
         map[TIMESTAMP_KEY] = System.currentTimeMillis()
 
-        matches().add(map)
+        val id = firestoreHelper.addData(matches(), map)
+        map[ID_KEY] = id
+
+        return mapToMatch(map)
     }
 
-    override suspend fun saveMatch(match: Match) {
+    override suspend fun saveMatch(match: MatchEntity) {
         val map = mutableMapOf<String, Any>()
-        map[START_DATE_TIME_KEY] = match.start.format(dateTimeFormatter)
-        map[END_DATE_TIME_KEY] = match.end.format(dateTimeFormatter)
+        map[START_DATE_TIME_KEY] = match.startDateTime
+        map[END_DATE_TIME_KEY] = match.endDateTime
         map[LOCATION_KEY] = match.location
-        map[NUMBER_OF_PLAYERS_KEY] = match.squadSize
+        map[NUMBER_OF_PLAYERS_KEY] = match.numberOfPlayers
 
         firestoreHelper.setData(matches().document(match.matchId), map, SetOptions.merge())
     }
@@ -46,30 +50,31 @@ class MatchFirebaseRepo(private val firestoreHelper: FirestoreHelper) : MatchRep
         return firestoreHelper.getUserDocRef().collection(MATCHES_KEY)
     }
 
-    override suspend fun getMatch(matchID: String): Match {
+    override suspend fun getMatch(matchID: String): MatchEntity {
         val data = firestoreHelper.getData(matches().document(matchID))
         return mapToMatch(data)
     }
 
-    override suspend fun getAllMatches(): List<Match> {
+    override suspend fun getAllMatches(): List<MatchEntity> {
         return firestoreHelper.runQuery(matches().orderBy(TIMESTAMP_KEY))
                 .documents
                 .mapTo(mutableListOf()) {
                     val data = it.data
-                    data.put(ID_KEY, it.id)
+                    data[ID_KEY] = it.id
                     mapToMatch(data)
                 }
     }
 
-    private fun mapToMatch(map: Map<String, Any>): Match {
-        return Match(
+    private fun mapToMatch(map: Map<String, Any>): MatchEntity {
+        return MatchEntity(
                 matchId = map[ID_KEY] as String,
                 location = map[LOCATION_KEY] as String,
-                start = ZonedDateTime.parse(map[START_DATE_TIME_KEY] as String),
-                end = ZonedDateTime.parse(map[END_DATE_TIME_KEY] as String),
-                squadSize = (map[NUMBER_OF_PLAYERS_KEY] as Long).toInt()
+                startDateTime = map[START_DATE_TIME_KEY] as String,
+                endDateTime = map[END_DATE_TIME_KEY] as String,
+                numberOfPlayers = (map[NUMBER_OF_PLAYERS_KEY] as Long)
         )
     }
+
 
 }
 

@@ -1,30 +1,35 @@
 package com.gregmcgowan.fivesorganiser.importContacts
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.MainThread
+import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.ui.NonNullMutableLiveData
+import com.gregmcgowan.fivesorganiser.core.getNonNull
 import timber.log.Timber
-import kotlin.coroutines.experimental.CoroutineContext
+import javax.inject.Inject
 
-class ImportContactsViewModel(ui: CoroutineContext,
-                              background: CoroutineContext,
-                              private val orchestrator: ImportContactsOrchestrator) : CoroutinesViewModel(ui, background) {
+class ImportContactsViewModel @Inject constructor(coroutineContexts: CoroutineContexts,
+                                                  private val orchestrator: ImportContactsOrchestrator) : CoroutinesViewModel(coroutineContexts) {
 
     private val selectedContacts: MutableSet<Long> = mutableSetOf()
 
-    private val contactUiModelLiveData = NonNullMutableLiveData(ImportContactsUiModel(
-            contacts = emptyList(),
-            showLoading = true,
-            showContent = false,
-            importContactsButtonEnabled = false,
-            showErrorMessage = false,
-            errorMessage = null
+    private val contactUiModelLiveData = MutableLiveData<ImportContactsUiModel>()
+    private val contactUiNavLiveData = MutableLiveData<ImportContactsNavEvent>()
 
-    ))
-    private val contactUiNavLiveData = NonNullMutableLiveData<ImportContactsNavEvent>(
-            ImportContactsNavEvent.Idle
-    )
+    init {
+        contactUiModelLiveData.value = ImportContactsUiModel(
+                contacts = emptyList(),
+                showLoading = true,
+                showContent = false,
+                importContactsButtonEnabled = false,
+                showErrorMessage = false,
+                errorMessage = null
+
+        )
+        contactUiNavLiveData.value = ImportContactsNavEvent.Idle
+    }
+
 
     fun uiModel(): LiveData<ImportContactsUiModel> {
         return contactUiModelLiveData
@@ -66,7 +71,7 @@ class ImportContactsViewModel(ui: CoroutineContext,
 
     private fun updateUiModel(reducer: ImportContactsUiModelReducer) {
         Timber.d("Setting contact list UI model to ${contactUiModelLiveData.value}")
-        setUiModel(reducer.invoke(contactUiModelLiveData.getNonNullValue()))
+        setUiModel(reducer.invoke(contactUiModelLiveData.getNonNull()))
     }
 
     @MainThread
@@ -75,7 +80,7 @@ class ImportContactsViewModel(ui: CoroutineContext,
     }
 
     private suspend fun getUiModel(): ImportContactsUiModel {
-        return onUiContext { contactUiModelLiveData.getNonNullValue() }
+        return onUiContext { contactUiModelLiveData.getNonNull() }
     }
 
 }

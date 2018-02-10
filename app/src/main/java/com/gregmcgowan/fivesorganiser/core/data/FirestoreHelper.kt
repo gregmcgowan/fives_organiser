@@ -3,10 +3,12 @@ package com.gregmcgowan.fivesorganiser.core.data
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
+import javax.inject.Inject
 import kotlin.coroutines.experimental.suspendCoroutine
 
-class FirestoreHelper(private val authentication: Authentication,
-                      private val firebaseFirestore: FirebaseFirestore) {
+
+class FirestoreHelper @Inject constructor(private val authentication: Authentication,
+                                          private val firebaseFirestore: FirebaseFirestore) {
 
 
     fun getUserDocRef(): DocumentReference {
@@ -27,10 +29,35 @@ class FirestoreHelper(private val authentication: Authentication,
                 }
     }
 
+    suspend fun setData(collectionReference: CollectionReference,
+                        documentId: String,
+                        data: Map<String, Any>): Unit = suspendCoroutine { cont ->
+        collectionReference
+                .document(documentId)
+                .set(data)
+                .addOnSuccessListener { void ->
+                    cont.resume(Unit)
+                }
+                .addOnFailureListener { exception ->
+                    cont.resumeWithException(exception)
+                }
+    }
+
+    suspend fun addData(collectionReference: CollectionReference,
+                        data: Map<String, Any>): String = suspendCoroutine { cont ->
+        collectionReference
+                .add(data)
+                .addOnSuccessListener { docReference ->
+                    cont.resume(docReference.id)
+                }
+                .addOnFailureListener { exception ->
+                    cont.resumeWithException(exception)
+                }
+    }
 
     suspend fun setData(documentReference: DocumentReference,
                         data: Map<String, Any>,
-                        setOptions: SetOptions? = null): Any = suspendCoroutine { cont ->
+                        setOptions: SetOptions? = null): Unit = suspendCoroutine { cont ->
         val setRef: Task<Void>
         if (setOptions != null) {
             setRef = documentReference.set(data, setOptions)
@@ -40,7 +67,7 @@ class FirestoreHelper(private val authentication: Authentication,
 
         setRef
                 .addOnCompleteListener {
-                    cont.resume(1)
+                    cont.resume(Unit)
                 }
                 .addOnFailureListener { exception ->
                     cont.resumeWithException(exception)

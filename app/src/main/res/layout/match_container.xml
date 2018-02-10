@@ -3,7 +3,6 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,21 +15,13 @@
             android:elevation="4dp"
             android:theme="?attr/actionBarTheme"
             app:popupTheme="?attr/actionBarPopupTheme"
-    />
+            />
 
-
-    <include
-            android:id="@+id/match_content"
-            layout="@layout/match_content"
+    <FrameLayout
+            android:id="@+id/match_fragment_container"
             android:layout_below="@id/match_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    <ProgressBar
-            android:id="@+id/match_progress_bar"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:visibility="gone"/>
 
 </RelativeLayout>

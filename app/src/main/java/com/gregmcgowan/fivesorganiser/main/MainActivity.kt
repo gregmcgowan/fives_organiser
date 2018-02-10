@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.main
 
-import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -10,14 +10,13 @@ import android.view.View
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.getApp
+import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisible
 import com.gregmcgowan.fivesorganiser.main.MainScreen.*
 import com.gregmcgowan.fivesorganiser.main.matchList.MatchListFragment
 import com.gregmcgowan.fivesorganiser.main.playerList.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
+import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
@@ -27,22 +26,27 @@ class MainActivity : BaseActivity() {
 
     private lateinit var mainViewModel: MainViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setSupportActionBar(find<Toolbar>(R.id.main_toolbar).value)
 
+        DaggerMainComponent
+                .builder()
+                .appComponent(appComponent)
+                .build()
+                .inject(this)
 
         mainViewModel = ViewModelProviders
-                .of(this, MainViewModelFactory(getApp().dependencies, UI, CommonPool))
+                .of(this, viewModelFactory)
                 .get(MainViewModel::class.java)
 
-        mainViewModel.uiModelLiveData().observe(this,
-                Observer<MainScreenUiModel> { uiModel ->
-                    uiModel?.let {
-                        render(it)
-                    }
-                })
+        mainViewModel
+                .uiModelLiveData()
+                .observeNonNull(this, { render(it) })
 
         bottomNavigation.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -61,9 +65,9 @@ class MainActivity : BaseActivity() {
         content.setVisible(mainScreenUiModel.showContent)
         if (mainScreenUiModel.showContent) {
             when (mainScreenUiModel.screenToShow) {
-                is PlayersScreen -> showFragment(PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG)
-                is MatchesScreen -> showFragment(MatchListFragment.MATCH_LIST_FRAGMENT_TAG)
-                is ResultsScreen -> showFragment(ResultsFragment.RESULTS_FRAGMENT_TAG)
+                PlayersScreen -> showFragment(PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG)
+                MatchesScreen -> showFragment(MatchListFragment.MATCH_LIST_FRAGMENT_TAG)
+                ResultsScreen -> showFragment(ResultsFragment.RESULTS_FRAGMENT_TAG)
             }
         }
     }

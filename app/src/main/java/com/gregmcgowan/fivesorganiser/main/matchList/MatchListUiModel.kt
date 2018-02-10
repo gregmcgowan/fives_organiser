@@ -13,7 +13,6 @@ data class MatchListItemUiModel(val matchId: String,
                                 val location: String,
                                 val dateAndTime: String)
 
-
 sealed class MatchListNavigationEvents {
     object Idle : MatchListNavigationEvents()
     object AddMatchEvent : MatchListNavigationEvents()

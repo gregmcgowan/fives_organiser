@@ -41,13 +41,9 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
         }
     }
 
-    override fun getItemCount(): Int {
-        return contactList.size
-    }
+    override fun getItemCount(): Int = contactList.size
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ContactViewHolder {
         return ContactViewHolder(LayoutInflater.from(parent?.context)

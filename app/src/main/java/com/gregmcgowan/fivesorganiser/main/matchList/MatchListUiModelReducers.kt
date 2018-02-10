@@ -1,7 +1,7 @@
 package com.gregmcgowan.fivesorganiser.main.matchList
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
-import com.gregmcgowan.fivesorganiser.core.data.match.Match
+import com.gregmcgowan.fivesorganiser.match.Match
 
 typealias MatchListUiModelReducer = (MatchListUiModel) -> MatchListUiModel
 

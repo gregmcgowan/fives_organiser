@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.team
+package com.gregmcgowan.fivesorganiser.core.ui
 
 import android.content.Context
 import android.graphics.Canvas

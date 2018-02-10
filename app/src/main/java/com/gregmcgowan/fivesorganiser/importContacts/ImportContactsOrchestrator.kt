@@ -2,9 +2,10 @@ package com.gregmcgowan.fivesorganiser.importContacts
 
 import com.gregmcgowan.fivesorganiser.core.data.player.Player
 import com.gregmcgowan.fivesorganiser.core.data.player.PlayerRepo
+import javax.inject.Inject
 
-class ImportContactsOrchestrator(private val playersRepo: PlayerRepo,
-                                 private val contactsImporter: ContactImporter) {
+class ImportContactsOrchestrator @Inject constructor(private val playersRepo: PlayerRepo,
+                                                     private val contactsImporter: ContactImporter) {
 
     suspend fun saveSelectedContacts(selectedContacts: Set<Long>) {
         contactsImporter.getAllContacts()

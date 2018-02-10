@@ -21,12 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
                 android:name=".importContacts.ImportContactsActivity"
                 android:label="@string/import_contacts_title"/>
-        <activity
-                android:name=".team.SelectTeamActivity"
-                android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
                 android:name=".match.MatchActivity"

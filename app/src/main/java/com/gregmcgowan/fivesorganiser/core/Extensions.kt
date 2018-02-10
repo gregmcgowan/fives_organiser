@@ -1,6 +1,10 @@
 package com.gregmcgowan.fivesorganiser.core
 
 import android.app.Activity
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.pm.PackageManager
 import android.support.annotation.IdRes
@@ -14,7 +18,11 @@ import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 
 
+fun <T> MutableLiveData<T>.getNonNull() : T = this.value ?: throw IllegalStateException("live data cannot be null")
+
 fun Activity.getApp(): FivesOrganiserApp = this.application as FivesOrganiserApp
+
+fun Fragment.getApp(): FivesOrganiserApp = this.activity?.application as FivesOrganiserApp
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : View> Activity.find(@IdRes id: Int): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(id) }
@@ -56,4 +64,13 @@ fun View.setVisible(visible: Boolean) {
 
 fun Context.hasPermission(permission: String): Boolean =
         ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+
+
+inline fun <T> LiveData<T>.observeNonNull(owner: LifecycleOwner, crossinline observer: (T) -> Unit) {
+    this.observe(owner, Observer {
+        it?.let {
+            observer(it)
+        }
+    })
+}
 

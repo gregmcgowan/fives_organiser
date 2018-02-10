@@ -8,9 +8,10 @@ import kotlinx.coroutines.experimental.withTimeout
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.coroutines.experimental.suspendCoroutine
 
-class FirebaseAuthentication(private val firebaseAuth: FirebaseAuth) : Authentication {
+class FirebaseAuthentication @Inject constructor(private val firebaseAuth: FirebaseAuth) : Authentication {
 
     private val tag = "FirebaseAuthentication"
     private var addOnCompleteListenerTask: Task<AuthResult>? = null
@@ -62,12 +63,12 @@ class FirebaseAuthentication(private val firebaseAuth: FirebaseAuth) : Authentic
         return false
     }
 
-    private fun handleCompletedResult(authResult : AuthResult) {
-                firebaseAuth.currentUser?.let {
-                    this.currentUser = it
-                    this.currentUserId = it.uid
-                    //TODO move data stored under fake ID to real Id store
-                    Timber.d("Initialise with currentUser $currentUserId")
+    private fun handleCompletedResult(authResult: AuthResult) {
+        firebaseAuth.currentUser?.let {
+            this.currentUser = it
+            this.currentUserId = it.uid
+            //TODO move data stored under fake ID to real Id store
+            Timber.d("Initialise with currentUser $currentUserId")
 //                }
 //            } else {
 //                currentUserId = fakeUserId

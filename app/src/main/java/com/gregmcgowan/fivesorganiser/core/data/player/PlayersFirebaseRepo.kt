@@ -4,6 +4,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.gregmcgowan.fivesorganiser.core.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.core.data.ID_KEY
 import kotlinx.coroutines.experimental.runBlocking
+import javax.inject.Inject
 
 private const val PLAYERS_KEY = "Players"
 private const val NAME_KEY = "Name"
@@ -12,15 +13,15 @@ private const val PHONE_NUMBER = "PhoneNumber"
 private const val CONTACT_ID = "ContactId"
 private const val TIMESTAMP_KEY = "timestamp"
 
-class PlayersFirebaseRepo(private val firestoreHelper: FirestoreHelper) : PlayerRepo {
+class PlayersFirebaseRepo @Inject constructor (private val firestoreHelper: FirestoreHelper) : PlayerRepo {
 
-    suspend override fun getPlayers(): List<Player> {
+    override suspend fun getPlayers(): List<Player> {
         return firestoreHelper
                 .runQuery(getPlayersRef().orderBy(NAME_KEY))
                 .documents
                 .mapTo(mutableListOf()) {
                     val data = it.data
-                    data.put(ID_KEY, it.id)
+                    data[ID_KEY] = it.id
                     mapToPlayer(data)
                 }
 
@@ -31,11 +32,11 @@ class PlayersFirebaseRepo(private val firestoreHelper: FirestoreHelper) : Player
                                    phoneNumber: String,
                                    contactId: Long) {
         val map = mutableMapOf<String, Any>()
-        map.put(NAME_KEY, name)
-        map.put(EMAIL_KEY, email)
-        map.put(PHONE_NUMBER, phoneNumber)
-        map.put(CONTACT_ID, contactId)
-        map.put(TIMESTAMP_KEY, System.currentTimeMillis())
+        map[NAME_KEY] = name
+        map[EMAIL_KEY] = email
+        map[PHONE_NUMBER] = phoneNumber
+        map[CONTACT_ID] = contactId
+        map[TIMESTAMP_KEY] = System.currentTimeMillis()
 
         runBlocking {
             getPlayersRef()

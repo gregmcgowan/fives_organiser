@@ -1,17 +1,10 @@
 package com.gregmcgowan.fivesorganiser.core
 
-import android.os.Bundle
-import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
-import com.gregmcgowan.fivesorganiser.BuildConfig
-import com.gregmcgowan.fivesorganiser.Dependencies
+import com.gregmcgowan.fivesorganiser.core.di.AppComponent
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    val dependencies: Dependencies get() = getApp().dependencies
+    val appComponent: AppComponent get() = getApp().appComponent
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //FragmentManager.enableDebugLogging(BuildConfig.DEBUG)
-    }
 }

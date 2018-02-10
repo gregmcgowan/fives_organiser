@@ -13,6 +13,7 @@ import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>() {
 
     private var matches: MutableList<MatchListItemUiModel> = mutableListOf()
+
     var matchListInteraction: MatchListInteraction? = null
 
     fun setMatches(newMatches: MutableList<MatchListItemUiModel>) {

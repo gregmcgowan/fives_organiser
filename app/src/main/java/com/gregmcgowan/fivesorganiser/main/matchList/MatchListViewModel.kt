@@ -1,32 +1,35 @@
 package com.gregmcgowan.fivesorganiser.main.matchList
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
-import com.gregmcgowan.fivesorganiser.core.data.match.MatchRepo
-import com.gregmcgowan.fivesorganiser.core.ui.NonNullMutableLiveData
+import com.gregmcgowan.fivesorganiser.core.getNonNull
 import com.gregmcgowan.fivesorganiser.main.matchList.MatchListNavigationEvents.AddMatchEvent
 import com.gregmcgowan.fivesorganiser.main.matchList.MatchListNavigationEvents.MatchSelected
+import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
 import timber.log.Timber
-import kotlin.coroutines.experimental.CoroutineContext
+import javax.inject.Inject
 
-class MatchListViewModel(ui: CoroutineContext,
-                         background: CoroutineContext,
-                         private val matchRepo: MatchRepo,
-                         private val dateTimeFormatter: ZonedDateTimeFormatter) : CoroutinesViewModel(ui, background) {
+class MatchListViewModel @Inject constructor(coroutineContext: CoroutineContexts,
+                                             private val matchOrchestrator: MatchOrchestrator,
+                                             private val dateTimeFormatter: ZonedDateTimeFormatter) : CoroutinesViewModel(coroutineContext) {
 
-    private val matchListUiModelLiveData = NonNullMutableLiveData(
-            MatchListUiModel(
-                    showList = false,
-                    showProgressBar = true,
-                    showEmptyView = false,
-                    emptyMessage = null,
-                    matches = emptyList()
-            )
-    )
-    private val navigationLiveData = NonNullMutableLiveData<MatchListNavigationEvents>(
-            MatchListNavigationEvents.Idle
-    )
+    private val matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
+    private val navigationLiveData = MutableLiveData<MatchListNavigationEvents>()
+
+    init {
+        matchListUiModelLiveData.value = MatchListUiModel(
+                showList = false,
+                showProgressBar = true,
+                showEmptyView = false,
+                emptyMessage = null,
+                matches = emptyList()
+        )
+
+        navigationLiveData.value = MatchListNavigationEvents.Idle
+    }
 
     fun uiModelLiveData(): LiveData<MatchListUiModel> {
         return matchListUiModelLiveData
@@ -40,14 +43,14 @@ class MatchListViewModel(ui: CoroutineContext,
         navigationLiveData.value = MatchListNavigationEvents.Idle
         updateUiModel(loadingMatchListUiModel())
         runOnBackgroundAndUpdateOnUI(
-                backgroundBlock = { matchListUiModel(matchRepo.getAllMatches(), dateTimeFormatter) },
+                backgroundBlock = { matchListUiModel(matchOrchestrator.getAllMatches(), dateTimeFormatter) },
                 uiBlock = { uiModel -> updateUiModel(uiModel) }
         )
     }
 
     private fun updateUiModel(reducer: MatchListUiModelReducer) {
+        matchListUiModelLiveData.value = reducer.invoke(matchListUiModelLiveData.getNonNull())
         Timber.d("Setting match list UI model to ${matchListUiModelLiveData.value}")
-        matchListUiModelLiveData.value = reducer.invoke(matchListUiModelLiveData.getNonNullValue())
     }
 
     fun addMatchButtonPressed() {

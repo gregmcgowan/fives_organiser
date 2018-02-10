@@ -1,9 +1,10 @@
-package com.gregmcgowan.fivesorganiser.match
+package com.gregmcgowan.fivesorganiser.match.summary
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
-import com.gregmcgowan.fivesorganiser.core.data.match.Match
+import com.gregmcgowan.fivesorganiser.match.Match
+import javax.inject.Inject
 
-class MatchUiModelReducers(private val instantFormatter: ZonedDateTimeFormatter) {
+class MatchSummaryUiModelReducers @Inject constructor(private val instantFormatter: ZonedDateTimeFormatter) {
 
     internal fun savingUiModel(): MatchUiModelReducer = { model ->
         model.copy(loading = true, showContent = false)
@@ -22,8 +23,8 @@ class MatchUiModelReducers(private val instantFormatter: ZonedDateTimeFormatter)
     }
 
     internal fun numberOfPlayersUpdatedReduce(match: Match): MatchUiModelReducer = { model ->
-        if (match.squadSize > 0) {
-            model.copy(numberOfPLayers = match.squadSize.toString())
+        if (match.squad.size > 0) {
+            model.copy(numberOfPLayers = match.squad.size.toString())
         } else {
             model
         }
@@ -31,18 +32,18 @@ class MatchUiModelReducers(private val instantFormatter: ZonedDateTimeFormatter)
 
     internal fun displayMatchReducer(match: Match, new: Boolean): MatchUiModelReducer = { model ->
         val numberOfPlayers: String
-        if (match.squadSize > 0) {
-            numberOfPlayers = match.squadSize.toString()
+        if (match.squad.size > 0) {
+            numberOfPlayers = match.squad.size.toString()
         } else {
             numberOfPlayers = ""
         }
 
+        // TODO get from string resources
         val title: String = if (new) {
             "New match"
         } else {
             "Update match"
         }
-
 
         model.copy(
                 title = title,

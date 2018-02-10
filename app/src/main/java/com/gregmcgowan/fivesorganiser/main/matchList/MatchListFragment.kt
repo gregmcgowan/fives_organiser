@@ -1,28 +1,27 @@
 package com.gregmcgowan.fivesorganiser.main.matchList
 
-import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
+import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.getApp
+import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisible
-import com.gregmcgowan.fivesorganiser.main.MainViewModelFactory
+import com.gregmcgowan.fivesorganiser.main.matchList.MatchListAdapter.MatchListInteraction
 import com.gregmcgowan.fivesorganiser.main.matchList.MatchListNavigationEvents.AddMatchEvent
 import com.gregmcgowan.fivesorganiser.main.matchList.MatchListNavigationEvents.MatchSelected
 import com.gregmcgowan.fivesorganiser.match.createMatchIntent
 import com.gregmcgowan.fivesorganiser.match.editMatchIntent
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
+import javax.inject.Inject
 
-class MatchListFragment : Fragment() {
+class MatchListFragment : BaseFragment() {
 
     private lateinit var addMatchButton: FloatingActionButton
     private lateinit var matchList: RecyclerView
@@ -34,8 +33,10 @@ class MatchListFragment : Fragment() {
 
     private lateinit var matchListViewModel: MatchListViewModel
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+
     companion object {
-        val MATCH_LIST_FRAGMENT_TAG = "MATCH_LIST_FRAGMENT_TAG"
+        const val MATCH_LIST_FRAGMENT_TAG = "MATCH_LIST_FRAGMENT_TAG"
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -57,33 +58,28 @@ class MatchListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        matchListAdapter.matchListInteraction = object : MatchListAdapter.MatchListInteraction {
+        matchListAdapter.matchListInteraction = object : MatchListInteraction {
             override fun matchSelected(matchId: String) {
                 matchListViewModel.matchSelected(matchId)
             }
         }
 
+        DaggerMatchListComponent
+                .builder()
+                .appComponent(appComponent)
+                .build().inject(this)
+
         activity?.let {
             matchListViewModel = ViewModelProviders
-                    .of(this, MainViewModelFactory(it.getApp().dependencies, UI, CommonPool))
+                    .of(this, viewModelFactory)
                     .get(MatchListViewModel::class.java)
 
             matchListViewModel
                     .uiModelLiveData()
-                    .observe(this,
-                            Observer<MatchListUiModel?> { uiModel ->
-                                uiModel?.let {
-                                    render(it)
-                                }
-                            })
+                    .observeNonNull(this, this@MatchListFragment::render)
             matchListViewModel
                     .navigationLiveData()
-                    .observe(this,
-                            Observer<MatchListNavigationEvents?> { navModel ->
-                                navModel?.let {
-                                    handleNavigationEvent(it)
-                                }
-                            })
+                    .observeNonNull(this, this@MatchListFragment::handleNavigationEvent)
 
             addMatchButton.setOnClickListener({
                 matchListViewModel.addMatchButtonPressed()
@@ -97,10 +93,10 @@ class MatchListFragment : Fragment() {
             is MatchSelected -> {
                 activity?.startActivity(context?.editMatchIntent(navEvent.matchId))
             }
-            is AddMatchEvent -> {
+            AddMatchEvent -> {
                 activity?.startActivity(context?.createMatchIntent())
             }
-            is MatchListNavigationEvents.Idle -> {
+            MatchListNavigationEvents.Idle -> {
                 //Do nothing
             }
         }

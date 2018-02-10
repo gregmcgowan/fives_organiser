@@ -5,8 +5,9 @@ import android.database.Cursor
 import android.provider.ContactsContract
 import android.provider.ContactsContract.Contacts
 import java.util.*
+import javax.inject.Inject
 
-class AndroidContactImporter(private val contentResolver: ContentResolver) : ContactImporter {
+class AndroidContactImporter @Inject constructor(private val contentResolver: ContentResolver) : ContactImporter {
 
     //TODO fix
     private val PROJECTION = arrayOf(Contacts._ID,

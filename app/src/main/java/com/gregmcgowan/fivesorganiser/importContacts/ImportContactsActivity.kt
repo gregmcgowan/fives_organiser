@@ -2,8 +2,6 @@ package com.gregmcgowan.fivesorganiser.importContacts
 
 import android.Manifest
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -16,13 +14,11 @@ import android.widget.Toast
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.getApp
+import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import com.gregmcgowan.fivesorganiser.core.setVisible
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlin.coroutines.experimental.CoroutineContext
+import javax.inject.Inject
 
 class ImportContactsActivity : BaseActivity(), PermissionResults {
 
@@ -33,6 +29,8 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
 
     private lateinit var importImportContactsViewModel: ImportContactsViewModel
+
+    @Inject lateinit var viewHolderFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,27 +49,24 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
             }
         }
 
+        DaggerImportContactsComponent
+                .builder()
+                .appComponent(appComponent)
+                .contentResolver(contentResolver)
+                .build()
+                .inject(this)
+
         importImportContactsViewModel = ViewModelProviders
-                .of(this,
-                        ImportContactsViewModelFactory(
-                                ImportContactsOrchestrator(getApp().dependencies.playersRepo,
-                                        AndroidContactImporter(contentResolver)), UI, CommonPool))
+                .of(this, viewHolderFactory)
                 .get(ImportContactsViewModel::class.java)
 
         importImportContactsViewModel
                 .navEvents()
-                .observe(this, Observer<ImportContactsNavEvent?> { navEvent ->
-                    navEvent?.let {
-                        handleNavEvents(it)
-                    }
-                })
+                .observeNonNull(this, this::handleNavEvents)
+
         importImportContactsViewModel
                 .uiModel()
-                .observe(this, Observer<ImportContactsUiModel> { uiModel ->
-                    uiModel?.let {
-                        render(uiModel)
-                    }
-                })
+                .observeNonNull(this, this::render)
 
         addButton.setOnClickListener { _ -> importImportContactsViewModel.onAddButtonPressed() }
 
@@ -103,7 +98,6 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
                 Toast.LENGTH_LONG).show()
     }
 
-
     private fun render(uiModel: ImportContactsUiModel) {
         progressBar.setVisible(uiModel.showLoading)
         mainContent.setVisible(uiModel.showContent)
@@ -118,13 +112,5 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
         closeScreen()
     }
 
-    class ImportContactsViewModelFactory(private val importContactsOrchestrator: ImportContactsOrchestrator,
-                                         private val uiContext: CoroutineContext,
-                                         private val backgroundContext: CoroutineContext) : ViewModelProvider.NewInstanceFactory() {
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST")
-            return ImportContactsViewModel(uiContext, backgroundContext, importContactsOrchestrator) as T
-        }
-    }
 }

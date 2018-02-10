@@ -3,8 +3,9 @@ package com.gregmcgowan.fivesorganiser.core
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
+import javax.inject.Inject
 
-class ZonedDateTimeFormatter {
+class ZonedDateTimeFormatter @Inject constructor() {
 
    private val datePattern = DateTimeFormatter.ofPattern("EE d MMM yyyy")
    private val timePattern = DateTimeFormatter.ofPattern("HH:mm")

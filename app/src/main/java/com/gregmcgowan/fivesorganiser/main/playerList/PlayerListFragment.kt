@@ -1,12 +1,11 @@
 package com.gregmcgowan.fivesorganiser.main.playerList
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -14,20 +13,19 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
+import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.getApp
+import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisible
 import com.gregmcgowan.fivesorganiser.importContacts.ImportContactsActivity
-import com.gregmcgowan.fivesorganiser.main.MainViewModelFactory
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
+import javax.inject.Inject
 
 const val IMPORT_CONTACTS = 1
 
-class PlayerListFragment : Fragment() {
+class PlayerListFragment : BaseFragment() {
 
     companion object {
-        val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"
+        const val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"
     }
 
     private lateinit var progressBar: ProgressBar
@@ -36,8 +34,12 @@ class PlayerListFragment : Fragment() {
     private lateinit var emptyStateMessage: TextView
     private lateinit var addPlayerButton: FloatingActionButton
 
-    private val playerListAdapter: PlayerListAdapter = PlayerListAdapter()
     private lateinit var playerListViewModel: PlayerListViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val playerListAdapter: PlayerListAdapter = PlayerListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -60,23 +62,25 @@ class PlayerListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        DaggerPlayerListComponent
+                .builder()
+                .appComponent(appComponent)
+                .build()
+                .inject(this)
+
         activity?.let {
             playerListViewModel = ViewModelProviders
-                    .of(this, MainViewModelFactory(it.getApp().dependencies, UI, CommonPool))
+                    .of(this, viewModelFactory)
                     .get(PlayerListViewModel::class.java)
 
-            playerListViewModel.uiModel().observe(this,
-                    Observer<PlayerListUiModel?> { uiModel ->
-                        uiModel?.let {
-                            render(it)
-                        }
-                    })
-            playerListViewModel.navigationEvents().observe(this,
-                    Observer<PlayerListNavigationEvents?> { navEvent ->
-                        navEvent?.let {
-                            handleNavEvent(navEvent)
-                        }
-                    })
+            playerListViewModel
+                    .uiModel()
+                    .observeNonNull(this, this@PlayerListFragment::render)
+
+            playerListViewModel
+                    .navigationEvents()
+                    .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
+
             addPlayerButton.setOnClickListener({
                 playerListViewModel.addPlayerButtonPressed()
             })
@@ -90,9 +94,9 @@ class PlayerListFragment : Fragment() {
 
     private fun handleNavEvent(navEvent: PlayerListNavigationEvents) {
         when (navEvent) {
-            is PlayerListNavigationEvents.AddPlayerEvent ->
+            PlayerListNavigationEvents.AddPlayerEvent ->
                 showAddPlayers()
-            is PlayerListNavigationEvents.Idle -> {
+            PlayerListNavigationEvents.Idle -> {
 
             }
         }
