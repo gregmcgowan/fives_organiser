@@ -20,9 +20,13 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
     suspend fun getData(documentReference: DocumentReference): Map<String, Any> = suspendCoroutine { cont ->
         documentReference.get()
                 .addOnCompleteListener { docSnapshot ->
-                    val data = docSnapshot.result.data
-                    data.put(ID_KEY, docSnapshot.result.id)
-                    cont.resume(data)
+                    if (docSnapshot.result.exists()) {
+                        val data = docSnapshot.result.data
+                        data[ID_KEY] = docSnapshot.result.id
+                        cont.resume(data)
+                    } else {
+                        cont.resumeWithException(Exception("Document reference ${documentReference.path} does not exist"))
+                    }
                 }
                 .addOnFailureListener { exception ->
                     cont.resumeWithException(exception)
