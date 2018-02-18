@@ -13,8 +13,8 @@ import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisible
 import com.gregmcgowan.fivesorganiser.main.MainScreen.*
-import com.gregmcgowan.fivesorganiser.main.matchList.MatchListFragment
-import com.gregmcgowan.fivesorganiser.main.playerList.PlayerListFragment
+import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListFragment
+import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
 import javax.inject.Inject
 

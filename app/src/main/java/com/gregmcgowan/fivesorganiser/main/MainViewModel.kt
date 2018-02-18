@@ -8,13 +8,14 @@ import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import com.gregmcgowan.fivesorganiser.core.getNonNull
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(coroutineContext: CoroutineContexts,
-                                        private val authentication: Authentication) : CoroutinesViewModel(coroutineContext) {
+class MainViewModel @Inject constructor(
+        coroutineContext: CoroutineContexts,
+        private val authentication: Authentication
+) : CoroutinesViewModel(coroutineContext) {
 
     private var currentScreen: MainScreen = MainScreen.PlayersScreen
 
-    var uiModelLiveData: MutableLiveData<MainScreenUiModel> = MutableLiveData<MainScreenUiModel>()
-        private set
+    var uiModelLiveData: MutableLiveData<MainScreenUiModel> = MutableLiveData()
 
     init {
         uiModelLiveData.value = MainScreenUiModel(

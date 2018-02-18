@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.experimental.suspendCoroutine
 
+const val TIMEOUT = 10L
+
 class FirebaseAuthentication @Inject constructor(private val firebaseAuth: FirebaseAuth) : Authentication {
 
     private val tag = "FirebaseAuthentication"
@@ -33,8 +35,8 @@ class FirebaseAuthentication @Inject constructor(private val firebaseAuth: Fireb
     }
 
 
-    suspend override fun initialise() {
-        withTimeout(10, TimeUnit.SECONDS, {
+    override suspend fun initialise() {
+        withTimeout(TIMEOUT, TimeUnit.SECONDS, {
             handleCompletedResult(signInAnonymously())
         })
     }

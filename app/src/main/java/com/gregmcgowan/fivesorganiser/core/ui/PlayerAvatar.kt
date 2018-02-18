@@ -17,6 +17,8 @@ class PlayerAvatar : View {
     private val mainCircleBackgroundColour: Int
     private val shadowColor: Int
 
+    private val radius = 2f
+
     private val mainCircleMargin: Float
     private val shadowPadding: Float
     private val headYOffset: Float
@@ -45,7 +47,7 @@ class PlayerAvatar : View {
         mainCircleBackgroundColour = ContextCompat.getColor(context, R.color.grey_300)
         shadowColor = ContextCompat.getColor(context, R.color.grey_400)
         shadowPaint.color = shadowColor
-        shadowPaint.maskFilter = BlurMaskFilter(2f, BlurMaskFilter.Blur.OUTER)
+        shadowPaint.maskFilter = BlurMaskFilter(radius, BlurMaskFilter.Blur.OUTER)
         shadowPaint.style = Paint.Style.STROKE
 
         val resources = resources

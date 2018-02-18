@@ -11,10 +11,12 @@ import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import javax.inject.Inject
 
-class MatchSummaryViewModel @Inject constructor(coroutineContext: CoroutineContexts,
-                                                private val matchId: String?,
-                                                private val matchOrchestrator: MatchOrchestrator,
-                                                private val matchSummaryUiModelReducers: MatchSummaryUiModelReducers) : CoroutinesViewModel(coroutineContext) {
+class MatchSummaryViewModel @Inject constructor(
+        coroutineContext: CoroutineContexts,
+        private val matchId: String?,
+        private val matchOrchestrator: MatchOrchestrator,
+        private val matchSummaryUiModelReducers: MatchSummaryUiModelReducers
+) : CoroutinesViewModel(coroutineContext) {
 
     private val matchUiModelLiveData = MutableLiveData<MatchSummaryUiModel>()
     private val matchUiNavigationLiveData = MutableLiveData<MatchSummaryUiNavigationEvent>()
@@ -48,8 +50,14 @@ class MatchSummaryViewModel @Inject constructor(coroutineContext: CoroutineConte
             } else {
                 matchStateHolder = MatchStateHolder(matchOrchestrator.getMatch(matchId))
             }
-        },
-                { updateUiModel(matchSummaryUiModelReducers.displayMatchReducer(matchStateHolder.match, matchId == null)) }
+        }, {
+            updateUiModel(
+                    matchSummaryUiModelReducers.displayMatchReducer(
+                            matchStateHolder.match,
+                            matchId == null
+                    )
+            )
+        }
         )
     }
 

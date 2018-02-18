@@ -2,6 +2,7 @@ package com.gregmcgowan.fivesorganiser.core.data
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
+
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import javax.inject.Inject
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -17,7 +18,9 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
                 .document("User ${authentication.getUserId()}")
     }
 
-    suspend fun getData(documentReference: DocumentReference): Map<String, Any> = suspendCoroutine { cont ->
+    suspend fun getData(
+            documentReference: DocumentReference
+    ): Map<String, Any> = suspendCoroutine { cont ->
         documentReference.get()
                 .addOnCompleteListener { docSnapshot ->
                     if (docSnapshot.result.exists()) {
@@ -25,7 +28,9 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
                         data[ID_KEY] = docSnapshot.result.id
                         cont.resume(data)
                     } else {
-                        cont.resumeWithException(Exception("Document reference ${documentReference.path} does not exist"))
+                        cont.resumeWithException(
+                                Exception("Document reference ${documentReference.path} " +
+                                        "does not exist"))
                     }
                 }
                 .addOnFailureListener { exception ->

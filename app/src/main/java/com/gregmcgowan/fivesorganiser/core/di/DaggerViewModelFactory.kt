@@ -41,6 +41,7 @@ class DaggerViewModelFactory @Inject constructor(
         if (creator == null) {
             throw IllegalArgumentException("unknown model class " + modelClass)
         }
+        @Suppress("TooGenericExceptionCaught", "TooGenericExceptionThrown")
         try {
             @Suppress("UNCHECKED_CAST")
             return creator.get() as T

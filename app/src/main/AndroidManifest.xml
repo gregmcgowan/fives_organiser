@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-                android:name=".importContacts.ImportContactsActivity"
+                android:name=".importcontacts.ImportContactsActivity"
                 android:label="@string/import_contacts_title"/>
 
         <activity

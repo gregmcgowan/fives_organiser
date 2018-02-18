@@ -16,7 +16,7 @@ import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchNavigator
-import com.gregmcgowan.fivesorganiser.match.squad.notInvitedPlayers.NotInvitedPlayersListFragment
+import com.gregmcgowan.fivesorganiser.match.squad.notinvitedplayers.NotInvitedPlayersListFragment
 
 class SquadFragment : BaseFragment() {
 

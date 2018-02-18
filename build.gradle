@@ -46,6 +46,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC6-3"
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -53,6 +57,16 @@ allprojects {
             url 'https://maven.google.com'
         }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
+}
+
+detekt {
+    version = "1.0.0.RC6-3"
+    profile("main") {
+        input = "$projectDir/app"
+        config = "$projectDir/quality/detekt-config.yml"
+        filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
+        output = "$projectDir/quality/reports"
     }
 }
 

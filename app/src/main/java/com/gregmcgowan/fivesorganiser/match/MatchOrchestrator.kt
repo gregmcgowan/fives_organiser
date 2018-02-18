@@ -22,10 +22,7 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
                             location: String): Match {
         return map(
                 matchRepo.createMatch(startTime, endTime, squadSize, location),
-                emptyList(),
-                emptyList(),
-                emptyList(),
-                emptyList(),
+                MatchSquadEntity(),
                 emptyMap()
         )
     }
@@ -52,10 +49,7 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
         val matchSquad = matchSquad.getMatchSquad(matchId)
         val playerMap = getPlayerMap()
         for (playerId in playerMap.keys) {
-            if (!matchSquad.confirmed.contains(playerId)
-                    || !matchSquad.invited.contains(playerId)
-                    || !matchSquad.declined.contains(playerId)
-                    || !matchSquad.unsure.contains(playerId)) {
+            if (isPlayerNotInvited(matchSquad, playerId)) {
                 playerMap[playerId]?.let {
                     uninvitedPlayers.add(it)
                 }
@@ -64,15 +58,19 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
         return uninvitedPlayers
     }
 
+    private fun isPlayerNotInvited(matchSquad: MatchSquadEntity, playerId: String): Boolean {
+        return (!matchSquad.confirmed.contains(playerId)
+                || !matchSquad.invited.contains(playerId)
+                || !matchSquad.declined.contains(playerId)
+                || !matchSquad.unsure.contains(playerId))
+    }
+
     private suspend fun mapFullMatch(match: MatchEntity, playerMap: Map<String, Player>): Match {
         val matchSquad = matchSquad.getMatchSquad(match.matchId)
 
         return map(
                 matchEntity = match,
-                confirmedPlayersIds = matchSquad.confirmed,
-                invitedPlayersIds = matchSquad.invited,
-                declinedPlayersIds = matchSquad.declined,
-                unknownPlayersIds = matchSquad.unsure,
+                matchSquad = matchSquad,
                 players = playerMap
         )
     }
@@ -107,10 +105,7 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
     }
 
     private fun map(matchEntity: MatchEntity,
-                    confirmedPlayersIds: List<String>,
-                    invitedPlayersIds: List<String>,
-                    declinedPlayersIds: List<String>,
-                    unknownPlayersIds: List<String>,
+                    matchSquad: MatchSquadEntity,
                     players: Map<String, Player>): Match {
         //TODO map ids to players
         val confirmedPlayers: List<Player> = mutableListOf()

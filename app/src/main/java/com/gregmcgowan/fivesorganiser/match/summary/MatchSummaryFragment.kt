@@ -51,7 +51,11 @@ class MatchSummaryFragment : BaseFragment() {
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.match_summary, container, false)
     }
 
@@ -73,9 +77,15 @@ class MatchSummaryFragment : BaseFragment() {
         matchSummaryViewModel.navigationEvents().observeNonNull(this, this::handleNavEvent)
         matchSummaryViewModel.matchUiModel().observeNonNull(this, this::render)
 
-        startTimeListener = TimePickerDialog.OnTimeSetListener { _, hour, minute -> matchSummaryViewModel.startTimeUpdated(hour, minute) }
-        endTimeListener = TimePickerDialog.OnTimeSetListener { _, hour, minute -> matchSummaryViewModel.endTimeUpdated(hour, minute) }
-        dateListener = DatePickerDialog.OnDateSetListener { _, year, month, date -> matchSummaryViewModel.dateUpdated(year, month, date) }
+        startTimeListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+            matchSummaryViewModel.startTimeUpdated(hour, minute)
+        }
+        endTimeListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+            matchSummaryViewModel.endTimeUpdated(hour, minute)
+        }
+        dateListener = DatePickerDialog.OnDateSetListener { _, year, month, date ->
+            matchSummaryViewModel.dateUpdated(year, month, date)
+        }
 
         startTime.setOnClickListener { matchSummaryViewModel.startTimeSelected() }
         endTime.setOnClickListener { matchSummaryViewModel.endTimeSelected() }
@@ -145,7 +155,12 @@ class MatchSummaryFragment : BaseFragment() {
         newFragment.show(fragmentManager, "datePicker")
     }
 
-    private fun showTimePicker(hour: Int, minute: Int, is24Hr: Boolean, onTimeSetListener: TimePickerDialog.OnTimeSetListener) {
+    private fun showTimePicker(
+            hour: Int,
+            minute: Int,
+            is24Hr: Boolean,
+            onTimeSetListener: TimePickerDialog.OnTimeSetListener
+    ) {
         val newFragment = TimePickerFragment.newInstance(hour, minute, is24Hr)
         newFragment.timePickerListener = onTimeSetListener
         newFragment.show(fragmentManager, "timePicker")
