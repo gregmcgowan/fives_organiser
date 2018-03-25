@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.data.player.PlayerRepo
-import com.gregmcgowan.fivesorganiser.core.getNonNull
+import com.gregmcgowan.fivesorganiser.core.requireValue
 import javax.inject.Inject
 
 class PlayerListViewModel @Inject constructor(
@@ -50,7 +50,7 @@ class PlayerListViewModel @Inject constructor(
     }
 
     private fun updateUiModel(reducer: PlayerListUiModelReducer) {
-        playerUiModelLiveData.value = reducer.invoke(playerUiModelLiveData.getNonNull())
+        playerUiModelLiveData.value = reducer.invoke(playerUiModelLiveData.requireValue())
     }
 
 }

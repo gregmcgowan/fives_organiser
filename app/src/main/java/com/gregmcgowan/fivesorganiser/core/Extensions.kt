@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
@@ -14,14 +15,22 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 
 
-fun <T> MutableLiveData<T>.getNonNull(): T = this.value
-        ?: throw IllegalStateException("live data cannot be null")
+fun Context.hasPermission(permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
+}
+
+fun Fragment.requireStartActivity(intent: Intent) {
+    requireActivity().startActivity(intent)
+}
+
+fun Fragment.requireStartActivityForResult(intent: Intent, requestCode: Int) {
+    requireActivity().startActivityForResult(intent, requestCode)
+}
 
 fun Activity.getApp(): FivesOrganiserApp = this.application as FivesOrganiserApp
 
@@ -58,8 +67,8 @@ internal fun <T : View> find(
         rootView: View
 ): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { rootView.findViewById<T>(id) }
 
-fun Spinner.setIfNotEqual(index : Int) {
-    if(this.selectedItemPosition != index) {
+fun Spinner.setIfNotEqual(index: Int) {
+    if (this.selectedItemPosition != index) {
         this.setSelection(index)
     }
 }
@@ -80,19 +89,13 @@ fun <T : Any> ArrayAdapter<T>.updateIfChanged(newValues: List<T>) {
     }
 }
 
-fun TextView.setTextIfNotEqual(text: CharSequence) {
-    if (this.text != text) {
+fun <T : TextView> T.setTextIfNotEqual(text: CharSequence) {
+    if (this.text.toString() != text.toString()) {
         this.text = text
     }
 }
 
-fun EditText.setTextIfNotEqual(text: CharSequence) {
-    if (this.text.toString() != text.toString()) {
-        this.setText(text)
-    }
-}
-
-fun View.setVisible(visible: Boolean) {
+fun View.setVisibleOrGone(visible: Boolean) {
     if (visible) {
         this.visibility = View.VISIBLE
     } else {
@@ -100,9 +103,9 @@ fun View.setVisible(visible: Boolean) {
     }
 }
 
-fun Context.hasPermission(permission: String): Boolean {
-    return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
-}
+fun <T> MutableLiveData<T>.requireValue(): T = this.value
+        ?: throw IllegalStateException("live data cannot be null")
+
 
 inline fun <T> LiveData<T>.observeNonNull(
         owner: LifecycleOwner,

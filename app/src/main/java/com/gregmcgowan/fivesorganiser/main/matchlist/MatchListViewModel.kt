@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.getNonNull
+import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.AddMatchEvent
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.MatchSelected
 import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
@@ -52,7 +52,7 @@ class MatchListViewModel @Inject constructor(
     }
 
     private fun updateUiModel(reducer: MatchListUiModelReducer) {
-        matchListUiModelLiveData.value = reducer.invoke(matchListUiModelLiveData.getNonNull())
+        matchListUiModelLiveData.value = reducer.invoke(matchListUiModelLiveData.requireValue())
         Timber.d("Setting match list UI model to ${matchListUiModelLiveData.value}")
     }
 

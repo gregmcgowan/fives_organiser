@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import com.gregmcgowan.fivesorganiser.core.getNonNull
+import com.gregmcgowan.fivesorganiser.core.requireValue
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -37,7 +37,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateUiModel(reducer: MainScreenUiModelReducer) {
-        uiModelLiveData.value = reducer.invoke(uiModelLiveData.getNonNull())
+        uiModelLiveData.value = reducer.invoke(uiModelLiveData.requireValue())
     }
 
     fun handleMenuSelection(selectedScreen: MainScreen) {

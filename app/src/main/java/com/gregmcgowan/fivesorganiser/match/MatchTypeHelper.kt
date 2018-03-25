@@ -7,13 +7,13 @@ import javax.inject.Inject
 
 class MatchTypeHelper @Inject constructor(
         strings: Strings,
-        matchTypesInfo: MatchTypesInfo
+        matchTypes: MatchTypesInfo
 ) {
 
     private val map: Map<String, Int>
 
     init {
-        val pairs = (matchTypesInfo.minTeamSize..matchTypesInfo.maxTeamSize)
+        val pairs = (matchTypes.minTeamSize..matchTypes.maxTeamSize)
                 .map {
                     strings.getString(R.string.match_types_format, it) to it
                 }

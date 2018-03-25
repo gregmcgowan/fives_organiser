@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.MainThread
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.getNonNull
+import com.gregmcgowan.fivesorganiser.core.requireValue
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,6 +17,7 @@ class ImportContactsViewModel @Inject constructor(
     private val selectedContacts: MutableSet<Long> = mutableSetOf()
     private val contactUiModelLiveData = MutableLiveData<ImportContactsUiModel>()
     private val contactUiNavLiveData = MutableLiveData<ImportContactsNavEvent>()
+            get
 
     init {
         contactUiModelLiveData.value = ImportContactsUiModel(
@@ -73,7 +74,7 @@ class ImportContactsViewModel @Inject constructor(
 
     private fun updateUiModel(reducer: ImportContactsUiModelReducer) {
         Timber.d("Setting contact list UI model to ${contactUiModelLiveData.value}")
-        setUiModel(reducer.invoke(contactUiModelLiveData.getNonNull()))
+        setUiModel(reducer.invoke(contactUiModelLiveData.requireValue()))
     }
 
     @MainThread
@@ -82,7 +83,7 @@ class ImportContactsViewModel @Inject constructor(
     }
 
     private suspend fun getUiModel(): ImportContactsUiModel {
-        return onUiContext { contactUiModelLiveData.getNonNull() }
+        return onUiContext { contactUiModelLiveData.requireValue() }
     }
 
 }

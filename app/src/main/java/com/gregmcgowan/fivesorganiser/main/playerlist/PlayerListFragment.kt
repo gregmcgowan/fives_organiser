@@ -1,9 +1,7 @@
 package com.gregmcgowan.fivesorganiser.main.playerlist
 
-import android.app.Activity
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.RecyclerView
@@ -13,11 +11,8 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.BaseFragment
-import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.core.setVisible
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsActivity
+import com.gregmcgowan.fivesorganiser.core.*
+import com.gregmcgowan.fivesorganiser.importcontacts.importContactsIntent
 import javax.inject.Inject
 
 const val IMPORT_CONTACTS = 1
@@ -28,17 +23,15 @@ class PlayerListFragment : BaseFragment() {
         const val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var playerListViewModel: PlayerListViewModel
+
     private lateinit var progressBar: ProgressBar
     private lateinit var playerList: RecyclerView
     private lateinit var emptyState: View
     private lateinit var emptyStateMessage: TextView
     private lateinit var addPlayerButton: FloatingActionButton
-
-    private lateinit var playerListViewModel: PlayerListViewModel
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
     private val playerListAdapter: PlayerListAdapter = PlayerListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -103,9 +96,7 @@ class PlayerListFragment : BaseFragment() {
     }
 
     private fun showAddPlayers() {
-        val activity = context as Activity
-        activity.startActivityForResult(Intent(activity, ImportContactsActivity::class.java),
-                IMPORT_CONTACTS)
+        requireStartActivityForResult(requireContext().importContactsIntent(), IMPORT_CONTACTS)
     }
 
     private fun render(uiModel: PlayerListUiModel) {
@@ -121,11 +112,11 @@ class PlayerListFragment : BaseFragment() {
     }
 
     private fun showProgressBar(show: Boolean) {
-        progressBar.setVisible(show)
+        progressBar.setVisibleOrGone(show)
     }
 
     private fun showPlayerList(show: Boolean) {
-        playerList.setVisible(show)
+        playerList.setVisibleOrGone(show)
     }
 
     private fun setEmptyState(message: String?) {
@@ -133,7 +124,7 @@ class PlayerListFragment : BaseFragment() {
     }
 
     private fun showEmptyState(show: Boolean) {
-        emptyState.setVisible(show)
+        emptyState.setVisibleOrGone(show)
     }
 
 

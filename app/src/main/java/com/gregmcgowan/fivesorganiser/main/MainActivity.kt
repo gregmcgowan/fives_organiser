@@ -11,7 +11,7 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.core.setVisible
+import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.main.MainScreen.*
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListFragment
 import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListFragment
@@ -20,15 +20,13 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var mainViewModel: MainViewModel
+
     private val content: View by find(R.id.main_content_group)
     private val progressBar: View by find(R.id.main_progress_bar)
     private val bottomNavigation: BottomNavigationView by find(R.id.main_bottom_navigation)
-
-
-    private lateinit var mainViewModel: MainViewModel
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +60,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun render(mainScreenUiModel: MainScreenUiModel) {
-        progressBar.setVisible(mainScreenUiModel.showLoading)
-        content.setVisible(mainScreenUiModel.showContent)
+        progressBar.setVisibleOrGone(mainScreenUiModel.showLoading)
+        content.setVisibleOrGone(mainScreenUiModel.showContent)
         if (mainScreenUiModel.showContent) {
             when (mainScreenUiModel.screenToShow) {
                 PlayersScreen -> showFragment(PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG)

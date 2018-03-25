@@ -21,6 +21,11 @@ import javax.inject.Inject
 
 class MatchSummaryFragment : BaseFragment() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var matchSummaryViewModel: MatchSummaryViewModel
+    private lateinit var matchNavigator: MatchNavigator
+
     private val content: View by find(R.id.match_content)
     private val progressBar: ProgressBar by find(R.id.match_progress_bar)
     private val startTime: TextView by find(R.id.match_start_time)
@@ -32,12 +37,6 @@ class MatchSummaryFragment : BaseFragment() {
     private val unknownPlayers: TextView by find(R.id.match_unknown_players_count)
     private val declinedPlayers: TextView by find(R.id.match_declined_players_count)
     private val matchType: Spinner by find(R.id.match_type)
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private lateinit var matchSummaryViewModel: MatchSummaryViewModel
-    private lateinit var matchNavigator: MatchNavigator
 
     private lateinit var dateListener: DatePickerDialog.OnDateSetListener
     private lateinit var startTimeListener: TimePickerDialog.OnTimeSetListener
@@ -76,27 +75,32 @@ class MatchSummaryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val matchId = activity?.intent?.getStringExtra(MATCH_ID_INTENT_EXTRA)
 
-        val toolbar = find<Toolbar>(R.id.match_toolbar).value
-
-        getAppCompatActivity().setSupportActionBar(toolbar)
+        getAppCompatActivity().setSupportActionBar(find<Toolbar>(R.id.match_toolbar).value)
         getAppCompatActivity().supportActionBar?.setHomeButtonEnabled(true)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         DaggerMatchSummaryComponent
                 .builder()
                 .appComponent(appComponent)
-                .matchId(matchId)
+                .matchId(requireActivity().intent.getStringExtra(MATCH_ID_INTENT_EXTRA))
                 .build()
                 .inject(this)
 
-        matchSummaryViewModel = ViewModelProviders.of(this, viewModelFactory)
+        matchSummaryViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
                 .get(MatchSummaryViewModel::class.java)
-        matchNavigator = ViewModelProviders.of(activity!!).get(MatchActivityViewModel::class.java)
 
-        matchSummaryViewModel.navigationEvents().observeNonNull(this, this::handleNavEvent)
-        matchSummaryViewModel.matchUiModel().observeNonNull(this, this::render)
+        matchNavigator = ViewModelProviders
+                .of(requireActivity())
+                .get(MatchActivityViewModel::class.java)
+
+        matchSummaryViewModel
+                .navigationEvents()
+                .observeNonNull(this, this::handleNavEvent)
+        matchSummaryViewModel
+                .matchUiModel()
+                .observeNonNull(this, this::render)
 
         startTimeListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
             matchSummaryViewModel.startTimeUpdated(hour, minute)
@@ -108,8 +112,11 @@ class MatchSummaryFragment : BaseFragment() {
             matchSummaryViewModel.dateUpdated(year, month, date)
         }
 
-        matchTypeSpinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item,
+        matchTypeSpinnerAdapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
                 mutableListOf())
+
         matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         matchType.adapter = matchTypeSpinnerAdapter
 
@@ -143,6 +150,20 @@ class MatchSummaryFragment : BaseFragment() {
         }
 
         matchSummaryViewModel.onViewShown()
+    }
+
+    private fun render(summaryUiModel: MatchSummaryUiModel) {
+        content.setVisibleOrGone(summaryUiModel.showContent)
+        progressBar.setVisibleOrGone(summaryUiModel.loading)
+        startTime.setTextIfNotEqual(summaryUiModel.startTime)
+        endTime.setTextIfNotEqual(summaryUiModel.endTime)
+        date.setTextIfNotEqual(summaryUiModel.date)
+        location.setTextIfNotEqual(summaryUiModel.location)
+        confirmedPlayers.setTextIfNotEqual(summaryUiModel.confirmedPlayersCount.toString())
+        unknownPlayers.setTextIfNotEqual(summaryUiModel.unknownPlayersCount.toString())
+        declinedPlayers.setTextIfNotEqual(summaryUiModel.declinedPlayersCount.toString())
+        matchTypeSpinnerAdapter.updateIfChanged(summaryUiModel.matchTypeOptions)
+        matchType.setIfNotEqual(summaryUiModel.selectedMatchTypeIndex)
     }
 
     private fun handleNavEvent(navEventSummary: MatchSummaryUiNavigationEvent) {
@@ -181,25 +202,10 @@ class MatchSummaryFragment : BaseFragment() {
             hour: Int,
             minute: Int,
             is24Hr: Boolean,
-            onTimeSetListener: TimePickerDialog.OnTimeSetListener
-    ) {
+            onTimeSetListener: TimePickerDialog.OnTimeSetListener) {
         val newFragment = TimePickerFragment.newInstance(hour, minute, is24Hr)
         newFragment.timePickerListener = onTimeSetListener
         newFragment.show(fragmentManager, "timePicker")
-    }
-
-    private fun render(summaryUiModel: MatchSummaryUiModel) {
-        content.setVisible(summaryUiModel.showContent)
-        progressBar.setVisible(summaryUiModel.loading)
-        startTime.setTextIfNotEqual(summaryUiModel.startTime)
-        endTime.setTextIfNotEqual(summaryUiModel.endTime)
-        date.setTextIfNotEqual(summaryUiModel.date)
-        location.setTextIfNotEqual(summaryUiModel.location)
-        confirmedPlayers.setTextIfNotEqual(summaryUiModel.confirmedPlayersCount.toString())
-        unknownPlayers.setTextIfNotEqual(summaryUiModel.unknownPlayersCount.toString())
-        declinedPlayers.setTextIfNotEqual(summaryUiModel.declinedPlayersCount.toString())
-        matchTypeSpinnerAdapter.updateIfChanged(summaryUiModel.matchTypeOptions)
-        matchType.setIfNotEqual(summaryUiModel.selectedMatchTypeIndex)
     }
 
 }

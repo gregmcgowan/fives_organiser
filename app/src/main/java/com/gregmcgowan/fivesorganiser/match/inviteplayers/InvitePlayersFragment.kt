@@ -2,7 +2,6 @@ package com.gregmcgowan.fivesorganiser.match.inviteplayers
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.*
@@ -11,21 +10,19 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.core.setVisible
+import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import javax.inject.Inject
 
 class InvitePlayersFragment : BaseFragment() {
 
-    private lateinit var uninvitedPlayerList: RecyclerView
-    private lateinit var progressBar: ProgressBar
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var uninvitedPlayersViewModel: InvitePlayersViewModel
     private lateinit var navigationViewModel: MatchActivityViewModel
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
+    private lateinit var uninvitedPlayerList: RecyclerView
+    private lateinit var progressBar: ProgressBar
     private val notInvitedPlayersListAdapter = InvitePlayersListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -40,10 +37,6 @@ class InvitePlayersFragment : BaseFragment() {
         uninvitedPlayerList = find<RecyclerView>(R.id.match_squad_not_invited_list).value
         progressBar = find<ProgressBar>(R.id.match_squad_not_invited_progress_bar).value
         uninvitedPlayerList.adapter = notInvitedPlayersListAdapter
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -76,8 +69,8 @@ class InvitePlayersFragment : BaseFragment() {
     }
 
     private fun render(uninvitedPlayersUiModel: InvitePlayersUiModel) {
-        progressBar.setVisible(uninvitedPlayersUiModel.showLoading)
-        uninvitedPlayerList.setVisible(uninvitedPlayersUiModel.showContent)
+        progressBar.setVisibleOrGone(uninvitedPlayersUiModel.showLoading)
+        uninvitedPlayerList.setVisibleOrGone(uninvitedPlayersUiModel.showContent)
         notInvitedPlayersListAdapter.setUninvitedPlayers(uninvitedPlayersUiModel.invitePlayersList)
     }
 

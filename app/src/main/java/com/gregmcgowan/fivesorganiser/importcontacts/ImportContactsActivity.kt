@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -17,20 +19,25 @@ import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
-import com.gregmcgowan.fivesorganiser.core.setVisible
+import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import javax.inject.Inject
 
+
+fun Context.importContactsIntent(): Intent {
+    return Intent(this, ImportContactsActivity::class.java)
+}
+
 class ImportContactsActivity : BaseActivity(), PermissionResults {
+
+    @Inject
+    lateinit var viewHolderFactory: ViewModelProvider.Factory
+    private lateinit var importImportContactsViewModel: ImportContactsViewModel
 
     private val mainContent: View  by find(R.id.import_contacts_main_content)
     private val contactList: RecyclerView  by find(R.id.import_contacts_list)
     private val progressBar: ProgressBar by find(R.id.import_contacts_progress_bar)
     private val addButton: Button by find(R.id.import_contacts_add_button)
     private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
-
-    private lateinit var importImportContactsViewModel: ImportContactsViewModel
-
-    @Inject lateinit var viewHolderFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,8 +106,8 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     }
 
     private fun render(uiModel: ImportContactsUiModel) {
-        progressBar.setVisible(uiModel.showLoading)
-        mainContent.setVisible(uiModel.showContent)
+        progressBar.setVisibleOrGone(uiModel.showLoading)
+        mainContent.setVisibleOrGone(uiModel.showContent)
         importPlayersAdapter.setContacts(uiModel.contacts)
         addButton.isEnabled = uiModel.importContactsButtonEnabled
     }

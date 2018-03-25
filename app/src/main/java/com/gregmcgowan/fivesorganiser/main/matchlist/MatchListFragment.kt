@@ -10,10 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.BaseFragment
-import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.core.setVisible
+import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListAdapter.MatchListInteraction
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.AddMatchEvent
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.MatchSelected
@@ -23,21 +20,20 @@ import javax.inject.Inject
 
 class MatchListFragment : BaseFragment() {
 
+    companion object {
+        const val MATCH_LIST_FRAGMENT_TAG = "MATCH_LIST_FRAGMENT_TAG"
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var matchListViewModel: MatchListViewModel
+
     private lateinit var addMatchButton: FloatingActionButton
     private lateinit var matchList: RecyclerView
     private lateinit var progressView: View
     private lateinit var emptyView: View
     private lateinit var emptyMessage: TextView
-
     private val matchListAdapter = MatchListAdapter()
-
-    private lateinit var matchListViewModel: MatchListViewModel
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    companion object {
-        const val MATCH_LIST_FRAGMENT_TAG = "MATCH_LIST_FRAGMENT_TAG"
-    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -91,10 +87,10 @@ class MatchListFragment : BaseFragment() {
     private fun handleNavigationEvent(navEvent: MatchListNavigationEvents) {
         when (navEvent) {
             is MatchSelected -> {
-                activity?.startActivity(context?.editMatchIntent(navEvent.matchId))
+                requireStartActivity(requireContext().editMatchIntent(navEvent.matchId))
             }
             AddMatchEvent -> {
-                activity?.startActivity(context?.createMatchIntent())
+                requireStartActivity(requireContext().createMatchIntent())
             }
             MatchListNavigationEvents.Idle -> {
                 //Do nothing
@@ -107,12 +103,11 @@ class MatchListFragment : BaseFragment() {
         matchListViewModel.onViewShown()
     }
 
-
     private fun render(matchListUIModel: MatchListUiModel) {
         matchListAdapter.setMatches(matchListUIModel.matches.toMutableList())
-        matchList.setVisible(matchListUIModel.showList)
-        progressView.setVisible(matchListUIModel.showProgressBar)
-        emptyView.setVisible(matchListUIModel.showEmptyView)
+        matchList.setVisibleOrGone(matchListUIModel.showList)
+        progressView.setVisibleOrGone(matchListUIModel.showProgressBar)
+        emptyView.setVisibleOrGone(matchListUIModel.showEmptyView)
         emptyMessage.text = matchListUIModel.emptyMessage
     }
 

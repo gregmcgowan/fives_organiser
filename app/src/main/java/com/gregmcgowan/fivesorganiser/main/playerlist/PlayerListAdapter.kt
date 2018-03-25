@@ -41,7 +41,7 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
         return PlayerViewHolder(view)
     }
 
-    class PlayerViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val playerNameTextView: TextView by find(R.id.player_name)
     }
 
