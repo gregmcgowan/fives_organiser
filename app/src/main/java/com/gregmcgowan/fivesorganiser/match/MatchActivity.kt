@@ -4,12 +4,11 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
-import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.match.squad.SquadFragment
+import com.gregmcgowan.fivesorganiser.match.MatchActivityNavigationEvent.*
+import com.gregmcgowan.fivesorganiser.match.inviteplayers.InvitePlayersFragment
 import com.gregmcgowan.fivesorganiser.match.summary.MatchSummaryFragment
 
 fun Context.editMatchIntent(matchId: String): Intent {
@@ -33,11 +32,6 @@ class MatchActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.match_container)
 
-        val toolbar = find<Toolbar>(R.id.match_toolbar).value
-        setSupportActionBar(toolbar)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         matchActivityViewModel = ViewModelProviders.of(this)
                 .get(MatchActivityViewModel::class.java)
 
@@ -48,35 +42,31 @@ class MatchActivity : BaseActivity() {
 
     private fun handleNavEvent(event: MatchActivityNavigationEvent) {
         when (event) {
-            MatchActivityNavigationEvent.ShowSummary -> showMatchSummary()
-            MatchActivityNavigationEvent.ShowSquad -> showSquad()
-            MatchActivityNavigationEvent.UpButtonPressed -> handleUpButtonPressed()
-            else -> {
-                //
-            }
-        }
-    }
-
-    private fun handleUpButtonPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack()
-        } else {
-            finish()
+            ShowSummary -> showMatchSummary()
+            ShowSquad -> showSquad()
+            CloseScreen -> finish()
         }
     }
 
     private fun showSquad() {
         supportFragmentManager.beginTransaction()
-                .add(R.id.match_fragment_container, SquadFragment())
-                .addToBackStack(null)
+                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.settle,
+                        R.anim.slide_down)
+                .add(R.id.match_fragment_container, InvitePlayersFragment())
                 .commit()
     }
 
     private fun showMatchSummary() {
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.match_fragment_container, MatchSummaryFragment())
-                .commit()
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack()
+        } else {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.match_fragment_container, MatchSummaryFragment())
+                    .commit()
+        }
     }
 
-
+    override fun onBackPressed() {
+        matchActivityViewModel.backButtonPressed()
+    }
 }

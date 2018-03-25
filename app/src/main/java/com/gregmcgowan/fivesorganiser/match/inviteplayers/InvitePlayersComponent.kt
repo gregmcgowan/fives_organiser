@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.squad.notinvitedplayers
+package com.gregmcgowan.fivesorganiser.match.inviteplayers
 
 import com.gregmcgowan.fivesorganiser.core.di.AppComponent
 import com.gregmcgowan.fivesorganiser.core.di.FragmentScope
@@ -11,15 +11,15 @@ import dagger.Component
 @Component(
         dependencies = [AppComponent::class],
         modules = [
-            NotInvitedPlayerModule::class,
+            InvitePlayerModule::class,
             MatchRepoModule::class,
             ViewModelBuilder::class
         ]
 )
 @FragmentScope
-interface NotInvitedPlayersComponent : ViewModelComponent {
+interface InvitePlayersComponent : ViewModelComponent {
 
-    fun inject(notInvitedPlayersListFragment: NotInvitedPlayersListFragment);
+    fun inject(invitePlayersFragment: InvitePlayersFragment);
 
     @Component.Builder
     interface Builder {
@@ -29,7 +29,7 @@ interface NotInvitedPlayersComponent : ViewModelComponent {
 
         fun appComponent(appComponent: AppComponent): Builder
 
-        fun build(): NotInvitedPlayersComponent
+        fun build(): InvitePlayersComponent
     }
 
 }

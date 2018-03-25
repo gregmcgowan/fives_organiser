@@ -30,18 +30,17 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
 
     override fun getItemCount(): Int = matches.size
 
-    override fun onBindViewHolder(holder: MatchViewHolder?, position: Int) {
-        holder?.let {
-            holder.locationTextView.text = matches[position].location
-            holder.dateAndTimeTextView.text = matches[position].dateAndTime
-            holder.itemView.setOnClickListener {
-                matchListInteraction?.matchSelected(matchId = matches[position].matchId)
-            }
+    override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
+        holder.locationTextView.text = matches[position].summary
+        holder.dateAndTimeTextView.text = matches[position].heading
+        holder.itemView.setOnClickListener {
+            matchListInteraction?.matchSelected(matchId = matches[position].matchId)
+
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MatchViewHolder {
-        val view = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.match_list_item, parent, false)
         return MatchViewHolder(view)
     }

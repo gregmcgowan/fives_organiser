@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.squad.notinvitedplayers
+package com.gregmcgowan.fivesorganiser.match.inviteplayers
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -16,22 +16,22 @@ import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import javax.inject.Inject
 
-class NotInvitedPlayersListFragment : BaseFragment() {
+class InvitePlayersFragment : BaseFragment() {
 
     private lateinit var uninvitedPlayerList: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var uninvitedPlayersViewModel: NotInvitedPlayersViewModel
+    private lateinit var uninvitedPlayersViewModel: InvitePlayersViewModel
     private lateinit var navigationViewModel: MatchActivityViewModel
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val notInvitedPlayersListAdapter = NotInvitedPlayersListAdapter()
+    private val notInvitedPlayersListAdapter = InvitePlayersListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.match_squad_not_invited_players_layout, container, false)
+        return inflater.inflate(R.layout.match_squad_invite_players_layout, container, false)
     }
 
     override fun onViewCreated(view: View,
@@ -53,30 +53,32 @@ class NotInvitedPlayersListFragment : BaseFragment() {
             val matchId = it.intent?.getStringExtra(MATCH_ID_INTENT_EXTRA)
                     ?: throw java.lang.IllegalArgumentException()
 
-            DaggerNotInvitedPlayersComponent
-                    .builder()
+            DaggerInvitePlayersComponent.builder()
                     .appComponent(appComponent)
                     .matchId(matchId)
                     .build()
                     .inject(this)
 
-            uninvitedPlayersViewModel = ViewModelProviders.of(this, viewModelFactory)
-                    .get(NotInvitedPlayersViewModel::class.java)
+            uninvitedPlayersViewModel = ViewModelProviders
+                    .of(this, viewModelFactory)
+                    .get(InvitePlayersViewModel::class.java)
 
-            navigationViewModel = ViewModelProviders.of(it)
+            navigationViewModel = ViewModelProviders
+                    .of(it)
                     .get(MatchActivityViewModel::class.java)
 
         }
         uninvitedPlayersViewModel
                 .uiModel()
                 .observeNonNull(this, this::render)
+
         uninvitedPlayersViewModel.onViewShown()
     }
 
-    private fun render(uninvitedPlayersUiModel: NotInvitedPlayersUiModel) {
+    private fun render(uninvitedPlayersUiModel: InvitePlayersUiModel) {
         progressBar.setVisible(uninvitedPlayersUiModel.showLoading)
         uninvitedPlayerList.setVisible(uninvitedPlayersUiModel.showContent)
-        notInvitedPlayersListAdapter.setUninvitedPlayers(uninvitedPlayersUiModel.notInvitedPlayers)
+        notInvitedPlayersListAdapter.setUninvitedPlayers(uninvitedPlayersUiModel.invitePlayersList)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

@@ -44,7 +44,7 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
         collectionReference
                 .document(documentId)
                 .set(data)
-                .addOnSuccessListener { void ->
+                .addOnSuccessListener { _ ->
                     cont.resume(Unit)
                 }
                 .addOnFailureListener { exception ->

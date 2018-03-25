@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="match_type_min_players">3</integer>
+    <integer name="match_type_max_players">11</integer>
+</resources>

@@ -20,8 +20,7 @@ sealed class MatchSummaryUiNavigationEvent {
 
 }
 
-data class MatchSummaryUiModel(val title: String,
-                               val loading: Boolean,
+data class MatchSummaryUiModel(val loading: Boolean,
                                val showContent: Boolean,
                                val success: Boolean,
                                val errorMessage: String?,
@@ -29,7 +28,8 @@ data class MatchSummaryUiModel(val title: String,
                                val startTime: String,
                                val endTime: String,
                                val location: String,
-                               val numberOfPLayers: String,
+                               val matchTypeOptions : List<String>,
+                               val selectedMatchTypeIndex : Int = -1,
                                val confirmedPlayersCount: Int = 0,
                                val unknownPlayersCount: Int = 0,
                                val declinedPlayersCount: Int = 0)

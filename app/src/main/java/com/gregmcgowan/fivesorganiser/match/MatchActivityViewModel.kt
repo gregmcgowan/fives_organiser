@@ -29,13 +29,26 @@ class MatchActivityViewModel : ViewModel(), MatchNavigator {
     }
 
     override fun upButtonPressed() {
-        matchNavEvents.value = MatchActivityNavigationEvent.UpButtonPressed
+        if(matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
+            matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
+        } else {
+            matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen
+        }
     }
+
+    override fun backButtonPressed() {
+        if(matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
+            matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
+        } else {
+            matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen
+        }
+    }
+
 }
 
 
 sealed class MatchActivityNavigationEvent {
-    object UpButtonPressed : MatchActivityNavigationEvent()
+    object CloseScreen : MatchActivityNavigationEvent()
     object ShowSummary : MatchActivityNavigationEvent()
     object ShowSquad : MatchActivityNavigationEvent()
     object ShowTeams : MatchActivityNavigationEvent()

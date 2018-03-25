@@ -32,7 +32,8 @@ class MatchStateHolder(var match: Match) {
                         match.start.second,
                         match.start.nano,
                         match.start.zone
-                ))
+                )
+        )
     }
 
     fun endTimeUpdated(hour: Int, minute: Int) {
@@ -46,7 +47,8 @@ class MatchStateHolder(var match: Match) {
                         match.end.second,
                         match.end.nano,
                         match.end.zone
-                ))
+                )
+        )
     }
 
     fun locationUpdated(location: String) {
@@ -56,4 +58,5 @@ class MatchStateHolder(var match: Match) {
     fun squadSizeUpdated(numberOfPlayers: Int) {
         match = match.copy(squad = match.squad.copy(size = numberOfPlayers.toLong()))
     }
+
 }

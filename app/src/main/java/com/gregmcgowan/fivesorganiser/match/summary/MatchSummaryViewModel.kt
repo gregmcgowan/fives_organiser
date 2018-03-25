@@ -4,9 +4,9 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.getNonNull
 import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
 import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
+import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -15,7 +15,8 @@ class MatchSummaryViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
         private val matchId: String?,
         private val matchOrchestrator: MatchOrchestrator,
-        private val matchSummaryUiModelReducers: MatchSummaryUiModelReducers
+        private val matchSummaryUiModelReducers: MatchSummaryUiModelReducers,
+        private val matchTypeHelper: MatchTypeHelper
 ) : CoroutinesViewModel(coroutineContext) {
 
     private val matchUiModelLiveData = MutableLiveData<MatchSummaryUiModel>()
@@ -25,7 +26,6 @@ class MatchSummaryViewModel @Inject constructor(
 
     init {
         matchUiModelLiveData.value = MatchSummaryUiModel(
-                title = "",
                 showContent = false,
                 loading = true,
                 success = false,
@@ -34,18 +34,21 @@ class MatchSummaryViewModel @Inject constructor(
                 startTime = "",
                 endTime = "",
                 location = "",
-                numberOfPLayers = ""
+                selectedMatchTypeIndex = -1,
+                matchTypeOptions = emptyList()
         )
 
         matchUiNavigationLiveData.value = MatchSummaryUiNavigationEvent.Idle
 
         runOnBackgroundAndUpdateOnUI({
             if (matchId == null) {
-                matchStateHolder = MatchStateHolder(matchOrchestrator.createMatch(
-                        startTime = ZonedDateTime.now(),
-                        endTime = ZonedDateTime.now().plusHours(1),
-                        squadSize = 10,
-                        location = "")
+                matchStateHolder = MatchStateHolder(
+                        matchOrchestrator.createMatch(
+                                startTime = ZonedDateTime.now(),
+                                endTime = ZonedDateTime.now().plusHours(1),
+                                squadSize = 10,
+                                location = ""
+                        )
                 )
             } else {
                 matchStateHolder = MatchStateHolder(matchOrchestrator.getMatch(matchId))
@@ -53,12 +56,10 @@ class MatchSummaryViewModel @Inject constructor(
         }, {
             updateUiModel(
                     matchSummaryUiModelReducers.displayMatchReducer(
-                            matchStateHolder.match,
-                            matchId == null
+                            matchStateHolder.match
                     )
             )
-        }
-        )
+        })
     }
 
     fun navigationEvents(): LiveData<MatchSummaryUiNavigationEvent> {
@@ -75,9 +76,8 @@ class MatchSummaryViewModel @Inject constructor(
 
     private fun updateUiModel(reducer: MatchUiModelReducer) {
         matchUiModelLiveData.value?.let {
-
+            matchUiModelLiveData.value = reducer.invoke(it)
             Timber.d("Setting match UI model to ${matchUiModelLiveData.value}")
-            matchUiModelLiveData.value = reducer.invoke(matchUiModelLiveData.getNonNull())
         }
     }
 
@@ -134,11 +134,6 @@ class MatchSummaryViewModel @Inject constructor(
         updateUiModel(matchSummaryUiModelReducers.locationUpdatedReducer(matchStateHolder.match))
     }
 
-    fun squadSizeUpdated(numberOfPlayers: Int) {
-        matchStateHolder.squadSizeUpdated(numberOfPlayers)
-        updateUiModel(matchSummaryUiModelReducers.numberOfPlayersUpdatedReduce(matchStateHolder.match))
-    }
-
     fun saveButtonPressed() {
         updateUiModel(matchSummaryUiModelReducers.savingUiModel())
         runOnBackgroundAndUpdateOnUI(
@@ -149,6 +144,11 @@ class MatchSummaryViewModel @Inject constructor(
 
     fun closeButtonPressed() {
         matchUiNavigationLiveData.value = MatchSummaryUiNavigationEvent.CloseScreen
+    }
+
+    fun matchTypeSelected(matchType: String) {
+        matchStateHolder.squadSizeUpdated(matchTypeHelper.getSquadSize(matchType))
+        updateUiModel(matchSummaryUiModelReducers.matchTypeUpdated(matchStateHolder.match))
     }
 
 

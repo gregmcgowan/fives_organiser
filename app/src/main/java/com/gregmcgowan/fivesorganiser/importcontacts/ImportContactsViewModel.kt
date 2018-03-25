@@ -15,7 +15,6 @@ class ImportContactsViewModel @Inject constructor(
 ) : CoroutinesViewModel(coroutineContexts) {
 
     private val selectedContacts: MutableSet<Long> = mutableSetOf()
-
     private val contactUiModelLiveData = MutableLiveData<ImportContactsUiModel>()
     private val contactUiNavLiveData = MutableLiveData<ImportContactsNavEvent>()
 
@@ -58,7 +57,8 @@ class ImportContactsViewModel @Inject constructor(
         updateUiModel(loadingUiModel())
         runOnBackgroundAndUpdateOnUI(
                 backgroundBlock = { orchestrator.saveSelectedContacts(selectedContacts) },
-                uiBlock = { contactUiNavLiveData.value = ImportContactsNavEvent.CloseScreen })
+                uiBlock = { contactUiNavLiveData.value = ImportContactsNavEvent.CloseScreen }
+        )
     }
 
     fun contactSelected(contactId: Long) {

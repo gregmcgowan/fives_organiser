@@ -7,13 +7,13 @@ buildscript {
         minSdkVersion = 21
         targetSdkVersion = 27
         compileSdkVersion = 27
-        buildToolsVersion = '26.0.2'
+        buildToolsVersion = '27.0.3'
 
         // App dependencies
         daggerVersion = '2.14.1'
-        kotlinVersion = '1.2.21'
+        kotlinVersion = '1.2.30'
         coroutinesVersion = '0.21'
-        supportLibraryVersion = '27.0.2'
+        supportLibraryVersion = '27.1.0'
         constraintLayoutVersion = '1.1.0-beta4'
         lifeCyclesRuntimesVersion = '1.1.0'
         lifeCyclesExtensionsVersion = '1.1.0'
@@ -36,9 +36,10 @@ buildscript {
         maven {
             url 'https://maven.google.com'
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha06'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

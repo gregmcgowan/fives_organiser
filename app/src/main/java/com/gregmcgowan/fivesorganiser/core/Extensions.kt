@@ -13,7 +13,9 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 
@@ -56,6 +58,28 @@ internal fun <T : View> find(
         rootView: View
 ): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { rootView.findViewById<T>(id) }
 
+fun Spinner.setIfNotEqual(index : Int) {
+    if(this.selectedItemPosition != index) {
+        this.setSelection(index)
+    }
+}
+
+fun <T : Any> ArrayAdapter<T>.getItems(): List<T> {
+    if (this.count == 0) {
+        return emptyList()
+    }
+    return (0 until this.count).map { getItem(it) }
+}
+
+fun <T : Any> ArrayAdapter<T>.updateIfChanged(newValues: List<T>) {
+    val existingItems = this.getItems()
+    if (existingItems != newValues) {
+        this.clear()
+        this.addAll(newValues)
+        this.notifyDataSetChanged()
+    }
+}
+
 fun TextView.setTextIfNotEqual(text: CharSequence) {
     if (this.text != text) {
         this.text = text
@@ -76,12 +100,9 @@ fun View.setVisible(visible: Boolean) {
     }
 }
 
-fun Context.hasPermission(
-        permission: String
-): Boolean {
+fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
 }
-
 
 inline fun <T> LiveData<T>.observeNonNull(
         owner: LifecycleOwner,

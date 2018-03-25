@@ -8,8 +8,6 @@
 
     <string name="import_contacts_title">Import Contacts</string>
 
-
-
     <string name="no_results_message">No results yet!</string>
     <string name="no_matches_message">No matches</string>
 
@@ -21,11 +19,23 @@
     <string name="match_date_and_time_title">Date and Time</string>
     <string name="match_location_title">Location</string>
     <string name="match_squad_status">Status</string>
-    <string name="match_update_squad_button_text">Update Squad</string>
+    <string name="match_update_squad_button_text">Update</string>
     <string name="match_squad_size_required_label">required</string>
     <string name="match_current_status_label_text">Current</string>
+    <string name="match_list_summary_format">%1$s at %2$s</string>
 
     <string name="squad_not_invited_players_tab_text">Still to invite</string>
     <string name="squad_invited_players_tab_text">Invited</string>
 
+    <string name="match_types_format">%1$d a-side</string>
+    <string name="match_type">Match Type</string>
+
+    <string-array name="player_invitation_status">
+        <item/>
+        <item>Invited</item>
+        <item>Confirmed</item>
+        <item>Unsure</item>
+        <item>Not Available</item>
+    </string-array>
+    
 </resources>

@@ -5,13 +5,11 @@ import android.app.TimePickerDialog
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
@@ -29,11 +27,11 @@ class MatchSummaryFragment : BaseFragment() {
     private val endTime: TextView by find(R.id.match_end_time)
     private val date: TextView by find(R.id.match_date)
     private val location: EditText by find(R.id.match_location)
-    private val squadSize: EditText by find(R.id.match_squad_size)
     private val updateSquadButton: Button by find(R.id.match_update_squad_button)
     private val confirmedPlayers: TextView by find(R.id.match_confirmed_players_count)
     private val unknownPlayers: TextView by find(R.id.match_unknown_players_count)
     private val declinedPlayers: TextView by find(R.id.match_declined_players_count)
+    private val matchType: Spinner by find(R.id.match_type)
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -44,12 +42,12 @@ class MatchSummaryFragment : BaseFragment() {
     private lateinit var dateListener: DatePickerDialog.OnDateSetListener
     private lateinit var startTimeListener: TimePickerDialog.OnTimeSetListener
     private lateinit var endTimeListener: TimePickerDialog.OnTimeSetListener
+    private lateinit var matchTypeSpinnerAdapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -59,9 +57,32 @@ class MatchSummaryFragment : BaseFragment() {
         return inflater.inflate(R.layout.match_summary, container, false)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.clear()
+        inflater?.inflate(R.menu.add_edit_match, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item?.let {
+            when (item.itemId) {
+                R.id.save_match -> matchSummaryViewModel.saveButtonPressed()
+                R.id.home -> matchNavigator.upButtonPressed()
+            }
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val matchId = activity?.intent?.getStringExtra(MATCH_ID_INTENT_EXTRA)
+
+        val toolbar = find<Toolbar>(R.id.match_toolbar).value
+
+        getAppCompatActivity().setSupportActionBar(toolbar)
+        getAppCompatActivity().supportActionBar?.setHomeButtonEnabled(true)
+        getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         DaggerMatchSummaryComponent
                 .builder()
@@ -87,6 +108,11 @@ class MatchSummaryFragment : BaseFragment() {
             matchSummaryViewModel.dateUpdated(year, month, date)
         }
 
+        matchTypeSpinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item,
+                mutableListOf())
+        matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        matchType.adapter = matchTypeSpinnerAdapter
+
         startTime.setOnClickListener { matchSummaryViewModel.startTimeSelected() }
         endTime.setOnClickListener { matchSummaryViewModel.endTimeSelected() }
         date.setOnClickListener { matchSummaryViewModel.dateSelected() }
@@ -102,19 +128,15 @@ class MatchSummaryFragment : BaseFragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
-        squadSize.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                if (squadSize.text.isNotEmpty()) {
-                    matchSummaryViewModel.squadSizeUpdated(squadSize.text.toString().toInt())
-                }
+        matchType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(adapter: AdapterView<*>?) {
             }
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            override fun onItemSelected(adapter: AdapterView<*>, view: View, position: Int, id: Long) {
+                val itemAtPosition = adapter.getItemAtPosition(position) as String
+                matchSummaryViewModel.matchTypeSelected(itemAtPosition)
             }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
+        }
 
         updateSquadButton.setOnClickListener {
             matchNavigator.showMatchSquad()
@@ -173,30 +195,11 @@ class MatchSummaryFragment : BaseFragment() {
         endTime.setTextIfNotEqual(summaryUiModel.endTime)
         date.setTextIfNotEqual(summaryUiModel.date)
         location.setTextIfNotEqual(summaryUiModel.location)
-        squadSize.setTextIfNotEqual(summaryUiModel.numberOfPLayers)
         confirmedPlayers.setTextIfNotEqual(summaryUiModel.confirmedPlayersCount.toString())
         unknownPlayers.setTextIfNotEqual(summaryUiModel.unknownPlayersCount.toString())
         declinedPlayers.setTextIfNotEqual(summaryUiModel.declinedPlayersCount.toString())
-        activity?.title = summaryUiModel.title
+        matchTypeSpinnerAdapter.updateIfChanged(summaryUiModel.matchTypeOptions)
+        matchType.setIfNotEqual(summaryUiModel.selectedMatchTypeIndex)
     }
-
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.clear()
-        inflater?.inflate(R.menu.add_edit_match, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.let {
-            when (item.itemId) {
-                R.id.save_match -> matchSummaryViewModel.saveButtonPressed()
-                R.id.home -> matchNavigator.upButtonPressed()
-            }
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
 
 }

@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
 import com.gregmcgowan.fivesorganiser.core.getNonNull
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.AddMatchEvent
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.MatchSelected
@@ -15,7 +14,7 @@ import javax.inject.Inject
 class MatchListViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
         private val matchOrchestrator: MatchOrchestrator,
-        private val dateTimeFormatter: ZonedDateTimeFormatter
+        private val matchListUiModelReducers: MatchListUiModelReducers
 ) : CoroutinesViewModel(coroutineContext) {
 
     private val matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
@@ -43,10 +42,10 @@ class MatchListViewModel @Inject constructor(
 
     fun onViewShown() {
         navigationLiveData.value = MatchListNavigationEvents.Idle
-        updateUiModel(loadingMatchListUiModel())
+        updateUiModel(matchListUiModelReducers.loadingMatchListUiModel())
         runOnBackgroundAndUpdateOnUI(
                 backgroundBlock = {
-                    matchListUiModel(matchOrchestrator.getAllMatches(), dateTimeFormatter)
+                    matchListUiModelReducers.matchListUiModel(matchOrchestrator.getAllMatches())
                 },
                 uiBlock = { uiModel -> updateUiModel(uiModel) }
         )

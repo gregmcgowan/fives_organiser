@@ -24,6 +24,7 @@ class MainActivity : BaseActivity() {
     private val progressBar: View by find(R.id.main_progress_bar)
     private val bottomNavigation: BottomNavigationView by find(R.id.main_bottom_navigation)
 
+
     private lateinit var mainViewModel: MainViewModel
 
     @Inject

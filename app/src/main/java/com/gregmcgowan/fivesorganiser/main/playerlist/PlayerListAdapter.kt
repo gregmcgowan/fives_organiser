@@ -30,12 +30,13 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
 
     override fun getItemCount(): Int = playerList.size
 
-    override fun onBindViewHolder(holder: PlayerViewHolder?, position: Int) {
-        holder?.let { holder.playerNameTextView.text = playerList[position].name }
+    override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
+        holder.playerNameTextView.text = playerList[position].name
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): PlayerViewHolder {
-        val view = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
+        val view = LayoutInflater
+                .from(parent.context)
                 .inflate(R.layout.player_list_item, parent, false)
         return PlayerViewHolder(view)
     }

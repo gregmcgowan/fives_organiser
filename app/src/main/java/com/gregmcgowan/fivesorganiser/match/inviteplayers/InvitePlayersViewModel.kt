@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.squad.notinvitedplayers
+package com.gregmcgowan.fivesorganiser.match.inviteplayers
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
@@ -8,23 +8,23 @@ import com.gregmcgowan.fivesorganiser.core.data.player.Player
 import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
 import javax.inject.Inject
 
-class NotInvitedPlayersViewModel @Inject constructor(
+class InvitePlayersViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
         private val matchId: String,
         private val matchOrchestrator: MatchOrchestrator
 ) : CoroutinesViewModel(coroutineContext) {
 
-    private val notInvitedPlayersUiModel = MutableLiveData<NotInvitedPlayersUiModel>()
+    private val notInvitedPlayersUiModel = MutableLiveData<InvitePlayersUiModel>()
 
     init {
-        notInvitedPlayersUiModel.value = NotInvitedPlayersUiModel(
+        notInvitedPlayersUiModel.value = InvitePlayersUiModel(
                 showLoading = true,
                 showContent = false,
-                notInvitedPlayers = emptyList()
+                invitePlayersList = emptyList()
         )
     }
 
-    fun uiModel(): LiveData<NotInvitedPlayersUiModel> {
+    fun uiModel(): LiveData<InvitePlayersUiModel> {
         return notInvitedPlayersUiModel
     }
 
@@ -35,20 +35,20 @@ class NotInvitedPlayersViewModel @Inject constructor(
         )
     }
 
-    private fun mapToUiModel(noteInvitedPlayers: List<Player>): NotInvitedPlayersUiModel {
-        val models = mutableListOf<NotInvitedPlayerItemModel>()
+    private fun mapToUiModel(noteInvitedPlayers: List<Player>): InvitePlayersUiModel {
+        val models = mutableListOf<InvitePlayerListItemModel>()
         noteInvitedPlayers.mapTo(models) {
-            NotInvitedPlayerItemModel(
+            InvitePlayerListItemModel(
                     it.playerId,
                     it.name,
                     false
             )
         }
 
-        return NotInvitedPlayersUiModel(
+        return InvitePlayersUiModel(
                 showLoading = false,
                 showContent = true,
-                notInvitedPlayers = models)
+                invitePlayersList = models)
     }
 
     fun saveAndExit() {

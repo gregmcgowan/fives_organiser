@@ -4,6 +4,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
+import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import dagger.BindsInstance
 import dagger.Component
@@ -24,6 +26,10 @@ interface AppComponent {
     fun fireStore(): FirebaseFirestore
 
     fun authentication(): Authentication
+
+    fun strings(): Strings
+
+    fun matchTypesInfo(): MatchTypesInfo
 
     @Component.Builder
     interface Builder {

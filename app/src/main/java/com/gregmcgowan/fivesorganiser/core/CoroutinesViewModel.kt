@@ -12,10 +12,10 @@ open class CoroutinesViewModel(private val coroutineContexts: CoroutineContexts)
 
     fun <T> runOnBackgroundAndUpdateOnUI(backgroundBlock: suspend () -> T,
                                          uiBlock: (T) -> Unit) {
-        launch(coroutineContexts.background, parent = parent) {
+        launch(coroutineContexts.background, parent = this.parent) {
             if (isActive) {
-                val value = async(parent = parent) { backgroundBlock.invoke() }.await()
-                withContext(coroutineContexts.ui) { uiBlock(value) }
+                val value = async(parent) { backgroundBlock.invoke() }.await()
+                onUiContext { uiBlock(value) }
             }
         }
     }

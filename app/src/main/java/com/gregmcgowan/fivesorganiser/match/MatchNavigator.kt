@@ -11,4 +11,6 @@ interface MatchNavigator {
 
     fun upButtonPressed()
 
+    fun backButtonPressed()
+
 }

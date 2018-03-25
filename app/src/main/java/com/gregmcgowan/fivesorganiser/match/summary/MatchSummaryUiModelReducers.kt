@@ -2,9 +2,14 @@ package com.gregmcgowan.fivesorganiser.match.summary
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
 import com.gregmcgowan.fivesorganiser.match.Match
+import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
 import javax.inject.Inject
 
-class MatchSummaryUiModelReducers @Inject constructor(private val instantFormatter: ZonedDateTimeFormatter) {
+class MatchSummaryUiModelReducers @Inject constructor(
+        private val instantFormatter: ZonedDateTimeFormatter,
+        private val matchTypeHelper: MatchTypeHelper
+
+) {
 
     internal fun savingUiModel(): MatchUiModelReducer = { model ->
         model.copy(loading = true, showContent = false)
@@ -22,31 +27,19 @@ class MatchSummaryUiModelReducers @Inject constructor(private val instantFormatt
         model.copy(location = match.location)
     }
 
-    internal fun numberOfPlayersUpdatedReduce(match: Match): MatchUiModelReducer = { model ->
-        if (match.squad.size > 0) {
-            model.copy(numberOfPLayers = match.squad.size.toString())
-        } else {
-            model
-        }
+    internal fun matchTypeUpdated(match: Match): MatchUiModelReducer = { model ->
+        val matchTypes = matchTypeHelper.getAllMatchTypes()
+        val selectedMatchType = getSelectedMatchTypeIndex(match, matchTypes)
+        model.copy(
+                selectedMatchTypeIndex = selectedMatchType
+        )
     }
 
-    internal fun displayMatchReducer(match: Match, new: Boolean): MatchUiModelReducer = { model ->
-        val numberOfPlayers: String
-        if (match.squad.size > 0) {
-            numberOfPlayers = match.squad.size.toString()
-        } else {
-            numberOfPlayers = ""
-        }
-
-        // TODO get from string resources
-        val title: String = if (new) {
-            "New match"
-        } else {
-            "Update match"
-        }
+    internal fun displayMatchReducer(match: Match): MatchUiModelReducer = { model ->
+        val matchTypes = matchTypeHelper.getAllMatchTypes()
+        val selectedMatchType = getSelectedMatchTypeIndex(match, matchTypes)
 
         model.copy(
-                title = title,
                 loading = false,
                 showContent = true,
                 success = true,
@@ -54,8 +47,22 @@ class MatchSummaryUiModelReducers @Inject constructor(private val instantFormatt
                 date = instantFormatter.formatDate(match.start),
                 startTime = instantFormatter.formatTime(match.start),
                 endTime = instantFormatter.formatTime(match.end),
-                numberOfPLayers = numberOfPlayers
+                matchTypeOptions = matchTypes,
+                selectedMatchTypeIndex = selectedMatchType
+
         )
+    }
+
+    private fun getSelectedMatchTypeIndex(match: Match, matchTypes: List<String>): Int {
+        val numberOfPlayers: Int
+        // TODO maybe default to last selected size
+        if (match.squad.size == 0L) {
+            numberOfPlayers = 10
+        } else {
+            numberOfPlayers = match.squad.size.toInt()
+        }
+        val matchType = matchTypeHelper.getMatchType(numberOfPlayers)
+        return matchTypes.indexOf(matchType)
     }
 
     fun endTimeUpdated(match: Match): MatchUiModelReducer = { model ->

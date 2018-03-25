@@ -25,18 +25,19 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
         calculateDiff.dispatchUpdatesTo(this)
     }
 
-    override fun onBindViewHolder(holder: ContactViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
         val contact = contactList[position]
 
-        holder?.let {
-            holder.contactName.text = contact.name
-            holder.contactCheckBox.setOnCheckedChangeListener { _, selected ->
+        holder.contactName.text = contact.name
+        holder.contactCheckBox.setOnCheckedChangeListener { _, selected ->
+            contactListInteractions?.let {
                 if (selected) {
-                    contactListInteractions?.contactSelected(contact.contactId)
+                    it.contactSelected(contact.contactId)
                 } else {
-                    contactListInteractions?.contactDeselected(contact.contactId)
+                    it.contactDeselected(contact.contactId)
                 }
             }
+
             holder.contactCheckBox.isChecked = contact.isSelected
         }
     }
@@ -45,8 +46,8 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ContactViewHolder {
-        return ContactViewHolder(LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
+        return ContactViewHolder(LayoutInflater.from(parent.context)
                 .inflate(R.layout.import_contacts_list_item, parent, false))
     }
 

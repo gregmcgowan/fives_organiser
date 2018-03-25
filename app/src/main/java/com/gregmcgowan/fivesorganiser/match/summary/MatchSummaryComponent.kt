@@ -19,6 +19,8 @@ import dagger.Component
 @FragmentScope
 interface MatchSummaryComponent : ViewModelComponent {
 
+
+
     fun inject(matchSummaryFragment: MatchSummaryFragment);
 
     @Component.Builder
