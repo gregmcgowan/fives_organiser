@@ -17,7 +17,7 @@ class MatchTypeHelper @Inject constructor(
                 .map {
                     strings.getString(R.string.match_types_format, it) to it
                 }
-
+        @SuppressWarnings("SpreadOperator")
         map = mapOf(*pairs.toTypedArray())
     }
 

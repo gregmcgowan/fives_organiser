@@ -3,7 +3,9 @@ package com.gregmcgowan.fivesorganiser.main
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.constraint.Group
 import android.support.design.widget.BottomNavigationView
+import android.support.transition.TransitionManager
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
 import android.view.View
@@ -16,6 +18,7 @@ import com.gregmcgowan.fivesorganiser.main.MainScreen.*
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListFragment
 import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
+import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -24,7 +27,7 @@ class MainActivity : BaseActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var mainViewModel: MainViewModel
 
-    private val content: View by find(R.id.main_content_group)
+    private val content: Group by find(R.id.main_content_group)
     private val progressBar: View by find(R.id.main_progress_bar)
     private val bottomNavigation: BottomNavigationView by find(R.id.main_bottom_navigation)
 
@@ -33,11 +36,7 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.main)
         setSupportActionBar(find<Toolbar>(R.id.main_toolbar).value)
 
-        DaggerMainComponent
-                .builder()
-                .appComponent(appComponent)
-                .build()
-                .inject(this)
+        AndroidInjection.inject(this)
 
         mainViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
@@ -72,6 +71,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showFragment(tag: String) {
+        TransitionManager.beginDelayedTransition(findViewById(R.id.main_content_container))
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_content_container, getFragment(tag))
                 .commit()

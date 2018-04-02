@@ -3,8 +3,9 @@ package com.gregmcgowan.fivesorganiser.match
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import javax.inject.Inject
 
-class MatchActivityViewModel : ViewModel(), MatchNavigator {
+class MatchActivityViewModel @Inject constructor() : ViewModel(), MatchNavigator {
 
     private val matchNavEvents = MutableLiveData<MatchActivityNavigationEvent>()
 
@@ -29,7 +30,7 @@ class MatchActivityViewModel : ViewModel(), MatchNavigator {
     }
 
     override fun upButtonPressed() {
-        if(matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
+        if (matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
             matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
         } else {
             matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen
@@ -37,7 +38,7 @@ class MatchActivityViewModel : ViewModel(), MatchNavigator {
     }
 
     override fun backButtonPressed() {
-        if(matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
+        if (matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
             matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
         } else {
             matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen

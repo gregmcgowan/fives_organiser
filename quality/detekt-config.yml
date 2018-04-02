@@ -359,7 +359,7 @@ style:
   UntilInsteadOfRangeTo:
     active: false
   UnusedImports:
-    active: false
+    active: true
   UseDataClass:
     active: false
     excludeAnnotatedClasses: ""

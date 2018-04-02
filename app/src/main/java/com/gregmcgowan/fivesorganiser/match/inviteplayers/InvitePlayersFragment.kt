@@ -13,17 +13,21 @@ import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
+import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class InvitePlayersFragment : BaseFragment() {
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var uninvitedPlayersViewModel: InvitePlayersViewModel
     private lateinit var navigationViewModel: MatchActivityViewModel
 
     private lateinit var uninvitedPlayerList: RecyclerView
     private lateinit var progressBar: ProgressBar
     private val notInvitedPlayersListAdapter = InvitePlayersListAdapter()
+
+    var matchId: String? = null
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -43,14 +47,9 @@ class InvitePlayersFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         activity?.let {
-            val matchId = it.intent?.getStringExtra(MATCH_ID_INTENT_EXTRA)
-                    ?: throw java.lang.IllegalArgumentException()
+            matchId = it.intent?.getStringExtra(MATCH_ID_INTENT_EXTRA)
 
-            DaggerInvitePlayersComponent.builder()
-                    .appComponent(appComponent)
-                    .matchId(matchId)
-                    .build()
-                    .inject(this)
+            AndroidSupportInjection.inject(this)
 
             uninvitedPlayersViewModel = ViewModelProviders
                     .of(this, viewModelFactory)

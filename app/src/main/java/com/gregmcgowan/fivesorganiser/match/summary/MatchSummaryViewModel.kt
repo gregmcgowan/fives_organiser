@@ -7,13 +7,13 @@ import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
 import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
 import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
-import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import javax.inject.Inject
 
 class MatchSummaryViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
         private val matchId: String?,
+        private val matchStateHolder: MatchStateHolder,
         private val matchOrchestrator: MatchOrchestrator,
         private val matchSummaryUiModelReducers: MatchSummaryUiModelReducers,
         private val matchTypeHelper: MatchTypeHelper
@@ -21,8 +21,6 @@ class MatchSummaryViewModel @Inject constructor(
 
     private val matchUiModelLiveData = MutableLiveData<MatchSummaryUiModel>()
     private val matchUiNavigationLiveData = MutableLiveData<MatchSummaryUiNavigationEvent>()
-
-    private lateinit var matchStateHolder: MatchStateHolder
 
     init {
         matchUiModelLiveData.value = MatchSummaryUiModel(
@@ -42,16 +40,9 @@ class MatchSummaryViewModel @Inject constructor(
 
         runOnBackgroundAndUpdateOnUI({
             if (matchId == null) {
-                matchStateHolder = MatchStateHolder(
-                        matchOrchestrator.createMatch(
-                                startTime = ZonedDateTime.now(),
-                                endTime = ZonedDateTime.now().plusHours(1),
-                                squadSize = 10,
-                                location = ""
-                        )
-                )
+                matchStateHolder.createOrRestoreMatch()
             } else {
-                matchStateHolder = MatchStateHolder(matchOrchestrator.getMatch(matchId))
+                matchStateHolder.match = matchOrchestrator.getMatch(matchId)
             }
         }, {
             updateUiModel(
@@ -136,9 +127,21 @@ class MatchSummaryViewModel @Inject constructor(
 
     fun saveButtonPressed() {
         updateUiModel(matchSummaryUiModelReducers.savingUiModel())
-        runOnBackgroundAndUpdateOnUI(
-                { matchOrchestrator.saveMatch(matchStateHolder.match) },
-                { matchUiNavigationLiveData.value = MatchSummaryUiNavigationEvent.CloseScreen }
+        //TODO validation???
+        runOnBackgroundAndUpdateOnUI({
+            if (matchId == null) {
+                matchOrchestrator.createMatch(
+                        matchStateHolder.match.start,
+                        matchStateHolder.match.end,
+                        matchStateHolder.match.squad.size,
+                        matchStateHolder.match.location
+                )
+            } else {
+                matchOrchestrator.saveMatch(matchStateHolder.match)
+            }
+        }, {
+            matchUiNavigationLiveData.value = MatchSummaryUiNavigationEvent.CloseScreen
+        }
         )
     }
 

@@ -1,6 +1,7 @@
 package com.gregmcgowan.fivesorganiser.match.summary
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
+import com.gregmcgowan.fivesorganiser.match.DEFAULT_NO_OF_PLAYERS
 import com.gregmcgowan.fivesorganiser.match.Match
 import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
 import javax.inject.Inject
@@ -57,7 +58,7 @@ class MatchSummaryUiModelReducers @Inject constructor(
         val numberOfPlayers: Int
         // TODO maybe default to last selected size
         if (match.squad.size == 0L) {
-            numberOfPlayers = 10
+            numberOfPlayers = DEFAULT_NO_OF_PLAYERS.toInt()
         } else {
             numberOfPlayers = match.squad.size.toInt()
         }

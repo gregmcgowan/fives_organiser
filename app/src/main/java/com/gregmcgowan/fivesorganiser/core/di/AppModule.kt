@@ -11,6 +11,7 @@ import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import com.gregmcgowan.fivesorganiser.core.authenication.FirebaseAuthentication
+import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -36,6 +37,13 @@ class AppModule {
     @Singleton
     fun coroutines(): CoroutineContexts {
         return CoroutineContexts(UI, CommonPool)
+    }
+
+    //TODO find a way to share between the match fragments using AndroidInjectors
+    @Provides
+    @Singleton
+    fun matchStateHolder() : MatchStateHolder{
+        return MatchStateHolder()
     }
 
     @Provides

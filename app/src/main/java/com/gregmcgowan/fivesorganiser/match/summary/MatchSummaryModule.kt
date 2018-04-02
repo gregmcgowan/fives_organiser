@@ -1,17 +1,36 @@
 package com.gregmcgowan.fivesorganiser.match.summary
 
 import android.arch.lifecycle.ViewModel
+import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
+import com.gregmcgowan.fivesorganiser.match.database.MatchRepoModule
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.multibindings.IntoMap
 
-@Module
-abstract class MatchSummaryModule {
+@Module(
+        includes = [
+            MatchSummaryModule.Bindings::class,
+            MatchRepoModule::class,
+            ViewModelBuilder::class
+        ]
+)
+class MatchSummaryModule {
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(MatchSummaryViewModel::class)
-    abstract fun bindViewModel(viewModel: MatchSummaryViewModel): ViewModel
+    @Provides
+    fun matchId(matchSummaryFragment: MatchSummaryFragment): String? {
+        return matchSummaryFragment.matchId
+    }
+
+    @Module
+    interface Bindings {
+        @Binds
+        @IntoMap
+        @ViewModelKey(MatchSummaryViewModel::class)
+        fun bindViewModel(viewModel: MatchSummaryViewModel): ViewModel
+
+    }
+
 
 }

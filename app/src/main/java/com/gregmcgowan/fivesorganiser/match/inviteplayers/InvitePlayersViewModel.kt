@@ -6,11 +6,13 @@ import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.data.player.Player
 import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
+import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
 import javax.inject.Inject
 
 class InvitePlayersViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
-        private val matchId: String,
+        private val matchStateHolder: MatchStateHolder,
+        private val matchId: String?,
         private val matchOrchestrator: MatchOrchestrator
 ) : CoroutinesViewModel(coroutineContext) {
 
@@ -30,7 +32,7 @@ class InvitePlayersViewModel @Inject constructor(
 
     fun onViewShown() {
         runOnBackgroundAndUpdateOnUI(
-                { mapToUiModel(matchOrchestrator.getUninvitedPlayers(matchId)) },
+                { mapToUiModel(matchOrchestrator.getAllPlayers()) },
                 { uiModel -> notInvitedPlayersUiModel.value = uiModel }
         )
     }

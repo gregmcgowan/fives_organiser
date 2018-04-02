@@ -20,6 +20,7 @@ import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
+import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 
@@ -56,12 +57,7 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
             }
         }
 
-        DaggerImportContactsComponent
-                .builder()
-                .appComponent(appComponent)
-                .contentResolver(contentResolver)
-                .build()
-                .inject(this)
+        AndroidInjection.inject(this)
 
         importImportContactsViewModel = ViewModelProviders
                 .of(this, viewHolderFactory)

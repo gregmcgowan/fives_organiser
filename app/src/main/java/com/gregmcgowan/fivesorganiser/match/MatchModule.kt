@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.main
+package com.gregmcgowan.fivesorganiser.match
 
 import android.arch.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
@@ -12,11 +12,12 @@ import dagger.multibindings.IntoMap
             ViewModelBuilder::class
         ]
 )
-abstract class MainModule {
+abstract class MatchModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MainViewModel::class)
-    abstract fun bindViewModel(viewModel: MainViewModel): ViewModel
+    @ViewModelKey(MatchActivityViewModel::class)
+    abstract fun bindViewModel(viewModel: MatchActivityViewModel): ViewModel
+
 
 }

@@ -17,6 +17,7 @@ import com.gregmcgowan.fivesorganiser.core.ui.TimePickerFragment
 import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchNavigator
+import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class MatchSummaryFragment : BaseFragment() {
@@ -42,6 +43,8 @@ class MatchSummaryFragment : BaseFragment() {
     private lateinit var startTimeListener: TimePickerDialog.OnTimeSetListener
     private lateinit var endTimeListener: TimePickerDialog.OnTimeSetListener
     private lateinit var matchTypeSpinnerAdapter: ArrayAdapter<String>
+
+    var matchId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,12 +83,9 @@ class MatchSummaryFragment : BaseFragment() {
         getAppCompatActivity().supportActionBar?.setHomeButtonEnabled(true)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        DaggerMatchSummaryComponent
-                .builder()
-                .appComponent(appComponent)
-                .matchId(requireActivity().intent.getStringExtra(MATCH_ID_INTENT_EXTRA))
-                .build()
-                .inject(this)
+        matchId = requireActivity().intent.getStringExtra(MATCH_ID_INTENT_EXTRA)
+
+        AndroidSupportInjection.inject(this)
 
         matchSummaryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
@@ -102,6 +102,14 @@ class MatchSummaryFragment : BaseFragment() {
                 .matchUiModel()
                 .observeNonNull(this, this::render)
 
+        setListeners()
+
+        setMatchTypeAdapter()
+
+        matchSummaryViewModel.onViewShown()
+    }
+
+    private fun setListeners() {
         startTimeListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
             matchSummaryViewModel.startTimeUpdated(hour, minute)
         }
@@ -111,14 +119,6 @@ class MatchSummaryFragment : BaseFragment() {
         dateListener = DatePickerDialog.OnDateSetListener { _, year, month, date ->
             matchSummaryViewModel.dateUpdated(year, month, date)
         }
-
-        matchTypeSpinnerAdapter = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                mutableListOf())
-
-        matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        matchType.adapter = matchTypeSpinnerAdapter
 
         startTime.setOnClickListener { matchSummaryViewModel.startTimeSelected() }
         endTime.setOnClickListener { matchSummaryViewModel.endTimeSelected() }
@@ -148,8 +148,16 @@ class MatchSummaryFragment : BaseFragment() {
         updateSquadButton.setOnClickListener {
             matchNavigator.showMatchSquad()
         }
+    }
 
-        matchSummaryViewModel.onViewShown()
+    private fun setMatchTypeAdapter() {
+        matchTypeSpinnerAdapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                mutableListOf())
+
+        matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        matchType.adapter = matchTypeSpinnerAdapter
     }
 
     private fun render(summaryUiModel: MatchSummaryUiModel) {

@@ -20,11 +20,9 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
                             endTime: ZonedDateTime,
                             squadSize: Long,
                             location: String): Match {
-        return map(
-                matchRepo.createMatch(startTime, endTime, squadSize, location),
-                MatchSquadEntity(),
-                emptyMap()
-        )
+        val match = matchRepo.createMatch(startTime, endTime, squadSize, location)
+        val squad = matchSquad.createMatchSquad(matchId = match.matchId)
+        return map(match, squad, emptyMap())
     }
 
     suspend fun saveMatch(match: Match) {
@@ -44,6 +42,9 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
         }
     }
 
+    suspend fun getAllPlayers(): List<Player> {
+        return playersRepo.getPlayers()
+    }
     suspend fun getUninvitedPlayers(matchId: String): List<Player> {
         val uninvitedPlayers = mutableListOf<Player>()
         val matchSquad = matchSquad.getMatchSquad(matchId)

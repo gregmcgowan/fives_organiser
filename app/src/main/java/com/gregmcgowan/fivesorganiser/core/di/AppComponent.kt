@@ -7,17 +7,22 @@ import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
+import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjector
+import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Component(
-        modules = [AppModule::class]
+        modules = [
+            AppModule::class,
+            ContributesModule::class,
+            AndroidSupportInjectionModule::class
+        ]
 )
 @Singleton
-interface AppComponent {
-
-    fun inject(app: FivesOrganiserApp)
+interface AppComponent : AndroidInjector<FivesOrganiserApp> {
 
     fun coroutineContexts(): CoroutineContexts
 
@@ -30,6 +35,8 @@ interface AppComponent {
     fun strings(): Strings
 
     fun matchTypesInfo(): MatchTypesInfo
+
+    fun matchStateHolder() : MatchStateHolder
 
     @Component.Builder
     interface Builder {

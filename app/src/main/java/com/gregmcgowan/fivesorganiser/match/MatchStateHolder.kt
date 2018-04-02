@@ -1,8 +1,13 @@
 package com.gregmcgowan.fivesorganiser.match
 
 import org.threeten.bp.ZonedDateTime
+import javax.inject.Inject
 
-class MatchStateHolder(var match: Match) {
+const val DEFAULT_NO_OF_PLAYERS = 10L
+
+class MatchStateHolder @Inject constructor(){
+
+    lateinit var match: Match
 
     fun dateUpdated(year: Int,
                     month: Int,
@@ -57,6 +62,19 @@ class MatchStateHolder(var match: Match) {
 
     fun squadSizeUpdated(numberOfPlayers: Int) {
         match = match.copy(squad = match.squad.copy(size = numberOfPlayers.toLong()))
+    }
+
+    fun createOrRestoreMatch() {
+        // TODO we should check if there is a stored match to restore from
+        match = Match(
+                matchId = "",
+                start = ZonedDateTime.now(),
+                end = ZonedDateTime.now().plusHours(1),
+                location = "",
+                squad = Squad(DEFAULT_NO_OF_PLAYERS)
+
+        )
+
     }
 
 }
