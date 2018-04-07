@@ -1,9 +1,7 @@
 package com.gregmcgowan.fivesorganiser.match.summary
 
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
-import com.gregmcgowan.fivesorganiser.match.DEFAULT_NO_OF_PLAYERS
-import com.gregmcgowan.fivesorganiser.match.Match
-import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
+import com.gregmcgowan.fivesorganiser.match.*
 import javax.inject.Inject
 
 class MatchSummaryUiModelReducers @Inject constructor(
@@ -49,7 +47,10 @@ class MatchSummaryUiModelReducers @Inject constructor(
                 startTime = instantFormatter.formatTime(match.start),
                 endTime = instantFormatter.formatTime(match.end),
                 matchTypeOptions = matchTypes,
-                selectedMatchTypeIndex = selectedMatchType
+                selectedMatchTypeIndex = selectedMatchType,
+                confirmedPlayersCount = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.CONFIRMED).size,
+                declinedPlayersCount = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.DECLINED).size,
+                unknownPlayersCount = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.UNSURE).size
 
         )
     }
@@ -57,10 +58,10 @@ class MatchSummaryUiModelReducers @Inject constructor(
     private fun getSelectedMatchTypeIndex(match: Match, matchTypes: List<String>): Int {
         val numberOfPlayers: Int
         // TODO maybe default to last selected size
-        if (match.squad.size == 0L) {
+        if (match.squad.expectedSize == 0L) {
             numberOfPlayers = DEFAULT_NO_OF_PLAYERS.toInt()
         } else {
-            numberOfPlayers = match.squad.size.toInt()
+            numberOfPlayers = match.squad.expectedSize.toInt()
         }
         val matchType = matchTypeHelper.getMatchType(numberOfPlayers)
         return matchTypes.indexOf(matchType)

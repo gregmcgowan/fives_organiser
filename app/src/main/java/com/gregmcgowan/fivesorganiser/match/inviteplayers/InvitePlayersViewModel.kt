@@ -4,19 +4,23 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.data.player.Player
-import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
 import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
+import com.gregmcgowan.fivesorganiser.match.PlayerAndMatchStatus
+import com.gregmcgowan.fivesorganiser.match.getPlayerIndex
+import com.gregmcgowan.fivesorganiser.match.toPlayerMatchSquadStatus
+import timber.log.Timber
 import javax.inject.Inject
 
 class InvitePlayersViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
         private val matchStateHolder: MatchStateHolder,
-        private val matchId: String?,
-        private val matchOrchestrator: MatchOrchestrator
+        private val invitePlayersUiModelMapper: InvitePlayersUiModelMapper,
+        private val invitePlayersOrchestrator: InvitePlayersOrchestrator
+
 ) : CoroutinesViewModel(coroutineContext) {
 
     private val notInvitedPlayersUiModel = MutableLiveData<InvitePlayersUiModel>()
+    private lateinit var allPlayers: List<PlayerAndMatchStatus>
 
     init {
         notInvitedPlayersUiModel.value = InvitePlayersUiModel(
@@ -31,30 +35,28 @@ class InvitePlayersViewModel @Inject constructor(
     }
 
     fun onViewShown() {
-        runOnBackgroundAndUpdateOnUI(
-                { mapToUiModel(matchOrchestrator.getAllPlayers()) },
-                { uiModel -> notInvitedPlayersUiModel.value = uiModel }
-        )
+        runOnBackgroundAndUpdateOnUI({
+            allPlayers = invitePlayersOrchestrator.getPlayersAndStatus(matchStateHolder.match.squad)
+            mapToUiModel()
+        }, { uiModel -> notInvitedPlayersUiModel.value = uiModel })
     }
 
-    private fun mapToUiModel(noteInvitedPlayers: List<Player>): InvitePlayersUiModel {
-        val models = mutableListOf<InvitePlayerListItemModel>()
-        noteInvitedPlayers.mapTo(models) {
-            InvitePlayerListItemModel(
-                    it.playerId,
-                    it.name,
-                    false
-            )
-        }
+    private fun mapToUiModel(): InvitePlayersUiModel {
 
         return InvitePlayersUiModel(
                 showLoading = false,
                 showContent = true,
-                invitePlayersList = models)
+                invitePlayersList = invitePlayersUiModelMapper.map(allPlayers))
     }
 
-    fun saveAndExit() {
-        //TODO save and exit
 
+    fun handlePlayerStatusChanged(playerId: String, status: String) {
+        Timber.d("$playerId changed to $status")
+
+        runOnBackgroundAndUpdateOnUI({
+            val indexOfPlayer = allPlayers.getPlayerIndex(playerId)
+            val player = allPlayers[indexOfPlayer]
+            matchStateHolder.updatePlayerStatus(player.player, status.toPlayerMatchSquadStatus())
+        }, {})
     }
 }

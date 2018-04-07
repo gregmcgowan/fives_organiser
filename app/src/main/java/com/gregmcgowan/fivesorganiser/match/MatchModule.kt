@@ -3,21 +3,31 @@ package com.gregmcgowan.fivesorganiser.match
 import android.arch.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
+import com.gregmcgowan.fivesorganiser.match.database.MatchRepoModule
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.multibindings.IntoMap
 
 @Module(
         includes = [
-            ViewModelBuilder::class
+            ViewModelBuilder::class,
+            MatchModule.Bindings::class,
+            MatchRepoModule::class
         ]
 )
-abstract class MatchModule {
+class MatchModule {
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(MatchActivityViewModel::class)
-    abstract fun bindViewModel(viewModel: MatchActivityViewModel): ViewModel
+    @Provides
+    fun matchId(matchActivity: MatchActivity) = matchActivity.matchId
 
+    @Module
+    interface Bindings {
+        @Binds
+        @IntoMap
+        @ViewModelKey(MatchActivityViewModel::class)
+        abstract fun bindViewModel(viewModel: MatchActivityViewModel): ViewModel
+
+    }
 
 }

@@ -27,7 +27,7 @@ class MatchListUiModelReducers @Inject constructor(
     internal fun matchListUiModel(matches: List<Match>): MatchListUiModelReducer = { uiModel ->
         val matchesUiModels = mutableListOf<MatchListItemUiModel>()
         for (match in matches) {
-            val matchType = matchTypeHelper.getMatchType(match.squad.size.toInt())
+            val matchType = matchTypeHelper.getMatchType(match.squad.expectedSize.toInt())
             val summary = strings.getString(R.string.match_list_summary_format, matchType, match.location)
 
             matchesUiModels += MatchListItemUiModel(

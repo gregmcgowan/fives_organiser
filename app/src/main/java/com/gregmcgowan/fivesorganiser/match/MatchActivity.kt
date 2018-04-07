@@ -33,6 +33,9 @@ class MatchActivity : BaseActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var matchActivityViewModel: MatchActivityViewModel
 
+    var matchId: String? = null
+        get() = intent.getStringExtra(MATCH_ID_INTENT_EXTRA)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.match_container)

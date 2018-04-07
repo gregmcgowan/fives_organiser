@@ -42,30 +42,6 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
         }
     }
 
-    suspend fun getAllPlayers(): List<Player> {
-        return playersRepo.getPlayers()
-    }
-    suspend fun getUninvitedPlayers(matchId: String): List<Player> {
-        val uninvitedPlayers = mutableListOf<Player>()
-        val matchSquad = matchSquad.getMatchSquad(matchId)
-        val playerMap = getPlayerMap()
-        for (playerId in playerMap.keys) {
-            if (isPlayerNotInvited(matchSquad, playerId)) {
-                playerMap[playerId]?.let {
-                    uninvitedPlayers.add(it)
-                }
-            }
-        }
-        return uninvitedPlayers
-    }
-
-    private fun isPlayerNotInvited(matchSquad: MatchSquadEntity, playerId: String): Boolean {
-        return (!matchSquad.confirmed.contains(playerId)
-                || !matchSquad.invited.contains(playerId)
-                || !matchSquad.declined.contains(playerId)
-                || !matchSquad.unsure.contains(playerId))
-    }
-
     private suspend fun mapFullMatch(match: MatchEntity, playerMap: Map<String, Player>): Match {
         val matchSquad = matchSquad.getMatchSquad(match.matchId)
 
@@ -91,28 +67,30 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
                 location = match.location,
                 startDateTime = match.start.format(dateTimeFormatter),
                 endDateTime = match.end.format(dateTimeFormatter),
-                numberOfPlayers = match.squad.size
+                numberOfPlayers = match.squad.expectedSize
         )
     }
 
     private fun mapSquad(match: Match): MatchSquadEntity {
         return MatchSquadEntity(
                 matchId = match.matchId,
-                invited = match.squad.invited.map(Player::playerId),
-                confirmed = match.squad.confirmed.map(Player::playerId),
-                declined = match.squad.declined.map(Player::playerId),
-                unsure = match.squad.unsure.map(Player::playerId)
+                invited = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.INVITED),
+                confirmed = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.CONFIRMED),
+                declined = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.DECLINED),
+                unsure = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.UNSURE)
         )
     }
 
     private fun map(matchEntity: MatchEntity,
                     matchSquad: MatchSquadEntity,
                     players: Map<String, Player>): Match {
-        //TODO map ids to players
-        val confirmedPlayers: List<Player> = mutableListOf()
-        val invitedPlayers: List<Player> = mutableListOf()
-        val declinedPlayers: List<Player> = mutableListOf()
-        val unknownPlayers: List<Player> = mutableListOf()
+
+        val mutableList = mutableListOf<PlayerAndMatchStatus>()
+
+        populateList(matchSquad.invited, PlayerMatchSquadStatus.INVITED, players, mutableList)
+        populateList(matchSquad.confirmed, PlayerMatchSquadStatus.CONFIRMED, players, mutableList)
+        populateList(matchSquad.declined, PlayerMatchSquadStatus.DECLINED, players, mutableList)
+        populateList(matchSquad.unsure, PlayerMatchSquadStatus.UNSURE, players, mutableList)
 
         return Match(
                 matchId = matchEntity.matchId,
@@ -120,14 +98,23 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
                 start = ZonedDateTime.parse(matchEntity.startDateTime),
                 end = ZonedDateTime.parse(matchEntity.endDateTime),
                 squad = Squad(
-                        size = matchEntity.numberOfPlayers,
-                        invited = invitedPlayers,
-                        confirmed = confirmedPlayers,
-                        unsure = unknownPlayers,
-                        declined = declinedPlayers
+                        expectedSize = matchEntity.numberOfPlayers,
+                        playerAndStatuses = mutableList
                 )
 
         )
+    }
+
+    private fun populateList(playerIds: List<String>,
+                             playerMatchSquadStatus: PlayerMatchSquadStatus,
+                             players: Map<String, Player>,
+                             mutableList: MutableList<PlayerAndMatchStatus>) {
+        for (playerId in playerIds) {
+            val player = players[playerId]
+            player?.let {
+                mutableList.add(PlayerAndMatchStatus(it, playerMatchSquadStatus))
+            }
+        }
     }
 
 

@@ -25,7 +25,12 @@ class InvitePlayersFragment : BaseFragment() {
 
     private lateinit var uninvitedPlayerList: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private val notInvitedPlayersListAdapter = InvitePlayersListAdapter()
+
+    private val notInvitedPlayersListAdapter = InvitePlayersListAdapter(object: PlayerStatusUpdated {
+        override fun playerStatusChanged(playerId: String, status: String) {
+            uninvitedPlayersViewModel.handlePlayerStatusChanged(playerId, status)
+        }
+    })
 
     var matchId: String? = null
 
@@ -79,16 +84,6 @@ class InvitePlayersFragment : BaseFragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.let {
-            when (item.itemId) {
-                R.id.save_match -> uninvitedPlayersViewModel.saveAndExit()
-                R.id.home -> navigationViewModel.upButtonPressed()
-            }
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
 }
 
 

@@ -3,7 +3,6 @@ package com.gregmcgowan.fivesorganiser.match.summary
 import android.arch.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
-import com.gregmcgowan.fivesorganiser.match.database.MatchRepoModule
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -12,7 +11,6 @@ import dagger.multibindings.IntoMap
 @Module(
         includes = [
             MatchSummaryModule.Bindings::class,
-            MatchRepoModule::class,
             ViewModelBuilder::class
         ]
 )
@@ -25,6 +23,7 @@ class MatchSummaryModule {
 
     @Module
     interface Bindings {
+
         @Binds
         @IntoMap
         @ViewModelKey(MatchSummaryViewModel::class)

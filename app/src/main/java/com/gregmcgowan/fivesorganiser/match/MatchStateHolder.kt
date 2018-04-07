@@ -1,11 +1,12 @@
 package com.gregmcgowan.fivesorganiser.match
 
+import com.gregmcgowan.fivesorganiser.core.data.player.Player
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 const val DEFAULT_NO_OF_PLAYERS = 10L
 
-class MatchStateHolder @Inject constructor(){
+class MatchStateHolder @Inject constructor() {
 
     lateinit var match: Match
 
@@ -61,7 +62,7 @@ class MatchStateHolder @Inject constructor(){
     }
 
     fun squadSizeUpdated(numberOfPlayers: Int) {
-        match = match.copy(squad = match.squad.copy(size = numberOfPlayers.toLong()))
+        match = match.copy(squad = match.squad.copy(expectedSize = numberOfPlayers.toLong()))
     }
 
     fun createOrRestoreMatch() {
@@ -74,7 +75,11 @@ class MatchStateHolder @Inject constructor(){
                 squad = Squad(DEFAULT_NO_OF_PLAYERS)
 
         )
+    }
 
+    fun updatePlayerStatus(player: Player,
+                           status: PlayerMatchSquadStatus) {
+        match = match.copy(squad = match.squad.updatePlayerStatus(player, status))
     }
 
 }

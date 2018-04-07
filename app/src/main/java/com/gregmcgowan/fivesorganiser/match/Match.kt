@@ -11,19 +11,74 @@ data class Match(val matchId: String,
 )
 
 data class Squad(
-        val size: Long,
-        val invited : List<Player> = emptyList(),
-        val confirmed: List<Player> = emptyList(),
-        val unsure: List<Player> = emptyList(),
-        val declined: List<Player> = emptyList()
+        val expectedSize: Long,
+        val playerAndStatuses: List<PlayerAndMatchStatus> = emptyList()
 )
 
-enum class MatchSquadStatus {
-    NOT_INVITED,
+data class PlayerAndMatchStatus(
+        val player: Player,
+        val matchSquadStatus: PlayerMatchSquadStatus
+)
+
+fun Squad.getPlayersWithStatus(matchSquadStatus: PlayerMatchSquadStatus): List<String> {
+    return this.playerAndStatuses
+            .filter { playerAndMatchStatus ->
+                playerAndMatchStatus.matchSquadStatus == matchSquadStatus
+            }.map { playerAndMatchStatus ->
+                playerAndMatchStatus.player.playerId
+            }
+}
+
+fun Squad.updatePlayerStatus(player: Player,
+                             matchSquadStatus: PlayerMatchSquadStatus): Squad {
+    val playerIndex = getPlayerIndex(playerId = player.playerId)
+    val toMutableList = this.playerAndStatuses
+            .toMutableList()
+    if (playerIndex == -1) {
+        toMutableList.add(PlayerAndMatchStatus(player, matchSquadStatus))
+    } else {
+        toMutableList[playerIndex] = PlayerAndMatchStatus(player, matchSquadStatus)
+    }
+    return this.copy(playerAndStatuses = toMutableList)
+}
+
+fun Squad.getPlayerIndex(playerId: String) =
+        this.playerAndStatuses.indexOfFirst { playerAndMatchStatus ->
+            playerAndMatchStatus.player.playerId == playerId
+        }
+
+fun List<PlayerAndMatchStatus>.getPlayerIndex(playerId : String) : Int {
+    return this.indexOfFirst { it.player.playerId == playerId }
+}
+
+enum class PlayerMatchSquadStatus {
+    NO_STATUS,
     INVITED,
     DECLINED,
     UNSURE,
-    ACCEPTED
+    CONFIRMED
+}
+
+
+fun String.toPlayerMatchSquadStatus(): PlayerMatchSquadStatus {
+    return when (this) {
+        "Invited" -> PlayerMatchSquadStatus.INVITED
+        "Confirmed" -> PlayerMatchSquadStatus.CONFIRMED
+        "Unsure" -> PlayerMatchSquadStatus.UNSURE
+        "Not Available" -> PlayerMatchSquadStatus.DECLINED
+        else -> PlayerMatchSquadStatus.NO_STATUS
+    }
+}
+
+fun PlayerMatchSquadStatus.getString()  : String {
+    return when (this) {
+        PlayerMatchSquadStatus.INVITED -> "Invited"
+        PlayerMatchSquadStatus.CONFIRMED -> "Confirmed"
+        PlayerMatchSquadStatus.UNSURE -> "Unsure"
+        PlayerMatchSquadStatus.DECLINED -> "Not Available"
+        PlayerMatchSquadStatus.NO_STATUS -> ""
+    }
+
 }
 
 

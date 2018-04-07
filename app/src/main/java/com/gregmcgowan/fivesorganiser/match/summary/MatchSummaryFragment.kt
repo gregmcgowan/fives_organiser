@@ -14,9 +14,7 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
 import com.gregmcgowan.fivesorganiser.core.ui.TimePickerFragment
-import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
-import com.gregmcgowan.fivesorganiser.match.MatchNavigator
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -25,7 +23,7 @@ class MatchSummaryFragment : BaseFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var matchSummaryViewModel: MatchSummaryViewModel
-    private lateinit var matchNavigator: MatchNavigator
+    private lateinit var mainActivityViewModel: MatchActivityViewModel
 
     private val content: View by find(R.id.match_content)
     private val progressBar: ProgressBar by find(R.id.match_progress_bar)
@@ -68,8 +66,8 @@ class MatchSummaryFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
             when (item.itemId) {
-                R.id.save_match -> matchSummaryViewModel.saveButtonPressed()
-                R.id.home -> matchNavigator.upButtonPressed()
+                R.id.save_match -> mainActivityViewModel.saveButtonPressed()
+                R.id.home -> mainActivityViewModel.upButtonPressed()
             }
             return true
         }
@@ -83,15 +81,13 @@ class MatchSummaryFragment : BaseFragment() {
         getAppCompatActivity().supportActionBar?.setHomeButtonEnabled(true)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        matchId = requireActivity().intent.getStringExtra(MATCH_ID_INTENT_EXTRA)
-
         AndroidSupportInjection.inject(this)
 
         matchSummaryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(MatchSummaryViewModel::class.java)
 
-        matchNavigator = ViewModelProviders
+        mainActivityViewModel = ViewModelProviders
                 .of(requireActivity())
                 .get(MatchActivityViewModel::class.java)
 
@@ -146,7 +142,7 @@ class MatchSummaryFragment : BaseFragment() {
         }
 
         updateSquadButton.setOnClickListener {
-            matchNavigator.showMatchSquad()
+            mainActivityViewModel.showMatchSquad()
         }
     }
 

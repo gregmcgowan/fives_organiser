@@ -10,13 +10,5 @@ data class InvitePlayersUiModel(
 data class InvitePlayerListItemModel(
         val playerId: String,
         val playerName: String,
-        val selected: Boolean
+        val statusIndex: Int
 )
-
-enum class InvitedPlayerStatus {
-    INVITED,
-    UNSURE,
-    CONFIRMED,
-    DECLINED
-
-}
