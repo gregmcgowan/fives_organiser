@@ -11,7 +11,7 @@
     <string name="no_results_message">No results yet!</string>
     <string name="no_matches_message">No matches</string>
 
-    <string name="match_title_new">New Match</string>
+    <string name="match_title_new">Match</string>
     <string name="match_title_update">Update Match</string>
     <string name="match_enter_location_hint">Enter location</string>
     <string name="match_squad_size_hint">Required size</string>

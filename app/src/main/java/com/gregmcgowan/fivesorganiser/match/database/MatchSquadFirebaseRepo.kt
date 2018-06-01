@@ -25,7 +25,10 @@ class MatchSquadFirebaseRepo @Inject constructor(private val firestoreHelper: Fi
         map[DECLINED_PLAYER_IDS_KEY] = declined
 
         firestoreHelper.setData(matchSquad(), matchId, map)
-        return mapToSquadEntity(map)
+        val newMap = map.toMutableMap()
+        newMap[ID_KEY] = matchId
+
+        return mapToSquadEntity(newMap)
     }
 
     override suspend fun saveMatchSquad(matchSquad: MatchSquadEntity) {

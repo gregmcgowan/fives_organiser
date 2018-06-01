@@ -103,8 +103,8 @@ fun View.setVisibleOrGone(visible: Boolean) {
     }
 }
 
-fun <T> MutableLiveData<T>.requireValue(): T = this.value
-        ?: throw IllegalStateException("live data cannot be null")
+fun <T> LiveData<T>.requireValue(): T = this.value
+        ?: throw IllegalStateException("live data cannot have null value")
 
 
 inline fun <T> LiveData<T>.observeNonNull(

@@ -9,13 +9,17 @@ import android.support.v4.app.DialogFragment
 class DatePickerFragment : DialogFragment() {
 
     companion object {
+        const val YEAR = "year"
+        const val MONTH = "month"
+        const val DATE = "date"
+
         fun newInstance(year: Int, month: Int, day: Int): DatePickerFragment {
             val datePickerFragment = DatePickerFragment()
             val args = Bundle()
 
-            args.putInt("year", year)
-            args.putInt("month", month)
-            args.putInt("date", day)
+            args.putInt(YEAR, year)
+            args.putInt(MONTH, month)
+            args.putInt(DATE, day)
             datePickerFragment.arguments = args
 
             return datePickerFragment
@@ -28,9 +32,9 @@ class DatePickerFragment : DialogFragment() {
         arguments?.let {
             return DatePickerDialog(activity,
                     dateListener,
-                    it.getInt("year"),
-                    it.getInt("month"),
-                    it.getInt("date"))
+                    it.getInt(YEAR),
+                    it.getInt(MONTH),
+                    it.getInt(DATE))
         }
         throw IllegalStateException()
     }

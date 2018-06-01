@@ -17,7 +17,7 @@ class InvitePlayersUiModelMapper @Inject constructor(private val strings: String
                             playerAndMatchStatus.player.name,
                             mapStatus(playerAndMatchStatus.matchSquadStatus)
                     )
-                }
+                }.toMutableList()
     }
 
 
