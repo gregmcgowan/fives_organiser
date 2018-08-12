@@ -4,24 +4,34 @@ buildscript {
     // Define versions in a single place
     ext {
         // Sdk and tools
-        minSdkVersion = 21
-        targetSdkVersion = 27
+        minSdk =  21
+        targetSdk =  27
         compileSdkVersion = 27
-        buildToolsVersion = '27.0.3'
 
         // App dependencies
         daggerVersion = '2.15'
-        kotlinVersion = '1.2.31'
-        coroutinesVersion = '0.21'
-        supportLibraryVersion = '27.1.0'
-        constraintLayoutVersion = '1.1.0-beta4'
-        lifeCyclesRuntimesVersion = '1.1.0'
-        lifeCyclesExtensionsVersion = '1.1.0'
-        lifeCyclesCompilerVersion = '1.1.0'
-        firebaseVersion = '11.8.0'
 
-        timberVersion = '4.6.0'
-        threeTenAbpVersion = '1.0.5'
+        kotlinVersion = '1.2.60'
+
+        coroutinesVersion = '0.24.0'
+
+        supportLibraryVersion = '27.1.1'
+
+        nav_version = "1.0.0-alpha01"
+
+        constraintLayoutVersion = '1.1.2'
+
+        lifeCyclesRuntimesVersion = '1.1.1'
+        lifeCyclesExtensionsVersion = '1.1.1'
+        lifeCyclesCompilerVersion = '1.1.0'
+
+        firebaseCoreVersion = '16.0.1'
+        firebaseDatabaseVersion = '16.0.1'
+        firebaseAuthVersion = '16.0.2'
+        firestoreVersion = '17.0.4'
+
+        timberVersion = '4.7.0'
+        threeTenAbpVersion = '1.1.0'
 
         junitVersion = '4.12'
         mockitoVersion = '2.7.21'
@@ -39,24 +49,22 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0'
+        classpath 'com.android.tools.build:gradle:3.2.0-beta05'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.google.gms:google-services:3.1.0'
+        classpath 'com.google.gms:google-services:4.0.1'
     }
 }
 
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC6-3"
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC6-4"
 }
 
 allprojects {
     repositories {
         jcenter()
-        maven {
-            url 'https://maven.google.com'
-        }
+        maven { url 'https://maven.google.com' }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }

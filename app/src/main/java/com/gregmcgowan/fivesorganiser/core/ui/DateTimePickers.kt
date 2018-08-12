@@ -9,9 +9,9 @@ import android.support.v4.app.DialogFragment
 class DatePickerFragment : DialogFragment() {
 
     companion object {
-        const val YEAR = "year"
-        const val MONTH = "month"
-        const val DATE = "date"
+        private const val YEAR = "year"
+        private const val MONTH = "month"
+        private const val DATE = "date"
 
         fun newInstance(year: Int, month: Int, day: Int): DatePickerFragment {
             val datePickerFragment = DatePickerFragment()
@@ -43,12 +43,16 @@ class DatePickerFragment : DialogFragment() {
 class TimePickerFragment : DialogFragment() {
 
     companion object {
+        private const val HOUR = "hour"
+        private const val MINUTE = "minute"
+        private const val IS_24_HOUR = "is24Hour"
+
         fun newInstance(hour: Int, minute: Int, is24Hour: Boolean): TimePickerFragment {
             val datePickerFragment = TimePickerFragment()
             val args = Bundle()
-            args.putInt("hour", hour)
-            args.putInt("minute", minute)
-            args.putBoolean("is24Hour", is24Hour)
+            args.putInt(HOUR, hour)
+            args.putInt(MINUTE, minute)
+            args.putBoolean(IS_24_HOUR, is24Hour)
             datePickerFragment.arguments = args
 
             return datePickerFragment
@@ -61,9 +65,9 @@ class TimePickerFragment : DialogFragment() {
         arguments?.let {
             return TimePickerDialog(activity,
                     timePickerListener,
-                    it.getInt("hour"),
-                    it.getInt("minute"),
-                    it.getBoolean("is24Hour"))
+                    it.getInt(HOUR),
+                    it.getInt(MINUTE),
+                    it.getBoolean(IS_24_HOUR))
 
         }
         throw IllegalStateException()

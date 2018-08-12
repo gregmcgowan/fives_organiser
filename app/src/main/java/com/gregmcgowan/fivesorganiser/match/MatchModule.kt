@@ -19,7 +19,7 @@ import dagger.multibindings.IntoMap
 class MatchModule {
 
     @Provides
-    fun matchId(matchActivity: MatchActivity) = matchActivity.matchId
+    fun matchId(matchActivity: MatchActivity) = matchActivity.matchEvent
 
     @Module
     interface Bindings {

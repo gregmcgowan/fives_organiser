@@ -5,27 +5,27 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.match.MatchActivityNavigationEvent.*
+import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
 import com.gregmcgowan.fivesorganiser.match.inviteplayers.InvitePlayersFragment
-import com.gregmcgowan.fivesorganiser.match.summary.MatchSummaryFragment
+import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationFragment
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-fun Context.editMatchIntent(matchId: String): Intent {
+fun Context.createMatchIntent(matchEvent : MatchNavigationEvent): Intent {
     return Intent(this, MatchActivity::class.java)
             .apply {
-                putExtra(MATCH_ID_INTENT_EXTRA, matchId)
+                putExtra(MATCH_EVENT_EXTRA, matchEvent)
             }
 }
 
-fun Context.createMatchIntent(): Intent {
-    return Intent(this, MatchActivity::class.java)
-}
 
 const val MATCH_ID_INTENT_EXTRA = "match_id"
+const val MATCH_EVENT_EXTRA = "MATCH_EVENT_EXTRA"
+
 
 class MatchActivity : BaseActivity() {
 
@@ -33,8 +33,11 @@ class MatchActivity : BaseActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var matchActivityViewModel: MatchActivityViewModel
 
-    var matchId: String? = null
-        get() = intent.getStringExtra(MATCH_ID_INTENT_EXTRA)
+    val matchEvent: MatchNavigationEvent
+        get() = intent.getParcelableExtra(MATCH_EVENT_EXTRA)
+                ?: throw IllegalStateException()
+
+    private lateinit var matchFragment: MatchFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,37 +49,53 @@ class MatchActivity : BaseActivity() {
                 .get(MatchActivityViewModel::class.java)
 
         matchActivityViewModel
-                .navigationEvents()
+                .matchNavEvents
                 .observeNonNull(this, this::handleNavEvent)
     }
 
-    private fun handleNavEvent(event: MatchActivityNavigationEvent) {
+    private fun handleNavEvent(event: MatchNavigationEvent) {
         when (event) {
-            ShowSummary -> showMatchSummary()
-            ShowSquad -> showSquad()
-            CloseScreen -> finish()
+            is StartNewMatchFlow -> {
+                showFragment(MatchTimeAndLocationFragment())
+            }
+            is ShowMatchTimeAndLocation -> {
+                showFragment(MatchTimeAndLocationFragment.newInstance(event.matchId))
+            }
+            is ShowInvitePlayers -> {
+                showFragment(InvitePlayersFragment.newInstance(event.matchId))
+            }
+            is ShowSquad -> {
+                showSquad()
+            }
+            is CloseScreen -> finish()
         }
     }
 
     private fun showSquad() {
-        supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.settle,
-                        R.anim.slide_down)
+        supportFragmentManager
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_up,
+                        R.anim.slide_down,
+                        R.anim.settle,
+                        R.anim.slide_down
+                )
                 .add(R.id.match_fragment_container, InvitePlayersFragment())
                 .commit()
     }
 
-    private fun showMatchSummary() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            supportFragmentManager.popBackStack()
-        } else {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.match_fragment_container, MatchSummaryFragment())
-                    .commit()
+    private fun showFragment(matchFragment: Fragment) {
+        if (matchFragment is MatchFragment) {
+            this.matchFragment = matchFragment
         }
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.match_fragment_container, matchFragment)
+                .commit()
     }
 
     override fun onBackPressed() {
-        matchActivityViewModel.backButtonPressed()
+        if (!matchFragment.consumeBackPress()) {
+            super.onBackPressed()
+        }
     }
 }

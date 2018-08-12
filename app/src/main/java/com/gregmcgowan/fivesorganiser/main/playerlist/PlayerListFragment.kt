@@ -61,7 +61,7 @@ class PlayerListFragment : BaseFragment() {
                 .build()
                 .inject(this)
 
-        activity?.let {
+        activity?.let { _ ->
             playerListViewModel = ViewModelProviders
                     .of(this, viewModelFactory)
                     .get(PlayerListViewModel::class.java)
@@ -74,9 +74,7 @@ class PlayerListFragment : BaseFragment() {
                     .navigationEvents()
                     .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
 
-            addPlayerButton.setOnClickListener({
-                playerListViewModel.addPlayerButtonPressed()
-            })
+            addPlayerButton.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
         }
     }
 
@@ -96,7 +94,8 @@ class PlayerListFragment : BaseFragment() {
     }
 
     private fun showAddPlayers() {
-        requireStartActivityForResult(requireContext().importContactsIntent(), IMPORT_CONTACTS)
+        requireStartActivityForResult(requireContext()
+                .importContactsIntent(), IMPORT_CONTACTS)
     }
 
     private fun render(uiModel: PlayerListUiModel) {

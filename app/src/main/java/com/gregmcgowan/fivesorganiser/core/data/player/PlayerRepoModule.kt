@@ -4,7 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Reusable
 
-
 @Module
 interface PlayerRepoModule {
 

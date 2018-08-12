@@ -2,8 +2,8 @@ package com.gregmcgowan.fivesorganiser.core.ui
 
 import android.support.v7.util.DiffUtil
 
-class DiffUtilCallback<out T>(val oldList: List<T>,
-                              val newList: List<T>,
+class DiffUtilCallback<out T>(private val oldList: List<T>,
+                              private val newList: List<T>,
                               private val itemsAreTheSame: (T, T) -> Boolean) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size

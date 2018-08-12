@@ -12,10 +12,9 @@ import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListAdapter.MatchListInteraction
-import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.AddMatchEvent
-import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.MatchSelected
+import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent
 import com.gregmcgowan.fivesorganiser.match.createMatchIntent
-import com.gregmcgowan.fivesorganiser.match.editMatchIntent
+import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class MatchListFragment : BaseFragment() {
@@ -24,8 +23,7 @@ class MatchListFragment : BaseFragment() {
         const val MATCH_LIST_FRAGMENT_TAG = "MATCH_LIST_FRAGMENT_TAG"
     }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var matchListViewModel: MatchListViewModel
 
     private lateinit var addMatchButton: FloatingActionButton
@@ -33,13 +31,13 @@ class MatchListFragment : BaseFragment() {
     private lateinit var progressView: View
     private lateinit var emptyView: View
     private lateinit var emptyMessage: TextView
+
     private val matchListAdapter = MatchListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.match_list, container, false)
-    }
+                              savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.match_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,58 +47,32 @@ class MatchListFragment : BaseFragment() {
         emptyView = find<View>(R.id.match_list_empty_view_group, view).value
         emptyMessage = find<TextView>(R.id.match_list_empty_message, view).value
         matchList.adapter = matchListAdapter
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+
+        matchListViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(MatchListViewModel::class.java)
+
+        matchListViewModel
+                .matchListUiModelLiveData
+                .observeNonNull(this, this@MatchListFragment::render)
+        matchListViewModel
+                .navigationLiveData
+                .observeNonNull(this, this@MatchListFragment::handleNavigationEvent)
+
+        addMatchButton.setOnClickListener { matchListViewModel.addMatchButtonPressed() }
 
         matchListAdapter.matchListInteraction = object : MatchListInteraction {
-            override fun matchSelected(matchId: String) {
-                matchListViewModel.matchSelected(matchId)
+
+            override fun editDateTimeAndLocation(matchId: String) {
+                matchListViewModel.editMatchDateTimeAndLocation(matchId)
+            }
+
+            override fun editSquad(matchId: String) {
+                matchListViewModel.editSquad(matchId)
             }
         }
-
-        DaggerMatchListComponent
-                .builder()
-                .appComponent(appComponent)
-                .build().inject(this)
-
-        activity?.let {
-            matchListViewModel = ViewModelProviders
-                    .of(this, viewModelFactory)
-                    .get(MatchListViewModel::class.java)
-
-            matchListViewModel
-                    .uiModelLiveData()
-                    .observeNonNull(this, this@MatchListFragment::render)
-            matchListViewModel
-                    .navigationLiveData()
-                    .observeNonNull(this, this@MatchListFragment::handleNavigationEvent)
-
-            addMatchButton.setOnClickListener({
-                matchListViewModel.addMatchButtonPressed()
-            })
-        }
-
-    }
-
-    private fun handleNavigationEvent(navEvent: MatchListNavigationEvents) {
-        when (navEvent) {
-            is MatchSelected -> {
-                requireStartActivity(requireContext().editMatchIntent(navEvent.matchId))
-            }
-            AddMatchEvent -> {
-                requireStartActivity(requireContext().createMatchIntent())
-            }
-            MatchListNavigationEvents.Idle -> {
-                //Do nothing
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        matchListViewModel.onViewShown()
     }
 
     private fun render(matchListUIModel: MatchListUiModel) {
@@ -110,5 +82,24 @@ class MatchListFragment : BaseFragment() {
         emptyView.setVisibleOrGone(matchListUIModel.showEmptyView)
         emptyMessage.text = matchListUIModel.emptyMessage
     }
+
+    private fun handleNavigationEvent(navEvent: MatchNavigationEvent) {
+        when (navEvent) {
+            is MatchNavigationEvent.Idle -> {
+                //Do nothing
+            }
+            else -> {
+                requireStartActivity(requireContext()
+                        .createMatchIntent(navEvent))
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        matchListViewModel.onViewShown()
+    }
+
+
 
 }

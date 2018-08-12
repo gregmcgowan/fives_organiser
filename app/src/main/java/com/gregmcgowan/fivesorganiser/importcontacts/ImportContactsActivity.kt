@@ -47,6 +47,7 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
         setSupportActionBar(find<Toolbar>(R.id.toolbar).value)
 
         contactList.adapter = importPlayersAdapter
+
         importPlayersAdapter.contactListInteractions = object : ImportPlayersAdapter.ContactListInteraction {
             override fun contactSelected(contactId: Long) {
                 importImportContactsViewModel.contactSelected(contactId)
@@ -97,7 +98,8 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     }
 
     override fun onPermissionDenied(userSaidNever: Boolean) {
-        Toast.makeText(this, "We need contact permission to import from your contacts",
+        Toast.makeText(this,
+                getString(R.string.permissons_denied_text),
                 Toast.LENGTH_LONG).show()
     }
 

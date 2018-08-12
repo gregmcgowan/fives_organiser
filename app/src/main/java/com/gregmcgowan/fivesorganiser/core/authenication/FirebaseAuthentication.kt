@@ -11,9 +11,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.experimental.suspendCoroutine
 
-const val TIMEOUT = 10L
+private const val TIMEOUT = 10L
 
-class FirebaseAuthentication @Inject constructor(private val firebaseAuth: FirebaseAuth) : Authentication {
+class FirebaseAuthentication @Inject constructor(
+        private val firebaseAuth: FirebaseAuth
+) : Authentication {
 
     private val tag = "FirebaseAuthentication"
     private var addOnCompleteListenerTask: Task<AuthResult>? = null
@@ -45,13 +47,13 @@ class FirebaseAuthentication @Inject constructor(private val firebaseAuth: Fireb
         return suspendCoroutine { cont ->
             firebaseAuth
                     .signInAnonymously()
-                    .addOnCompleteListener({ task ->
+                    .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             cont.resume(task.result)
                         } else {
                             cont.resumeWithException(task.exception as Throwable)
                         }
-                    })
+                    }
                     .addOnFailureListener { exception ->
                         cont.resumeWithException(exception)
                     }

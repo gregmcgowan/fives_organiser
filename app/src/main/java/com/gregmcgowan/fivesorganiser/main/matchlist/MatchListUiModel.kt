@@ -10,15 +10,10 @@ data class MatchListUiModel(
 )
 
 data class MatchListItemUiModel(val matchId: String,
-                                val summary: String,
-                                val heading: String)
+                                val matchType: String,
+                                val dateAndTime: String,
+                                val location : String,
+                                val squadStatus : String
+)
 
-sealed class MatchListNavigationEvents {
-
-    object Idle : MatchListNavigationEvents()
-
-    object AddMatchEvent : MatchListNavigationEvents()
-
-    class MatchSelected(val matchId: String) : MatchListNavigationEvents()
-}
 

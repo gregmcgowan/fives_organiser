@@ -5,9 +5,9 @@ import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
 import com.gregmcgowan.fivesorganiser.match.Match
 import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
+import com.gregmcgowan.fivesorganiser.match.PlayerMatchSquadStatus
+import com.gregmcgowan.fivesorganiser.match.getPlayersWithStatus
 import javax.inject.Inject
-
-typealias MatchListUiModelReducer = (MatchListUiModel) -> MatchListUiModel
 
 class MatchListUiModelReducers @Inject constructor(
         private val strings: Strings,
@@ -15,40 +15,47 @@ class MatchListUiModelReducers @Inject constructor(
         private val matchTypeHelper: MatchTypeHelper
 ) {
 
-    internal fun loadingMatchListUiModel(): MatchListUiModelReducer = { uiModel ->
-        uiModel.copy(
-                showEmptyView = false,
-                showProgressBar = true,
-                showList = false,
-                emptyMessage = null
+
+    internal fun map(matches: List<Match>): MatchListUiModel =
+            MatchListUiModel(
+                    showEmptyView = matches.isEmpty(),
+                    showProgressBar = false,
+                    showList = true,
+                    matches = matches.map(this::mapMatch),
+                    emptyMessage = getErrorMessage(matches)
+            )
+
+
+    private fun mapMatch(match: Match): MatchListItemUiModel {
+        val expectedSquadSize = match.squad.expectedSize.toInt()
+        val numberOfConfirmedPlayers = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.CONFIRMED).size
+
+        return MatchListItemUiModel(
+                matchId = match.matchId,
+                matchType = matchTypeHelper.getMatchType(match.squad.expectedSize.toInt()),
+                dateAndTime = getDateAndTime(match),
+                location = match.location,
+                squadStatus = getSquadStatus(expectedSquadSize - numberOfConfirmedPlayers)
         )
     }
 
-    internal fun matchListUiModel(matches: List<Match>): MatchListUiModelReducer = { uiModel ->
-        val matchesUiModels = mutableListOf<MatchListItemUiModel>()
-        for (match in matches) {
-            val matchType = matchTypeHelper.getMatchType(match.squad.expectedSize.toInt())
-            val summary = strings.getString(R.string.match_list_summary_format, matchType, match.location)
+    private fun getDateAndTime(match: Match): String = strings.getString(
+            R.string.match_list_summary_format,
+            dateTimeFormatter.formatDate(match.start),
+            dateTimeFormatter.formatTime(match.start),
+            dateTimeFormatter.formatTime(match.end)
+    )
 
-            matchesUiModels += MatchListItemUiModel(
-                    matchId = match.matchId,
-                    heading = dateTimeFormatter.formatDate(match.start),
-                    summary = summary)
-        }
-        var errorMessage: String? = null
-        var showEmptyView = false
-        if (matches.isEmpty()) {
-            showEmptyView = true
-            errorMessage = "No matches press + to add"
-        }
+    private fun getSquadStatus(playersNeeded: Int): String = if (playersNeeded == 0) {
+        strings.getString(R.string.match_list_full_squad_status)
+    } else {
+        strings.getString(R.string.match_list_more_players_needed_squad_status, playersNeeded)
+    }
 
-        uiModel.copy(
-                showEmptyView = showEmptyView,
-                showProgressBar = false,
-                showList = true,
-                matches = matchesUiModels,
-                emptyMessage = errorMessage
-        )
+    private fun getErrorMessage(matches: List<Match>): String? = if (matches.isEmpty()) {
+        strings.getString(R.string.match_list_empty_text)
+    } else {
+        null
     }
 
 

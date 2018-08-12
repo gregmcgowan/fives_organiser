@@ -19,10 +19,11 @@ class PlayersFirebaseRepo @Inject constructor (private val firestoreHelper: Fire
         return firestoreHelper
                 .runQuery(getPlayersRef().orderBy(NAME_KEY))
                 .documents
-                .mapTo(mutableListOf()) {
-                    val data = it.data
-                    data[ID_KEY] = it.id
-                    mapToPlayer(data)
+                .mapNotNullTo(mutableListOf()) { docSnapshot ->
+                    docSnapshot.data?.let { data ->
+                        data[ID_KEY] = docSnapshot.id
+                         mapToPlayer(data)
+                     }
                 }
 
     }

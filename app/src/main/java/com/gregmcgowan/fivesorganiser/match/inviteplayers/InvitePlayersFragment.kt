@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.ProgressBar
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
@@ -13,26 +14,35 @@ import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
+import com.gregmcgowan.fivesorganiser.match.MatchFragment
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class InvitePlayersFragment : BaseFragment() {
+class InvitePlayersFragment : MatchFragment, BaseFragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    companion object {
+        fun newInstance(matchId: String): InvitePlayersFragment =
+                InvitePlayersFragment().apply {
+                    val args = Bundle()
+                    args.putString(MATCH_ID_INTENT_EXTRA, matchId)
+                    arguments = args
+                }
+    }
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var uninvitedPlayersViewModel: InvitePlayersViewModel
     private lateinit var navigationViewModel: MatchActivityViewModel
 
     private lateinit var uninvitedPlayerList: RecyclerView
     private lateinit var progressBar: ProgressBar
 
-    private val notInvitedPlayersListAdapter = InvitePlayersListAdapter(object: PlayerStatusUpdated {
-        override fun playerStatusChanged(playerId: String, status: String) {
-            uninvitedPlayersViewModel.handlePlayerStatusChanged(playerId, status)
-        }
-    })
+    private val notInvitedPlayersListAdapter = InvitePlayersListAdapter { playerId: String, invitedStatus: Boolean ->
+        uninvitedPlayersViewModel.handlePlayerStatusChanged(playerId, invitedStatus)
+    }
 
-    var matchId: String? = null
+    private lateinit var matchTypeSpinnerAdapter: ArrayAdapter<String>
+
+    lateinit var matchId: String
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -46,30 +56,34 @@ class InvitePlayersFragment : BaseFragment() {
         uninvitedPlayerList = find<RecyclerView>(R.id.match_squad_not_invited_list).value
         progressBar = find<ProgressBar>(R.id.match_squad_not_invited_progress_bar).value
         uninvitedPlayerList.adapter = notInvitedPlayersListAdapter
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        matchId = arguments?.getString(MATCH_ID_INTENT_EXTRA) ?: throw IllegalArgumentException()
 
-        activity?.let {
-            matchId = it.intent?.getStringExtra(MATCH_ID_INTENT_EXTRA)
+        AndroidSupportInjection.inject(this)
 
-            AndroidSupportInjection.inject(this)
+        uninvitedPlayersViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(InvitePlayersViewModel::class.java)
 
-            uninvitedPlayersViewModel = ViewModelProviders
-                    .of(this, viewModelFactory)
-                    .get(InvitePlayersViewModel::class.java)
+        navigationViewModel = ViewModelProviders
+                .of(requireActivity())
+                .get(MatchActivityViewModel::class.java)
 
-            navigationViewModel = ViewModelProviders
-                    .of(it)
-                    .get(MatchActivityViewModel::class.java)
-
-        }
         uninvitedPlayersViewModel
                 .uiModel()
                 .observeNonNull(this, this::render)
 
         uninvitedPlayersViewModel.onViewShown()
+    }
+
+    private fun setMatchTypeAdapter() {
+        matchTypeSpinnerAdapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                mutableListOf())
+
+        matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // matchType.adapter = matchTypeSpinnerAdapter
     }
 
     private fun render(uninvitedPlayersUiModel: InvitePlayersUiModel) {
@@ -84,6 +98,9 @@ class InvitePlayersFragment : BaseFragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun consumeBackPress(): Boolean {
+        return false
+    }
 }
 
 

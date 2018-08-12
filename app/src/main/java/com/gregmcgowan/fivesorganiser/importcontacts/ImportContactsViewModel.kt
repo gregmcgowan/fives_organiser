@@ -17,7 +17,7 @@ class ImportContactsViewModel @Inject constructor(
     private val selectedContacts: MutableSet<Long> = mutableSetOf()
     private val contactUiModelLiveData = MutableLiveData<ImportContactsUiModel>()
     private val contactUiNavLiveData = MutableLiveData<ImportContactsNavEvent>()
-            get
+
 
     init {
         contactUiModelLiveData.value = ImportContactsUiModel(

@@ -1,7 +1,6 @@
-package com.gregmcgowan.fivesorganiser.match.inviteplayers
+package com.gregmcgowan.fivesorganiser.match.timelocation
 
 import android.arch.lifecycle.ViewModel
-import com.gregmcgowan.fivesorganiser.core.data.player.PlayerRepoModule
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
 import com.gregmcgowan.fivesorganiser.match.database.MatchRepoModule
@@ -10,27 +9,28 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 
+
 @Module(
         includes = [
-            InvitePlayerModule.Bindings::class,
+            MatchTimeAndLocationModule.Bindings::class,
             MatchRepoModule::class,
-            PlayerRepoModule::class,
             ViewModelBuilder::class
         ]
 )
-class InvitePlayerModule {
+class MatchTimeAndLocationModule {
 
     @Provides
-    fun matchId(invitePlayersFragment: InvitePlayersFragment): String {
-        return invitePlayersFragment.matchId
+    fun matchId(matchTimeAndLocationFragment: MatchTimeAndLocationFragment): String? {
+        return matchTimeAndLocationFragment.matchId
     }
 
     @Module
     interface Bindings {
+
         @Binds
         @IntoMap
-        @ViewModelKey(InvitePlayersViewModel::class)
-        fun bindViewModel(viewModel: InvitePlayersViewModel): ViewModel
+        @ViewModelKey(MatchTimeAndLocationViewModel::class)
+        fun bindViewModel(matchTimeAndLocationViewModel: MatchTimeAndLocationViewModel): ViewModel
 
     }
 

@@ -15,7 +15,9 @@ private const val LOCATION_KEY = "location"
 private const val NUMBER_OF_PLAYERS_KEY = "numberOfPlayers"
 private const val TIMESTAMP_KEY = "timestamp"
 
-class MatchFirebaseRepo @Inject constructor(private val firestoreHelper: FirestoreHelper) : MatchRepo {
+class MatchFirebaseRepo @Inject constructor(
+        private val firestoreHelper: FirestoreHelper
+) : MatchRepo {
 
     private val dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
@@ -58,10 +60,11 @@ class MatchFirebaseRepo @Inject constructor(private val firestoreHelper: Firesto
     override suspend fun getAllMatches(): List<MatchEntity> {
         return firestoreHelper.runQuery(matches().orderBy(TIMESTAMP_KEY))
                 .documents
-                .mapTo(mutableListOf()) {
-                    val data = it.data
-                    data[ID_KEY] = it.id
-                    mapToMatch(data)
+                .mapNotNullTo(mutableListOf()) { snapShot ->
+                    snapShot.data?.let {
+                        it[ID_KEY] = snapShot.id
+                        mapToMatch(it)
+                    }
                 }
     }
 

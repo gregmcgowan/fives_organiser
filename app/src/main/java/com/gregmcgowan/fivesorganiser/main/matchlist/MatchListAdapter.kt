@@ -25,34 +25,49 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
                 ))
         matches.clear()
         matches.addAll(newMatches)
+
         calculateDiff.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = matches.size
 
     override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
-        holder.locationTextView.text = matches[position].summary
-        holder.dateAndTimeTextView.text = matches[position].heading
-        holder.itemView.setOnClickListener {
-            matchListInteraction?.matchSelected(matchId = matches[position].matchId)
+        //TODO presenter or databinding
+        val matchUiModel = matches[position]
+        holder.matchTypeTextView.text = matchUiModel.matchType
+        holder.locationTextView.text = matchUiModel.location
+        holder.dateAndTimeTextView.text = matchUiModel.dateAndTime
+        holder.squadTextView.text = matchUiModel.squadStatus
 
+        holder.dateTimeLocationBackground.setOnClickListener {
+            matchListInteraction?.editDateTimeAndLocation(matchId = matchUiModel.matchId)
+
+        }
+        holder.squadBackground.setOnClickListener {
+            matchListInteraction?.editSquad(matchUiModel.matchId)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
-        val view = LayoutInflater.from(parent.context)
+        return MatchViewHolder(LayoutInflater.from(parent.context)
                 .inflate(R.layout.match_list_item, parent, false)
-        return MatchViewHolder(view)
+        )
     }
 
     class MatchViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        val locationTextView: TextView by find(R.id.match_list_item_match_location)
+        val matchTypeTextView: TextView by find(R.id.match_list_item_match_type)
         val dateAndTimeTextView: TextView by find(R.id.match_list_item_date_and_time)
+        val dateTimeLocationBackground : View by find(R.id.match_list_item_date_time_location_background)
+        val locationTextView: TextView by find(R.id.match_list_item_match_location)
+        val squadTextView: TextView by find(R.id.match_list_item_squad_text)
+        val squadBackground : View by find(R.id.match_list_item_squad_background)
     }
 
     interface MatchListInteraction {
 
-        fun matchSelected(matchId: String)
+        fun editDateTimeAndLocation(matchId: String)
+
+        fun editSquad(matchId : String)
     }
 
 }

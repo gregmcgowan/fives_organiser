@@ -7,7 +7,6 @@ import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import com.gregmcgowan.fivesorganiser.match.MatchStateHolder
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -35,8 +34,6 @@ interface AppComponent : AndroidInjector<FivesOrganiserApp> {
     fun strings(): Strings
 
     fun matchTypesInfo(): MatchTypesInfo
-
-    fun matchStateHolder() : MatchStateHolder
 
     @Component.Builder
     interface Builder {

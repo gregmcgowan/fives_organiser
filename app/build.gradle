@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 kapt {
     correctErrorTypes = true
@@ -8,12 +9,11 @@ kapt {
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "com.gregmcgowan.fivesorganiser"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion rootProject.ext.minSdk
+        targetSdkVersion rootProject.ext.targetSdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,12 +38,15 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 kotlin {
     experimental {
         coroutines "enable"
     }
 }
-
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -66,10 +69,10 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
 
-    implementation "com.google.firebase:firebase-core:$rootProject.ext.firebaseVersion"
-    implementation "com.google.firebase:firebase-database:$rootProject.ext.firebaseVersion"
-    implementation "com.google.firebase:firebase-auth:$rootProject.ext.firebaseVersion"
-    implementation "com.google.firebase:firebase-firestore:$rootProject.ext.firebaseVersion"
+    implementation "com.google.firebase:firebase-core:$rootProject.ext.firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-database:$rootProject.ext.firebaseDatabaseVersion"
+    implementation "com.google.firebase:firebase-auth:$rootProject.ext.firebaseAuthVersion"
+    implementation "com.google.firebase:firebase-firestore:$rootProject.ext.firestoreVersion"
 
     implementation "com.jakewharton.timber:timber:$rootProject.ext.timberVersion"
     implementation "com.jakewharton.threetenabp:threetenabp:$rootProject.ext.threeTenAbpVersion"
@@ -84,3 +87,4 @@ dependencies {
 
 
 apply plugin: 'com.google.gms.google-services'
+

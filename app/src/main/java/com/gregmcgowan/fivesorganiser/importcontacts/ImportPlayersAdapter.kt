@@ -18,8 +18,9 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
     var contactListInteractions: ContactListInteraction? = null
 
     fun setContacts(newContacts: List<ContactItemUiModel>) {
-        val calculateDiff = DiffUtil.calculateDiff(DiffUtilCallback(contactList, newContacts,
-                { c1, c2 -> c1.contactId == c2.contactId }))
+        val calculateDiff = DiffUtil.calculateDiff(
+                DiffUtilCallback(contactList, newContacts) { c1, c2 -> c1.contactId == c2.contactId }
+        )
         this.contactList.clear()
         this.contactList.addAll(newContacts)
         calculateDiff.dispatchUpdatesTo(this)

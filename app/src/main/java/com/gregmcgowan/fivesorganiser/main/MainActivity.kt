@@ -23,8 +23,7 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var mainViewModel: MainViewModel
 
     private val content: Group by find(R.id.main_content_group)
@@ -61,6 +60,7 @@ class MainActivity : BaseActivity() {
     private fun render(mainScreenUiModel: MainScreenUiModel) {
         progressBar.setVisibleOrGone(mainScreenUiModel.showLoading)
         content.setVisibleOrGone(mainScreenUiModel.showContent)
+
         if (mainScreenUiModel.showContent) {
             when (mainScreenUiModel.screenToShow) {
                 PlayersScreen -> showFragment(PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG)

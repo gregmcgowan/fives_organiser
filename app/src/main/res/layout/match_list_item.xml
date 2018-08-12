@@ -9,7 +9,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp">
 
-    <include
-            layout="@layout/match_list_item_content"/>
+    <include layout="@layout/match_list_item_content"/>
 
 </android.support.v7.widget.CardView>

@@ -5,23 +5,30 @@ import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
-import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.AddMatchEvent
-import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListNavigationEvents.MatchSelected
-import com.gregmcgowan.fivesorganiser.match.MatchOrchestrator
+import com.gregmcgowan.fivesorganiser.match.MatchInteractor
+import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent
+import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
 import timber.log.Timber
 import javax.inject.Inject
 
 class MatchListViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
-        private val matchOrchestrator: MatchOrchestrator,
+        private val matchInteractor: MatchInteractor,
         private val matchListUiModelReducers: MatchListUiModelReducers
 ) : CoroutinesViewModel(coroutineContext) {
 
-    private val matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
-    private val navigationLiveData = MutableLiveData<MatchListNavigationEvents>()
+    val matchListUiModelLiveData: LiveData<MatchListUiModel>
+        get() = _matchListUiModelLiveData
+    private val _matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
+
+
+    val navigationLiveData: LiveData<MatchNavigationEvent>
+        get() = _navigationLiveData
+
+    private val _navigationLiveData = MutableLiveData<MatchNavigationEvent>()
 
     init {
-        matchListUiModelLiveData.value = MatchListUiModel(
+        _matchListUiModelLiveData.value = MatchListUiModel(
                 showList = false,
                 showProgressBar = true,
                 showEmptyView = false,
@@ -29,39 +36,43 @@ class MatchListViewModel @Inject constructor(
                 matches = emptyList()
         )
 
-        navigationLiveData.value = MatchListNavigationEvents.Idle
+        _navigationLiveData.value = Idle
     }
 
-    fun uiModelLiveData(): LiveData<MatchListUiModel> {
-        return matchListUiModelLiveData
-    }
-
-    fun navigationLiveData(): LiveData<MatchListNavigationEvents> {
-        return navigationLiveData
-    }
 
     fun onViewShown() {
-        navigationLiveData.value = MatchListNavigationEvents.Idle
-        updateUiModel(matchListUiModelReducers.loadingMatchListUiModel())
+        _navigationLiveData.value = Idle
+
+        updateUiModel(
+                _matchListUiModelLiveData.requireValue().copy(
+                        showList = false,
+                        showProgressBar = true,
+                        showEmptyView = false
+                )
+        )
+
         runOnBackgroundAndUpdateOnUI(
-                backgroundBlock = {
-                    matchListUiModelReducers.matchListUiModel(matchOrchestrator.getAllMatches())
-                },
+                backgroundBlock = { matchListUiModelReducers.map(matchInteractor.getAllMatches()) },
                 uiBlock = { uiModel -> updateUiModel(uiModel) }
         )
     }
 
-    private fun updateUiModel(reducer: MatchListUiModelReducer) {
-        matchListUiModelLiveData.value = reducer.invoke(matchListUiModelLiveData.requireValue())
-        Timber.d("Setting match list UI model to ${matchListUiModelLiveData.value}")
+    private fun updateUiModel(model: MatchListUiModel) {
+        Timber.d("Setting match list UI model to ${_matchListUiModelLiveData.value}")
+        _matchListUiModelLiveData.value = model
+
     }
 
     fun addMatchButtonPressed() {
-        navigationLiveData.value = AddMatchEvent
+        _navigationLiveData.value = StartNewMatchFlow
     }
 
-    fun matchSelected(matchId: String) {
-        navigationLiveData.value = MatchSelected(matchId)
+    fun editMatchDateTimeAndLocation(matchId: String) {
+        _navigationLiveData.value = ShowMatchTimeAndLocation(matchId)
+    }
+
+    fun editSquad(matchId: String) {
+        _navigationLiveData.value = ShowInvitePlayers(matchId)
     }
 
 }

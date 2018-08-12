@@ -2,89 +2,93 @@ package com.gregmcgowan.fivesorganiser.match
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.os.Parcelable
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
+import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
+import kotlinx.android.parcel.Parcelize
+import java.util.*
 import javax.inject.Inject
 
 class MatchActivityViewModel @Inject constructor(
-        coroutineContext: CoroutineContexts,
-        private val matchId: String?,
-        private val matchStateHolder: MatchStateHolder,
-        private val matchOrchestrator: MatchOrchestrator
-) : CoroutinesViewModel(coroutineContext) {
+        coroutineContexts: CoroutineContexts,
+        matchEvent : MatchNavigationEvent
+) : CoroutinesViewModel(coroutineContexts) {
 
-    private val matchNavEvents = MutableLiveData<MatchActivityNavigationEvent>()
+    val matchNavEvents: LiveData<MatchNavigationEvent>
+        get() = _matchNavEvents
+
+    private val _matchNavEvents = MutableLiveData<MatchNavigationEvent>()
+    private val stack = Stack<MatchNavigationEvent>()
 
     init {
-        matchNavEvents.value = MatchActivityNavigationEvent.ShowLoading
-
-        runOnBackgroundAndUpdateOnUI({
-            if (matchId == null) {
-                matchStateHolder.createOrRestoreMatch()
-            } else {
-                matchStateHolder.match = matchOrchestrator.getMatch(matchId)
-            }
-        }, {
-            matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
-        })
-    }
-
-    fun navigationEvents(): LiveData<MatchActivityNavigationEvent> {
-        return matchNavEvents
-    }
-
-    fun showMatchSummary() {
-        matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
-    }
-
-    fun showMatchSquad() {
-        matchNavEvents.value = MatchActivityNavigationEvent.ShowSquad
-    }
-
-    fun showTeams() {
-        matchNavEvents.value = MatchActivityNavigationEvent.ShowTeams
+        handle(matchEvent)
     }
 
     fun upButtonPressed() {
-        if (matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
-            matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
-        } else {
-            matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen
-        }
+        upOrBackPressed()
     }
 
     fun backButtonPressed() {
-        if (matchNavEvents.value != MatchActivityNavigationEvent.ShowSummary) {
-            matchNavEvents.value = MatchActivityNavigationEvent.ShowSummary
+        upButtonPressed()
+    }
+
+    fun nextInNewMatchFlow(matchId: String) {
+        // TODO implement the proper flow here
+        // 1. time and location
+        // 2. pick squad
+        // 3. send invites
+        // ??? back to summary or show empty teams
+        stack.clear()
+        handle(ShowInvitePlayers(matchId))
+    }
+
+    private fun upOrBackPressed() {
+        stack.pop()
+
+        if (stack.size == 0) {
+            _matchNavEvents.value = CloseScreen
         } else {
-            matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen
+            _matchNavEvents.value = stack.peek()
         }
     }
 
-    fun saveButtonPressed() {
-        //TODO validation???
-        runOnBackgroundAndUpdateOnUI({
-            if (matchId == null) {
-                matchOrchestrator.createMatch(
-                        matchStateHolder.match.start,
-                        matchStateHolder.match.end,
-                        matchStateHolder.match.squad.expectedSize,
-                        matchStateHolder.match.location
-                )
-            } else {
-                matchOrchestrator.saveMatch(matchStateHolder.match)
-            }
-        }, {
-            matchNavEvents.value = MatchActivityNavigationEvent.CloseScreen
-        })
+    fun showTimeAndLocationScreen(matchId: String) {
+        handle(ShowMatchTimeAndLocation(matchId))
     }
+
+    private fun handle(event: MatchNavigationEvent) {
+        stack.push(event)
+        _matchNavEvents.value = event
+    }
+
+    fun showInvitePlayers(matchId: String) {
+        handle(ShowInvitePlayers(matchId))
+    }
+
 }
 
 
-sealed class MatchActivityNavigationEvent {
-    object CloseScreen : MatchActivityNavigationEvent()
-    object ShowLoading : MatchActivityNavigationEvent()
-    object ShowSummary : MatchActivityNavigationEvent()
-    object ShowSquad : MatchActivityNavigationEvent()
-    object ShowTeams : MatchActivityNavigationEvent()
+sealed class MatchNavigationEvent : Parcelable {
+
+    @Parcelize
+    object Idle : MatchNavigationEvent()
+
+    @Parcelize
+    class ShowMatchTimeAndLocation(val matchId: String) : MatchNavigationEvent()
+
+    @Parcelize
+    class ShowInvitePlayers(val matchId : String) : MatchNavigationEvent()
+
+    @Parcelize
+    object StartNewMatchFlow : MatchNavigationEvent()
+
+    @Parcelize
+    object CloseScreen : MatchNavigationEvent()
+
+    @Parcelize
+    object ShowSquad : MatchNavigationEvent()
+
+    @Parcelize
+    object ShowTeams : MatchNavigationEvent()
 }

@@ -19,7 +19,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 
-
 fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
 }
@@ -31,8 +30,6 @@ fun Fragment.requireStartActivity(intent: Intent) {
 fun Fragment.requireStartActivityForResult(intent: Intent, requestCode: Int) {
     requireActivity().startActivityForResult(intent, requestCode)
 }
-
-fun Activity.getApp(): FivesOrganiserApp = this.application as FivesOrganiserApp
 
 fun Fragment.getApp(): FivesOrganiserApp = this.activity?.application as FivesOrganiserApp
 
@@ -106,13 +103,18 @@ fun View.setVisibleOrGone(visible: Boolean) {
 fun <T> LiveData<T>.requireValue(): T = this.value
         ?: throw IllegalStateException("live data cannot have null value")
 
+fun <T : Any> MutableLiveData<T>.setIfDifferent(newValue : T ) {
+    if(newValue != this.value) {
+        this.value = newValue
+    }
+}
 
 inline fun <T> LiveData<T>.observeNonNull(
         owner: LifecycleOwner,
         crossinline observer: (T) -> Unit
 ) {
-    this.observe(owner, Observer {
-        it?.let {
+    this.observe(owner, Observer { value ->
+        value?.let {
             observer(it)
         }
     })

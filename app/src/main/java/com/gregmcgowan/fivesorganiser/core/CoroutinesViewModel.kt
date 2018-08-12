@@ -2,7 +2,6 @@ package com.gregmcgowan.fivesorganiser.core
 
 import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 
@@ -14,7 +13,7 @@ open class CoroutinesViewModel(private val coroutineContexts: CoroutineContexts)
                                          uiBlock: (T) -> Unit) {
         launch(coroutineContexts.background, parent = this.parent) {
             if (isActive) {
-                val value = async(parent) { backgroundBlock.invoke() }.await()
+                val value = withContext(parent) { backgroundBlock.invoke() }
                 onUiContext { uiBlock(value) }
             }
         }

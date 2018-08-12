@@ -11,6 +11,5 @@ interface Strings {
 
     fun getStringArray(@ArrayRes arrayRes: Int): Array<String>
 
-    //TODO others
 
 }

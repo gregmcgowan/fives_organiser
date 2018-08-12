@@ -7,10 +7,8 @@ import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import javax.inject.Inject
 import kotlin.coroutines.experimental.suspendCoroutine
 
-
 class FirestoreHelper @Inject constructor(private val authentication: Authentication,
                                           private val firebaseFirestore: FirebaseFirestore) {
-
 
     fun getUserDocRef(): DocumentReference {
         return firebaseFirestore
@@ -19,17 +17,17 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
     }
 
     suspend fun getData(
-            documentReference: DocumentReference
+            docRef: DocumentReference
     ): Map<String, Any> = suspendCoroutine { cont ->
-        documentReference.get()
+        docRef.get()
                 .addOnCompleteListener { docSnapshot ->
-                    if (docSnapshot.result.exists()) {
-                        val data = docSnapshot.result.data
+                    val data = docSnapshot.result.data
+                    if (docSnapshot.result.exists() && data != null) {
                         data[ID_KEY] = docSnapshot.result.id
                         cont.resume(data)
                     } else {
                         cont.resumeWithException(
-                                Exception("Document reference ${documentReference.path} " +
+                                Exception("Document reference ${docRef.path} " +
                                         "does not exist"))
                     }
                 }
@@ -67,11 +65,10 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
     suspend fun setData(documentReference: DocumentReference,
                         data: Map<String, Any>,
                         setOptions: SetOptions? = null): Unit = suspendCoroutine { cont ->
-        val setRef: Task<Void>
-        if (setOptions != null) {
-            setRef = documentReference.set(data, setOptions)
+        val setRef: Task<Void> = if (setOptions != null) {
+            documentReference.set(data, setOptions)
         } else {
-            setRef = documentReference.set(data)
+            documentReference.set(data)
         }
 
         setRef

@@ -10,9 +10,9 @@ import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
-class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
-                                            private val matchSquad: MatchSquadRepo,
-                                            private val playersRepo: PlayerRepo) {
+class MatchInteractor @Inject constructor(private val matchRepo: MatchRepo,
+                                          private val matchSquad: MatchSquadRepo,
+                                          private val playersRepo: PlayerRepo) {
 
     private val dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
@@ -22,11 +22,11 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
                             location: String): Match {
         val match = matchRepo.createMatch(startTime, endTime, squadSize, location)
         val squad = matchSquad.createMatchSquad(matchId = match.matchId)
-        return map(match, squad, emptyMap())
+        return combineMatchAndSquad(match, squad, emptyMap())
     }
 
     suspend fun saveMatch(match: Match) {
-        matchRepo.saveMatch(map(match))
+        matchRepo.saveMatch(combineMatchAndSquad(match))
         matchSquad.saveMatchSquad(mapSquad(match))
     }
 
@@ -45,9 +45,9 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
     private suspend fun mapFullMatch(match: MatchEntity, playerMap: Map<String, Player>): Match {
         val matchSquad = matchSquad.getMatchSquad(match.matchId)
 
-        return map(
-                matchEntity = match,
-                matchSquad = matchSquad,
+        return combineMatchAndSquad(
+                match = match,
+                squad = matchSquad,
                 players = playerMap
         )
     }
@@ -61,7 +61,7 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
         return map
     }
 
-    private fun map(match: Match): MatchEntity {
+    private fun combineMatchAndSquad(match: Match): MatchEntity {
         return MatchEntity(
                 matchId = match.matchId,
                 location = match.location,
@@ -81,25 +81,25 @@ class MatchOrchestrator @Inject constructor(private val matchRepo: MatchRepo,
         )
     }
 
-    private fun map(matchEntity: MatchEntity,
-                    matchSquad: MatchSquadEntity,
-                    players: Map<String, Player>): Match {
+    private fun combineMatchAndSquad(match: MatchEntity,
+                                     squad: MatchSquadEntity,
+                                     players: Map<String, Player>): Match {
 
-        val mutableList = mutableListOf<PlayerAndMatchStatus>()
+        val playerAndMatchStatuses = mutableListOf<PlayerAndMatchStatus>()
 
-        populateList(matchSquad.invited, PlayerMatchSquadStatus.INVITED, players, mutableList)
-        populateList(matchSquad.confirmed, PlayerMatchSquadStatus.CONFIRMED, players, mutableList)
-        populateList(matchSquad.declined, PlayerMatchSquadStatus.DECLINED, players, mutableList)
-        populateList(matchSquad.unsure, PlayerMatchSquadStatus.UNSURE, players, mutableList)
+        populateList(squad.invited, PlayerMatchSquadStatus.INVITED, players, playerAndMatchStatuses)
+        populateList(squad.confirmed, PlayerMatchSquadStatus.CONFIRMED, players, playerAndMatchStatuses)
+        populateList(squad.declined, PlayerMatchSquadStatus.DECLINED, players, playerAndMatchStatuses)
+        populateList(squad.unsure, PlayerMatchSquadStatus.UNSURE, players, playerAndMatchStatuses)
 
         return Match(
-                matchId = matchEntity.matchId,
-                location = matchEntity.location,
-                start = ZonedDateTime.parse(matchEntity.startDateTime),
-                end = ZonedDateTime.parse(matchEntity.endDateTime),
+                matchId = match.matchId,
+                location = match.location,
+                start = ZonedDateTime.parse(match.startDateTime),
+                end = ZonedDateTime.parse(match.endDateTime),
                 squad = Squad(
-                        expectedSize = matchEntity.numberOfPlayers,
-                        playerAndStatuses = mutableList
+                        expectedSize = match.numberOfPlayers,
+                        playerAndStatuses = playerAndMatchStatuses
                 )
 
         )
