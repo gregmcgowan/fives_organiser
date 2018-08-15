@@ -8,6 +8,5 @@
 /build
 /captures
 /quality/reports
-app/google-services.json
 *.keystore
 signing.properties
