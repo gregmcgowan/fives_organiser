@@ -10,3 +10,4 @@
 /quality/reports
 *.keystore
 signing.properties
+app/google-services.json
