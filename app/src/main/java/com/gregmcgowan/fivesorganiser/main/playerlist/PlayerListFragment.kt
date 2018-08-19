@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.importcontacts.importContactsIntent
+import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 const val IMPORT_CONTACTS = 1
@@ -23,8 +24,7 @@ class PlayerListFragment : BaseFragment() {
         const val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"
     }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var playerListViewModel: PlayerListViewModel
 
     private lateinit var progressBar: ProgressBar
@@ -36,46 +36,34 @@ class PlayerListFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.players_list, container, false)
-    }
+                              savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.players_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        AndroidSupportInjection.inject(this)
 
         progressBar = find<ProgressBar>(R.id.progress_bar, view).value
         playerList = find<RecyclerView>(R.id.player_list, view).value
         emptyState = find<View>(R.id.player_list_empty_view_group, view).value
         emptyStateMessage = find<TextView>(R.id.player_list_empty_message, view).value
         addPlayerButton = find<FloatingActionButton>(R.id.player_list_fab, view).value
-
         playerList.adapter = playerListAdapter
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        playerListViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(PlayerListViewModel::class.java)
 
-        DaggerPlayerListComponent
-                .builder()
-                .appComponent(appComponent)
-                .build()
-                .inject(this)
+        playerListViewModel
+                .playerUiModelLiveData
+                .observeNonNull(this, this@PlayerListFragment::render)
 
-        activity?.let { _ ->
-            playerListViewModel = ViewModelProviders
-                    .of(this, viewModelFactory)
-                    .get(PlayerListViewModel::class.java)
+        playerListViewModel
+                .playerListNavigationLiveData
+                .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
 
-            playerListViewModel
-                    .playerUiModelLiveData
-                    .observeNonNull(this, this@PlayerListFragment::render)
-
-            playerListViewModel
-                    .playerListNavigationLiveData
-                    .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
-
-            addPlayerButton.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
-        }
+        addPlayerButton.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
     }
 
     override fun onResume() {
@@ -85,10 +73,11 @@ class PlayerListFragment : BaseFragment() {
 
     private fun handleNavEvent(navEvent: PlayerListNavigationEvents) {
         when (navEvent) {
-            PlayerListNavigationEvents.AddPlayerEvent ->
+            PlayerListNavigationEvents.AddPlayerEvent -> {
                 showAddPlayers()
+            }
             PlayerListNavigationEvents.Idle -> {
-
+                // Do nothing
             }
         }
     }
@@ -99,31 +88,11 @@ class PlayerListFragment : BaseFragment() {
     }
 
     private fun render(uiModel: PlayerListUiModel) {
-        showProgressBar(uiModel.showLoading)
-        setEmptyState(uiModel.errorMessage)
-        showEmptyState(uiModel.showErrorMessage)
-        showPlayerList(uiModel.showPlayers)
-        showPlayers(uiModel.players)
-    }
-
-    private fun showPlayers(players: List<PlayerListItemUiModel>) {
-        playerListAdapter.setPlayers(players.toMutableList())
-    }
-
-    private fun showProgressBar(show: Boolean) {
-        progressBar.setVisibleOrGone(show)
-    }
-
-    private fun showPlayerList(show: Boolean) {
-        playerList.setVisibleOrGone(show)
-    }
-
-    private fun setEmptyState(message: String?) {
-        emptyStateMessage.text = message
-    }
-
-    private fun showEmptyState(show: Boolean) {
-        emptyState.setVisibleOrGone(show)
+        progressBar.setVisibleOrGone(uiModel.showLoading)
+        emptyStateMessage.text = uiModel.errorMessage
+        emptyState.setVisibleOrGone(uiModel.showErrorMessage)
+        playerList.setVisibleOrGone(uiModel.showPlayers)
+        playerListAdapter.setPlayers(uiModel.players.toMutableList())
     }
 
 

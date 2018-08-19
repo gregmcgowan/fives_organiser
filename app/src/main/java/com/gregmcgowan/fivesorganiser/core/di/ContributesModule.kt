@@ -6,6 +6,8 @@ import com.gregmcgowan.fivesorganiser.main.MainActivity
 import com.gregmcgowan.fivesorganiser.main.MainModule
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListFragment
 import com.gregmcgowan.fivesorganiser.main.matchlist.MatchListModule
+import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListFragment
+import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListModule
 import com.gregmcgowan.fivesorganiser.match.MatchActivity
 import com.gregmcgowan.fivesorganiser.match.MatchModule
 import com.gregmcgowan.fivesorganiser.match.inviteplayers.InvitePlayerModule
@@ -21,8 +23,11 @@ abstract class ContributesModule {
     @ContributesAndroidInjector(modules = [MainModule::class])
     abstract fun contributesMainActivity(): MainActivity
 
+    @ContributesAndroidInjector(modules = [PlayerListModule::class])
+    abstract fun contributesPlayerListFragment(): PlayerListFragment
+
     @ContributesAndroidInjector(modules = [MatchListModule::class])
-    abstract fun contributesMatchListFragment() : MatchListFragment
+    abstract fun contributesMatchListFragment(): MatchListFragment
 
     @ContributesAndroidInjector(modules = [ImportContactsModule::class])
     abstract fun contributesImporContactsActivity(): ImportContactsActivity
@@ -31,11 +36,10 @@ abstract class ContributesModule {
     abstract fun contributesMatchActivity(): MatchActivity
 
     @ContributesAndroidInjector(modules = [InvitePlayerModule::class])
-    abstract fun contributesInvitePlayersFragment() : InvitePlayersFragment
+    abstract fun contributesInvitePlayersFragment(): InvitePlayersFragment
 
     @ContributesAndroidInjector(modules = [MatchTimeAndLocationModule::class])
-    abstract fun contributesDateTimeLocationFragment() : MatchTimeAndLocationFragment
-
+    abstract fun contributesDateTimeLocationFragment(): MatchTimeAndLocationFragment
 
 
 }
