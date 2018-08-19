@@ -42,8 +42,8 @@ class MainActivity : BaseActivity() {
                 .get(MainViewModel::class.java)
 
         mainViewModel
-                .uiModelLiveData()
-                .observeNonNull(this, { render(it) })
+                .uiModelLiveData
+                .observeNonNull(this) { render(it) }
 
         bottomNavigation.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -54,6 +54,7 @@ class MainActivity : BaseActivity() {
             }
             true
         }
+
         mainViewModel.onViewCreated()
     }
 

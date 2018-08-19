@@ -99,7 +99,4 @@ class MatchListFragment : BaseFragment() {
         super.onResume()
         matchListViewModel.onViewShown()
     }
-
-
-
 }

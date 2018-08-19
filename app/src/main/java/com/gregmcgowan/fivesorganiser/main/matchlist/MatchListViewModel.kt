@@ -14,7 +14,7 @@ import javax.inject.Inject
 class MatchListViewModel @Inject constructor(
         coroutineContext: CoroutineContexts,
         private val matchInteractor: MatchInteractor,
-        private val matchListUiModelReducers: MatchListUiModelReducers
+        private val matchListUiModelMappers: MatchListUiModelMappers
 ) : CoroutinesViewModel(coroutineContext) {
 
     val matchListUiModelLiveData: LiveData<MatchListUiModel>
@@ -52,7 +52,7 @@ class MatchListViewModel @Inject constructor(
         )
 
         runOnBackgroundAndUpdateOnUI(
-                backgroundBlock = { matchListUiModelReducers.map(matchInteractor.getAllMatches()) },
+                backgroundBlock = { matchListUiModelMappers.map(matchInteractor.getAllMatches()) },
                 uiBlock = { uiModel -> updateUiModel(uiModel) }
         )
     }

@@ -30,8 +30,7 @@ fun Context.importContactsIntent(): Intent {
 
 class ImportContactsActivity : BaseActivity(), PermissionResults {
 
-    @Inject
-    lateinit var viewHolderFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewHolderFactory: ViewModelProvider.Factory
     private lateinit var importImportContactsViewModel: ImportContactsViewModel
 
     private val mainContent: View  by find(R.id.import_contacts_main_content)
@@ -39,6 +38,11 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     private val progressBar: ProgressBar by find(R.id.import_contacts_progress_bar)
     private val addButton: Button by find(R.id.import_contacts_add_button)
     private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
+
+    private val permission = Permission(this, Manifest.permission.READ_CONTACTS)
+
+    val hasContactPermission: Boolean
+        get() = permission.hasPermission()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,21 +69,14 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
                 .get(ImportContactsViewModel::class.java)
 
         importImportContactsViewModel
-                .navEvents()
+                .contactUiNavLiveData
                 .observeNonNull(this, this::handleNavEvents)
 
         importImportContactsViewModel
-                .uiModel()
+                .contactUiModelLiveData
                 .observeNonNull(this, this::render)
 
         addButton.setOnClickListener { _ -> importImportContactsViewModel.onAddButtonPressed() }
-
-        val permission = Permission(this, Manifest.permission.READ_CONTACTS)
-        if (permission.hasPermission()) {
-            onPermissionGranted()
-        } else {
-            permission.requestPermission()
-        }
     }
 
     private fun handleNavEvents(navEvent: ImportContactsNavEvent) {
@@ -90,11 +87,14 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
             ImportContactsNavEvent.CloseScreen -> {
                 returnToPlayersScreen()
             }
+            ImportContactsNavEvent.RequestPermission -> {
+                permission.requestPermission()
+            }
         }
     }
 
     override fun onPermissionGranted() {
-        importImportContactsViewModel.onViewShown()
+        importImportContactsViewModel.loadContacts()
     }
 
     override fun onPermissionDenied(userSaidNever: Boolean) {

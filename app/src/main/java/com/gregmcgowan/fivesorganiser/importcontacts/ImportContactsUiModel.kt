@@ -1,9 +1,8 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-typealias ImportContactsUiModelReducer = (ImportContactsUiModel) -> ImportContactsUiModel
-
 sealed class ImportContactsNavEvent {
     object Idle : ImportContactsNavEvent()
+    object RequestPermission : ImportContactsNavEvent()
     object CloseScreen : ImportContactsNavEvent()
 }
 

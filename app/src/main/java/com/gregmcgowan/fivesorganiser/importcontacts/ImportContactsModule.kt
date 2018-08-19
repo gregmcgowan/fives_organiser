@@ -24,6 +24,11 @@ class ImportContactsModule {
         return importContactsActivity.contentResolver
     }
 
+    @Provides
+    fun hasContactPermission(importContactsActivity: ImportContactsActivity) : Boolean  {
+        return importContactsActivity.hasContactPermission
+    }
+
     @Module
     interface Bindings {
 

@@ -5,20 +5,23 @@ import android.arch.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import com.gregmcgowan.fivesorganiser.core.requireValue
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-        coroutineContext: CoroutineContexts,
-        private val authentication: Authentication
+        private val mainUiModelMapper: MainUiModelMapper,
+        private val authentication: Authentication,
+        coroutineContext: CoroutineContexts
 ) : CoroutinesViewModel(coroutineContext) {
+
+    val uiModelLiveData: LiveData<MainScreenUiModel>
+        get() = _uiModelLiveData
+
+    private val _uiModelLiveData: MutableLiveData<MainScreenUiModel> = MutableLiveData()
 
     private var currentScreen: MainScreen = MainScreen.PlayersScreen
 
-    var uiModelLiveData: MutableLiveData<MainScreenUiModel> = MutableLiveData()
-
     init {
-        uiModelLiveData.value = MainScreenUiModel(
+        _uiModelLiveData.value = MainScreenUiModel(
                 screenToShow = currentScreen,
                 showContent = false,
                 showLoading = true
@@ -28,20 +31,16 @@ class MainViewModel @Inject constructor(
     fun onViewCreated() {
         runOnBackgroundAndUpdateOnUI(
                 { authentication.initialise() },
-                { _ -> updateUiModel(authCompleteUiModel(currentScreen)) }
+                { _ -> updateUiModel(currentScreen) }
         )
     }
 
-    fun uiModelLiveData(): LiveData<MainScreenUiModel> {
-        return uiModelLiveData
-    }
-
-    private fun updateUiModel(reducer: MainScreenUiModelReducer) {
-        uiModelLiveData.value = reducer.invoke(uiModelLiveData.requireValue())
+    private fun updateUiModel(selectedScreen: MainScreen) {
+        _uiModelLiveData.value = mainUiModelMapper.map(selectedScreen)
     }
 
     fun handleMenuSelection(selectedScreen: MainScreen) {
         currentScreen = selectedScreen
-        updateUiModel(menuSelectedUiModel(selectedScreen))
+        updateUiModel(selectedScreen)
     }
 }

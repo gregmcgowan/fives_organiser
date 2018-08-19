@@ -33,7 +33,7 @@ class AndroidContactImporter @Inject constructor(
     private fun createContactList(cursor: Cursor): ArrayList<Contact> {
         cursor.moveToFirst()
         val contactList = ArrayList<Contact>()
-        for (index in 0..cursor.count - 1) {
+        for (index in 0 until cursor.count) {
             val contact = createContact(cursor)
             if (contact != null) {
                 contactList.add(contact)

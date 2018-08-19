@@ -67,11 +67,11 @@ class PlayerListFragment : BaseFragment() {
                     .get(PlayerListViewModel::class.java)
 
             playerListViewModel
-                    .uiModel()
+                    .playerUiModelLiveData
                     .observeNonNull(this, this@PlayerListFragment::render)
 
             playerListViewModel
-                    .navigationEvents()
+                    .playerListNavigationLiveData
                     .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
 
             addPlayerButton.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }

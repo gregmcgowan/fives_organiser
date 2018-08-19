@@ -2,7 +2,11 @@
     <string name="app_name">Fives Organiser</string>
     <string name="add">Add</string>
     <string name="home_title">Fives Organiser</string>
+
+
     <string name="players_title">Players</string>
+    <string name="player_list_no_players_message">"No players, press + to add"</string>
+
     <string name="matches_title">Matches</string>
     <string name="results_title">Results</string>
 

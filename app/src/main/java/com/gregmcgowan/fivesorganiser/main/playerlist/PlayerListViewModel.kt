@@ -9,15 +9,23 @@ import com.gregmcgowan.fivesorganiser.core.requireValue
 import javax.inject.Inject
 
 class PlayerListViewModel @Inject constructor(
-        coroutineContext: CoroutineContexts,
-        private val playersRepo: PlayerRepo
+        private val playerListUiModelMapper: PlayerListUiModelMapper,
+        private val playersRepo: PlayerRepo,
+        coroutineContext: CoroutineContexts
 ) : CoroutinesViewModel(coroutineContext) {
 
-    private val playerUiModelLiveData = MutableLiveData<PlayerListUiModel>()
-    private val playerListNavigationLiveData = MutableLiveData<PlayerListNavigationEvents>()
+    val playerUiModelLiveData: LiveData<PlayerListUiModel>
+        get() = _playerUiModelLiveData
+
+    private val _playerUiModelLiveData = MutableLiveData<PlayerListUiModel>()
+
+    val playerListNavigationLiveData: LiveData<PlayerListNavigationEvents>
+        get() = _playerListNavigationLiveData
+
+    private val _playerListNavigationLiveData = MutableLiveData<PlayerListNavigationEvents>()
 
     init {
-        playerUiModelLiveData.value = PlayerListUiModel(
+        _playerUiModelLiveData.value = PlayerListUiModel(
                 players = emptyList(),
                 showLoading = true,
                 showErrorMessage = false,
@@ -25,32 +33,22 @@ class PlayerListViewModel @Inject constructor(
                 errorMessage = null
         )
 
-        playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
+        _playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
     }
-
-    fun uiModel(): LiveData<PlayerListUiModel> {
-        return playerUiModelLiveData
-    }
-
-    fun navigationEvents(): LiveData<PlayerListNavigationEvents> {
-        return playerListNavigationLiveData
-    }
-
+    
     fun addPlayerButtonPressed() {
-        playerListNavigationLiveData.value = PlayerListNavigationEvents.AddPlayerEvent
+        _playerListNavigationLiveData.value = PlayerListNavigationEvents.AddPlayerEvent
     }
 
     fun onViewShown() {
-        playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
-        updateUiModel(loadingPlayersUiModel())
-        runOnBackgroundAndUpdateOnUI(
-                backgroundBlock = { playersLoadedUiModel(playersRepo.getPlayers()) },
-                uiBlock = { uiModel -> updateUiModel(uiModel) }
-        )
-    }
+        _playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
+        _playerUiModelLiveData.value = playerUiModelLiveData.requireValue()
+                .copy(showLoading = true, showPlayers = false, showErrorMessage = false)
 
-    private fun updateUiModel(reducer: PlayerListUiModelReducer) {
-        playerUiModelLiveData.value = reducer.invoke(playerUiModelLiveData.requireValue())
+        runOnBackgroundAndUpdateOnUI(
+                backgroundBlock = { playerListUiModelMapper.map(playersRepo.getPlayers()) },
+                uiBlock = { uiModel -> _playerUiModelLiveData.value = uiModel }
+        )
     }
 
 }

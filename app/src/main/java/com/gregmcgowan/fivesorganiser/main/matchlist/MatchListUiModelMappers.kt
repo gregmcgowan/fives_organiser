@@ -9,14 +9,13 @@ import com.gregmcgowan.fivesorganiser.match.PlayerMatchSquadStatus
 import com.gregmcgowan.fivesorganiser.match.getPlayersWithStatus
 import javax.inject.Inject
 
-class MatchListUiModelReducers @Inject constructor(
+class MatchListUiModelMappers @Inject constructor(
         private val strings: Strings,
         private val dateTimeFormatter: ZonedDateTimeFormatter,
         private val matchTypeHelper: MatchTypeHelper
 ) {
 
-
-    internal fun map(matches: List<Match>): MatchListUiModel =
+    fun map(matches: List<Match>): MatchListUiModel =
             MatchListUiModel(
                     showEmptyView = matches.isEmpty(),
                     showProgressBar = false,
@@ -57,7 +56,6 @@ class MatchListUiModelReducers @Inject constructor(
     } else {
         null
     }
-
 
 }
 

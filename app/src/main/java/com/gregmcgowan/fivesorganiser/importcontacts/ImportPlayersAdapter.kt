@@ -38,9 +38,8 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
                     it.contactDeselected(contact.contactId)
                 }
             }
-
-            holder.contactCheckBox.isChecked = contact.isSelected
         }
+        holder.contactCheckBox.isChecked = contact.isSelected
     }
 
     override fun getItemCount(): Int = contactList.size
