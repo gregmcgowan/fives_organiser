@@ -21,7 +21,6 @@ class MatchListViewModel @Inject constructor(
         get() = _matchListUiModelLiveData
     private val _matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
 
-
     val navigationLiveData: LiveData<MatchNavigationEvent>
         get() = _navigationLiveData
 
@@ -72,7 +71,7 @@ class MatchListViewModel @Inject constructor(
     }
 
     fun editSquad(matchId: String) {
-        _navigationLiveData.value = ShowInvitePlayers(matchId)
+        _navigationLiveData.value = ShowSquad(matchId)
     }
 
 }

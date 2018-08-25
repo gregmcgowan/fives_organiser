@@ -10,7 +10,7 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
-import com.gregmcgowan.fivesorganiser.match.inviteplayers.InvitePlayersFragment
+import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadFragment
 import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationFragment
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -22,15 +22,14 @@ fun Context.createMatchIntent(matchEvent : MatchNavigationEvent): Intent {
             }
 }
 
-
 const val MATCH_ID_INTENT_EXTRA = "match_id"
 const val MATCH_EVENT_EXTRA = "MATCH_EVENT_EXTRA"
-
 
 class MatchActivity : BaseActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private lateinit var matchActivityViewModel: MatchActivityViewModel
 
     val matchEvent: MatchNavigationEvent
@@ -61,27 +60,13 @@ class MatchActivity : BaseActivity() {
             is ShowMatchTimeAndLocation -> {
                 showFragment(MatchTimeAndLocationFragment.newInstance(event.matchId))
             }
-            is ShowInvitePlayers -> {
-                showFragment(InvitePlayersFragment.newInstance(event.matchId))
-            }
             is ShowSquad -> {
-                showSquad()
+                showFragment(MatchSquadFragment.newInstance(event.matchId))
             }
-            is CloseScreen -> finish()
+            is CloseScreen -> {
+                finish()
+            }
         }
-    }
-
-    private fun showSquad() {
-        supportFragmentManager
-                .beginTransaction()
-                .setCustomAnimations(
-                        R.anim.slide_up,
-                        R.anim.slide_down,
-                        R.anim.settle,
-                        R.anim.slide_down
-                )
-                .add(R.id.match_fragment_container, InvitePlayersFragment())
-                .commit()
     }
 
     private fun showFragment(matchFragment: Fragment) {

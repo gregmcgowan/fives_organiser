@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.inviteplayers
+package com.gregmcgowan.fivesorganiser.match.squad
 
 import android.arch.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.data.player.PlayerRepoModule
@@ -12,27 +12,32 @@ import dagger.multibindings.IntoMap
 
 @Module(
         includes = [
-            InvitePlayerModule.Bindings::class,
+            MatchSquadModule.Bindings::class,
             MatchRepoModule::class,
             PlayerRepoModule::class,
             ViewModelBuilder::class
-        ]
+        ],
+        subcomponents = [MatchSquadListFactory::class]
+
 )
-class InvitePlayerModule {
+class MatchSquadModule {
 
     @Provides
-    fun matchId(invitePlayersFragment: InvitePlayersFragment): String {
-        return invitePlayersFragment.matchId
+    fun matchId(matchSquadFragment: MatchSquadFragment): String {
+        return matchSquadFragment.matchId
     }
 
     @Module
     interface Bindings {
         @Binds
         @IntoMap
-        @ViewModelKey(InvitePlayersViewModel::class)
-        fun bindViewModel(viewModel: InvitePlayersViewModel): ViewModel
+        @ViewModelKey(MatchSquadViewModel::class)
+        fun bindViewModel(viewModel: MatchSquadViewModel): ViewModel
+
+
+        @Binds
+        fun interactions(impl :MatchSquadFragment) : MatchSquadListInteractions
 
     }
-
 
 }

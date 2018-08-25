@@ -10,8 +10,8 @@ import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.main.playerlist.PlayerListModule
 import com.gregmcgowan.fivesorganiser.match.MatchActivity
 import com.gregmcgowan.fivesorganiser.match.MatchModule
-import com.gregmcgowan.fivesorganiser.match.inviteplayers.InvitePlayerModule
-import com.gregmcgowan.fivesorganiser.match.inviteplayers.InvitePlayersFragment
+import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadModule
+import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadFragment
 import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationFragment
 import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationModule
 import dagger.Module
@@ -35,8 +35,8 @@ abstract class ContributesModule {
     @ContributesAndroidInjector(modules = [MatchModule::class])
     abstract fun contributesMatchActivity(): MatchActivity
 
-    @ContributesAndroidInjector(modules = [InvitePlayerModule::class])
-    abstract fun contributesInvitePlayersFragment(): InvitePlayersFragment
+    @ContributesAndroidInjector(modules = [MatchSquadModule::class])
+    abstract fun contributesInvitePlayersFragment(): MatchSquadFragment
 
     @ContributesAndroidInjector(modules = [MatchTimeAndLocationModule::class])
     abstract fun contributesDateTimeLocationFragment(): MatchTimeAndLocationFragment

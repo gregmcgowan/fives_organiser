@@ -40,7 +40,7 @@ class MatchActivityViewModel @Inject constructor(
         // 3. send invites
         // ??? back to summary or show empty teams
         stack.clear()
-        handle(ShowInvitePlayers(matchId))
+        handle(ShowSquad(matchId))
     }
 
     private fun upOrBackPressed() {
@@ -62,10 +62,6 @@ class MatchActivityViewModel @Inject constructor(
         _matchNavEvents.value = event
     }
 
-    fun showInvitePlayers(matchId: String) {
-        handle(ShowInvitePlayers(matchId))
-    }
-
 }
 
 
@@ -78,7 +74,7 @@ sealed class MatchNavigationEvent : Parcelable {
     class ShowMatchTimeAndLocation(val matchId: String) : MatchNavigationEvent()
 
     @Parcelize
-    class ShowInvitePlayers(val matchId : String) : MatchNavigationEvent()
+    class ShowSquad(val matchId : String) : MatchNavigationEvent()
 
     @Parcelize
     object StartNewMatchFlow : MatchNavigationEvent()
@@ -86,9 +82,4 @@ sealed class MatchNavigationEvent : Parcelable {
     @Parcelize
     object CloseScreen : MatchNavigationEvent()
 
-    @Parcelize
-    object ShowSquad : MatchNavigationEvent()
-
-    @Parcelize
-    object ShowTeams : MatchNavigationEvent()
 }

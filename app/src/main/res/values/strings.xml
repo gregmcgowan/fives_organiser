@@ -3,7 +3,6 @@
     <string name="add">Add</string>
     <string name="home_title">Fives Organiser</string>
 
-
     <string name="players_title">Players</string>
     <string name="player_list_no_players_message">"No players, press + to add"</string>
 
@@ -33,21 +32,11 @@
     <string name="match_list_more_players_needed_squad_status">%1$s more players needed</string>
 
 
-    <string name="squad_not_invited_players_tab_text">Still to invite</string>
-    <string name="squad_invited_players_tab_text">Invited</string>
-
     <string name="match_types_format">%1$d a-side</string>
     <string name="match_type">Match Type</string>
     <string name="next">Next</string>
     <string name="invite_players_label">Invite players</string>
     <string name="permissons_denied_text">We need contact permission to import from your contacts</string>
 
-    <string-array name="player_invitation_status">
-        <item/>
-        <item>Invited</item>
-        <item>Confirmed</item>
-        <item>Unsure</item>
-        <item>Not Available</item>
-    </string-array>
     
 </resources>
