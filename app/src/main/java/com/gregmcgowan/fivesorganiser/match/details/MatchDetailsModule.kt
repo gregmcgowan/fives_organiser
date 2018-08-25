@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.timelocation
+package com.gregmcgowan.fivesorganiser.match.details
 
 import android.arch.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
@@ -12,16 +12,16 @@ import dagger.multibindings.IntoMap
 
 @Module(
         includes = [
-            MatchTimeAndLocationModule.Bindings::class,
+            MatchDetailsModule.Bindings::class,
             MatchRepoModule::class,
             ViewModelBuilder::class
         ]
 )
-class MatchTimeAndLocationModule {
+class MatchDetailsModule {
 
     @Provides
-    fun matchId(matchTimeAndLocationFragment: MatchTimeAndLocationFragment): String? {
-        return matchTimeAndLocationFragment.matchId
+    fun matchId(matchDetailsFragment: MatchDetailsFragment): String? {
+        return matchDetailsFragment.matchId
     }
 
     @Module
@@ -29,8 +29,8 @@ class MatchTimeAndLocationModule {
 
         @Binds
         @IntoMap
-        @ViewModelKey(MatchTimeAndLocationViewModel::class)
-        fun bindViewModel(matchTimeAndLocationViewModel: MatchTimeAndLocationViewModel): ViewModel
+        @ViewModelKey(MatchDetailsViewModel::class)
+        fun bindViewModel(matchDetailsViewModel: MatchDetailsViewModel): ViewModel
 
     }
 

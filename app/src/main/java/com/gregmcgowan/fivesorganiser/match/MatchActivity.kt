@@ -11,7 +11,7 @@ import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
 import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadFragment
-import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationFragment
+import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsFragment
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
@@ -55,10 +55,10 @@ class MatchActivity : BaseActivity() {
     private fun handleNavEvent(event: MatchNavigationEvent) {
         when (event) {
             is StartNewMatchFlow -> {
-                showFragment(MatchTimeAndLocationFragment())
+                showFragment(MatchDetailsFragment())
             }
-            is ShowMatchTimeAndLocation -> {
-                showFragment(MatchTimeAndLocationFragment.newInstance(event.matchId))
+            is ShowMatchDetails -> {
+                showFragment(MatchDetailsFragment.newInstance(event.matchId))
             }
             is ShowSquad -> {
                 showFragment(MatchSquadFragment.newInstance(event.matchId))

@@ -55,6 +55,7 @@
         android:layout_marginStart="8dp"
         android:text="@string/match_date_and_time_title"
         android:textAppearance="@style/Medium.Bold"
+        app:layout_constraintBottom_toBottomOf="@+id/match_date_time_icon"
         app:layout_constraintStart_toStartOf="@id/vertical_two"
         app:layout_constraintTop_toTopOf="@+id/match_date_time_icon" />
 
@@ -140,6 +141,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/match_location_title"
         android:textAppearance="@style/Medium.Bold"
+        app:layout_constraintBottom_toBottomOf="@+id/match_location_icon"
         app:layout_constraintStart_toEndOf="@id/match_location_icon"
         app:layout_constraintTop_toTopOf="@id/match_location_icon" />
 
@@ -169,34 +171,77 @@
         app:layout_constraintStart_toStartOf="@+id/vertical_one"
         app:layout_constraintTop_toBottomOf="@id/match_location" />
 
+    <ImageView
+        android:id="@+id/match_type_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_people_black_24dp"
+        android:tint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="@id/vertical_two"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/vertical_one"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_diver_two" />
+
+    <TextView
+        android:id="@+id/match_type_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/match_type"
+        android:textAppearance="@style/Medium.Bold"
+        app:layout_constraintBottom_toBottomOf="@+id/match_type_icon"
+        app:layout_constraintStart_toEndOf="@+id/match_type_icon"
+        app:layout_constraintTop_toTopOf="@+id/match_type_icon" />
+
+    <Spinner
+        android:id="@+id/match_type_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/match_type_label"
+        app:layout_constraintTop_toBottomOf="@+id/match_type_label"
+        tools:items="@array/match_types"
+        tools:layout_editor_absoluteY="312dp" />
+
+    <View
+        android:id="@+id/horizontal_diver_three"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/grey_300"
+        app:layout_constraintStart_toStartOf="@+id/vertical_one"
+        app:layout_constraintTop_toBottomOf="@+id/match_type_spinner" />
+
     <Button
-        android:id="@+id/match_time_location_next_button"
+        android:id="@+id/match_details_next_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="@string/next"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_diver_two" />
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_diver_three" />
 
     <ProgressBar
-        android:id="@+id/match_date_time_location_progress_bar"
+        android:id="@+id/match_details_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/match_date_time_location_toolbar"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <android.support.constraint.Group
         android:id="@+id/match_date_time_location_content_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:constraint_referenced_ids="match_location_icon,match_location_title,match_location,horizontal_diver_two, match_date_time_icon,match_date_and_time_title,match_date,match_start_time,match_end_time,horizontal_divider_one"
+        app:constraint_referenced_ids="match_location_icon,match_location_title,match_location,horizontal_divider_one,match_date_time_icon,match_date_and_time_title,match_date,match_start_time,match_end_time, horizontal_diver_two,match_type_icon, match_type_label, match_type_spinner, horizontal_diver_three"
         tools:visibility="visible" />
 
 

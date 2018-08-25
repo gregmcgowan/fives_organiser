@@ -66,8 +66,8 @@ class MatchListViewModel @Inject constructor(
         _navigationLiveData.value = StartNewMatchFlow
     }
 
-    fun editMatchDateTimeAndLocation(matchId: String) {
-        _navigationLiveData.value = ShowMatchTimeAndLocation(matchId)
+    fun editMatchDetails(matchId: String) {
+        _navigationLiveData.value = ShowMatchDetails(matchId)
     }
 
     fun editSquad(matchId: String) {

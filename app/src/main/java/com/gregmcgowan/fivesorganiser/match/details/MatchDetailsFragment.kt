@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.timelocation
+package com.gregmcgowan.fivesorganiser.match.details
 
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.TimePickerDialog.OnTimeSetListener
@@ -10,10 +10,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
@@ -22,16 +19,16 @@ import com.gregmcgowan.fivesorganiser.core.ui.TimePickerFragment
 import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchFragment
-import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationNavEvent.*
+import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
+class MatchDetailsFragment : MatchFragment, BaseFragment() {
 
     companion object {
-        fun newInstance(matchId: String): MatchTimeAndLocationFragment =
-                MatchTimeAndLocationFragment().apply {
+        fun newInstance(matchId: String): MatchDetailsFragment =
+                MatchDetailsFragment().apply {
                     val args = Bundle()
                     args.putString(MATCH_ID_INTENT_EXTRA, matchId)
                     arguments = args
@@ -41,22 +38,27 @@ class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
     var matchId: String? = null
         get() =  arguments?.getString(MATCH_ID_INTENT_EXTRA)
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private val content: View by find(R.id.match_date_time_location_content_group)
-    private val progressBar: ProgressBar by find(R.id.match_date_time_location_progress_bar)
+    private val progressBar: ProgressBar by find(R.id.match_details_progress_bar)
     private val startTime: TextView by find(R.id.match_start_time)
     private val endTime: TextView by find(R.id.match_end_time)
     private val date: TextView by find(R.id.match_date)
     private val location: EditText by find(R.id.match_location)
-    private val nextButton: Button by find(R.id.match_time_location_next_button)
+    private val nextButton: Button by find(R.id.match_details_next_button)
+    private val matchType: Spinner by find(R.id.match_type_spinner)
+
 
     private lateinit var dateListener: OnDateSetListener
     private lateinit var startTimeListener: OnTimeSetListener
     private lateinit var endTimeListener: OnTimeSetListener
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var matchDateTimeLocationViewModel: MatchTimeAndLocationViewModel
+    private lateinit var matchDateTimeLocationViewModel: MatchDetailsViewModel
     private lateinit var matchActivityViewModel: MatchActivityViewModel
+
+    private lateinit var matchTypeSpinnerAdapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +69,7 @@ class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.match_time_and_location, container, false)
+    ): View? = inflater.inflate(R.layout.match_details, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,7 +81,9 @@ class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
 
         matchDateTimeLocationViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(MatchTimeAndLocationViewModel::class.java)
+                .get(MatchDetailsViewModel::class.java)
+
+        setMatchTypeAdapter()
 
         setListeners()
 
@@ -128,9 +132,31 @@ class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
         editTextDebounce.watch { s -> matchDateTimeLocationViewModel.locationUpdated(s) }
         nextButton.setOnClickListener { matchDateTimeLocationViewModel.nextButtonPressed() }
 
+        matchType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(adapter: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(adapter: AdapterView<*>, view: View, position: Int, id: Long) {
+                val itemAtPosition = adapter.getItemAtPosition(position) as String
+                matchDateTimeLocationViewModel.matchTypeSelected(itemAtPosition)
+            }
+        }
+
+
     }
 
-    private fun render(uiModel: MatchTimeAndLocationUiModel) {
+    private fun setMatchTypeAdapter() {
+        matchTypeSpinnerAdapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                mutableListOf())
+
+        matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        matchType.adapter = matchTypeSpinnerAdapter
+    }
+
+
+    private fun render(uiModel: MatchDetailsUiModel) {
         Timber.d("Rendering $uiModel")
 
         content.setVisibleOrGone(uiModel.showContent)
@@ -139,10 +165,12 @@ class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
         endTime.setTextIfNotEqual(uiModel.endTime)
         date.setTextIfNotEqual(uiModel.date)
         location.setTextIfNotEqual(uiModel.location)
+        matchTypeSpinnerAdapter.updateIfChanged(uiModel.matchTypeOptions)
+        matchType.setIfNotEqual(uiModel.selectedMatchTypeIndex)
         nextButton.setVisibleOrGone(uiModel.showCreateSquadButton)
     }
 
-    private fun handleNavEvent(navEvent: MatchTimeAndLocationNavEvent) {
+    private fun handleNavEvent(navEvent:  MatchDetailsNavEvent) {
         when (navEvent) {
             is ShowDatePicker -> {
                 showDatePickerDialog(
@@ -173,7 +201,7 @@ class MatchTimeAndLocationFragment : MatchFragment, BaseFragment() {
             is BackPressed -> {
                 matchActivityViewModel.backButtonPressed()
             }
-            is MatchTimeAndLocationNavEvent.Idle -> {
+            is MatchDetailsNavEvent.Idle -> {
                 //Do nothing
             }
         }

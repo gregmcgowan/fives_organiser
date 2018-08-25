@@ -65,8 +65,8 @@ class MatchListFragment : BaseFragment() {
 
         matchListAdapter.matchListInteraction = object : MatchListInteraction {
 
-            override fun editDateTimeAndLocation(matchId: String) {
-                matchListViewModel.editMatchDateTimeAndLocation(matchId)
+            override fun editMatchDetails(matchId: String) {
+                matchListViewModel.editMatchDetails(matchId)
             }
 
             override fun editSquad(matchId: String) {

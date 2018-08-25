@@ -40,7 +40,7 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
         holder.squadTextView.text = matchUiModel.squadStatus
 
         holder.dateTimeLocationBackground.setOnClickListener {
-            matchListInteraction?.editDateTimeAndLocation(matchId = matchUiModel.matchId)
+            matchListInteraction?.editMatchDetails(matchId = matchUiModel.matchId)
 
         }
         holder.squadBackground.setOnClickListener {
@@ -65,7 +65,7 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
 
     interface MatchListInteraction {
 
-        fun editDateTimeAndLocation(matchId: String)
+        fun editMatchDetails(matchId: String)
 
         fun editSquad(matchId : String)
     }

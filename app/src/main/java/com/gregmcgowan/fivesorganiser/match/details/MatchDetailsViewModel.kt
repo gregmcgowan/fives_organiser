@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.match.timelocation
+package com.gregmcgowan.fivesorganiser.match.details
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
@@ -8,36 +8,38 @@ import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.core.setIfDifferent
 import com.gregmcgowan.fivesorganiser.match.Match
 import com.gregmcgowan.fivesorganiser.match.MatchInteractor
+import com.gregmcgowan.fivesorganiser.match.MatchTypeHelper
 import com.gregmcgowan.fivesorganiser.match.Squad
-import com.gregmcgowan.fivesorganiser.match.timelocation.MatchTimeAndLocationNavEvent.*
+import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 const val DEFAULT_NO_OF_PLAYERS = 10L
 internal const val NEW_MATCH_ID = ""
 
-class MatchTimeAndLocationViewModel @Inject constructor(
+class MatchDetailsViewModel @Inject constructor(
         coroutineContexts: CoroutineContexts,
         private val matchId: String?,
-        private val matchTimeAndLocationUiModelMapper: MatchTimeAndLocationUiModelMapper,
+        private val matchTypeHelper: MatchTypeHelper,
+        private val matchTimeAndLocationUiModelMapper: MatchDetailsUiModelMapper,
         private val matchInteractor: MatchInteractor
 ) : CoroutinesViewModel(coroutineContexts) {
 
     private lateinit var match: Match
 
-    private val _uiModelLiveData = MutableLiveData<MatchTimeAndLocationUiModel>()
+    private val _uiModelLiveData = MutableLiveData<MatchDetailsUiModel>()
 
-    val uiModelLiveData: LiveData<MatchTimeAndLocationUiModel>
+    val uiModelLiveData: LiveData<MatchDetailsUiModel>
         get() = _uiModelLiveData
 
-    private val _navLiveData = MutableLiveData<MatchTimeAndLocationNavEvent>()
+    private val _navLiveData = MutableLiveData<MatchDetailsNavEvent>()
 
-    val navLiveData: LiveData<MatchTimeAndLocationNavEvent>
+    val navLiveData: LiveData<MatchDetailsNavEvent>
         get() = _navLiveData
 
     init {
         _navLiveData.value = Idle
-        _uiModelLiveData.value = MatchTimeAndLocationUiModel(
+        _uiModelLiveData.value = MatchDetailsUiModel(
                 loading = true,
                 showContent = false,
                 showErrorState = false,
@@ -45,16 +47,15 @@ class MatchTimeAndLocationViewModel @Inject constructor(
                 startTime = "",
                 endTime = "",
                 location = "",
-                showCreateSquadButton = false
+                showCreateSquadButton = false,
+                matchTypeOptions = emptyList(),
+                selectedMatchTypeIndex = -1
         )
 
         runOnBackgroundAndUpdateOnUI({
             match = matchId?.let { matchInteractor.getMatch(it) } ?: createDefault()
             matchTimeAndLocationUiModelMapper.map(match)
-        }, {
-            _uiModelLiveData.value = it
-        }
-        )
+        }, { _uiModelLiveData.value = it })
 
     }
 
@@ -202,6 +203,11 @@ class MatchTimeAndLocationViewModel @Inject constructor(
         } else {
             matchInteractor.saveMatch(match)
         }
+    }
+
+    fun matchTypeSelected(matchType: String) {
+        val expectedSize = matchTypeHelper.getSquadSize(matchType).toLong()
+        match = match.copy(squad = match.squad.copy(expectedSize = expectedSize))
     }
 
 

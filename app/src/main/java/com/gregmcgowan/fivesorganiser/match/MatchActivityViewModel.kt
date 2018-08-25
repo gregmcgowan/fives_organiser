@@ -54,7 +54,7 @@ class MatchActivityViewModel @Inject constructor(
     }
 
     fun showTimeAndLocationScreen(matchId: String) {
-        handle(ShowMatchTimeAndLocation(matchId))
+        handle(ShowMatchDetails(matchId))
     }
 
     private fun handle(event: MatchNavigationEvent) {
@@ -71,7 +71,7 @@ sealed class MatchNavigationEvent : Parcelable {
     object Idle : MatchNavigationEvent()
 
     @Parcelize
-    class ShowMatchTimeAndLocation(val matchId: String) : MatchNavigationEvent()
+    class ShowMatchDetails(val matchId: String) : MatchNavigationEvent()
 
     @Parcelize
     class ShowSquad(val matchId : String) : MatchNavigationEvent()
