@@ -1,42 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Fives Organiser</string>
-    <string name="add">Add</string>
+
     <string name="home_title">Fives Organiser</string>
 
     <string name="players_title">Players</string>
-    <string name="player_list_no_players_message">"No players, press + to add"</string>
-
     <string name="matches_title">Matches</string>
     <string name="results_title">Results</string>
 
     <string name="import_contacts_title">Import Contacts</string>
 
     <string name="no_results_message">No results yet!</string>
-    <string name="no_matches_message">No matches</string>
 
-    <string name="match_title_new">Match</string>
-    <string name="match_title_update">Update Match</string>
-    <string name="match_enter_location_hint">Enter location</string>
-    <string name="match_squad_size_hint">Required size</string>
-    <string name="match_squad_title">Squad</string>
-    <string name="match_date_and_time_title">Date and Time</string>
-    <string name="match_location_title">Location</string>
-    <string name="match_squad_status">Status</string>
-    <string name="match_update_squad_button_text">Update</string>
-    <string name="match_squad_size_required_label">required</string>
-    <string name="match_current_status_label_text">Current</string>
-
-    <string name="match_list_summary_format">%1$s at %2$s-%3$s</string>
-    <string name="match_list_empty_text">No matches press + to add</string>
-    <string name="match_list_full_squad_status">Full squad</string>
-    <string name="match_list_more_players_needed_squad_status">%1$s more players needed</string>
-
-
-    <string name="match_types_format">%1$d a-side</string>
     <string name="match_type">Match Type</string>
-    <string name="next">Next</string>
     <string name="invite_players_label">Invite players</string>
-    <string name="permissons_denied_text">We need contact permission to import from your contacts</string>
 
-    
 </resources>

@@ -1,0 +1,14 @@
+apply plugin: 'com.android.library'
+apply from: "../base-android-library.gradle"
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":core")
+    implementation project(":data")
+
+    kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permissons_denied_text">We need contact permission to import from your contacts</string>
+</resources>

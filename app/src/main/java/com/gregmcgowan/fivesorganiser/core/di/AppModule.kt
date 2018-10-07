@@ -2,7 +2,6 @@ package com.gregmcgowan.fivesorganiser.core.di
 
 import android.content.res.Resources
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.AndroidStrings
@@ -28,13 +27,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun fireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    @Provides
-    @Singleton
-    fun coroutines(): CoroutineContexts {
-        return CoroutineContexts(UI, CommonPool)
-    }
+    fun coroutines(): CoroutineContexts = CoroutineContexts(UI, CommonPool)
 
     @Provides
     @Reusable

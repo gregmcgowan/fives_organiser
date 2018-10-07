@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+apply from: "../base-android-library.gradle"
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.ext.kotlinVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.ext.coroutinesVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.ext.coroutinesVersion"
+
+    api "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
+    api "com.android.support:recyclerview-v7:$rootProject.ext.supportLibraryVersion"
+    api "android.arch.lifecycle:extensions:$rootProject.ext.lifeCyclesExtensionsVersion"
+
+    api "com.google.dagger:dagger-android:$rootProject.ext.daggerVersion"
+    api "com.google.dagger:dagger-android-support:$rootProject.ext.daggerVersion"
+
+    api "com.google.firebase:firebase-core:$rootProject.ext.firebaseCoreVersion"
+    api "com.google.firebase:firebase-auth:$rootProject.ext.firebaseAuthVersion"
+
+    api "com.jakewharton.timber:timber:$rootProject.ext.timberVersion"
+    api "com.jakewharton.threetenabp:threetenabp:$rootProject.ext.threeTenAbpVersion"
+
+    testImplementation "junit:junit:$rootProject.ext.junitVersion"
+    testImplementation "org.robolectric:robolectric:$rootProject.ext.robolectricVersion"
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}
+repositories {
+    mavenCentral()
+}

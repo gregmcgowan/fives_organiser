@@ -1,7 +1,5 @@
 package com.gregmcgowan.fivesorganiser.core.di
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
 import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
@@ -24,10 +22,6 @@ import javax.inject.Singleton
 interface AppComponent : AndroidInjector<FivesOrganiserApp> {
 
     fun coroutineContexts(): CoroutineContexts
-
-    fun firebaseAuth(): FirebaseAuth
-
-    fun fireStore(): FirebaseFirestore
 
     fun authentication(): Authentication
 

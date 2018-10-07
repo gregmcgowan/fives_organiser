@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser
 
+import android.support.v4.app.Fragment
 import com.google.firebase.FirebaseApp
 import com.gregmcgowan.fivesorganiser.core.di.AppComponent
 import com.gregmcgowan.fivesorganiser.core.di.DaggerAppComponent
@@ -30,3 +31,5 @@ class FivesOrganiserApp : DaggerApplication() {
         return appComponent
     }
 }
+
+fun Fragment.getApp(): FivesOrganiserApp = this.activity?.application as FivesOrganiserApp

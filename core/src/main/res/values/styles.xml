@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Body" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Medium" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Medium.Bold">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

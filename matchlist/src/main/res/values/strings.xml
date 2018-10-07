@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="match_list_summary_format">%1$s at %2$s-%3$s</string>
+    <string name="match_list_empty_text">No matches press + to add</string>
+    <string name="match_list_full_squad_status">Full squad</string>
+    <string name="match_list_more_players_needed_squad_status">%1$s more players needed</string>
+    <string name="no_matches_message">No matches</string>
+
+</resources>

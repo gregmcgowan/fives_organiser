@@ -1,0 +1,3 @@
+<resources>
+    <string name="player_list_no_players_message">"No players, press + to add"</string>
+</resources>

@@ -11,3 +11,5 @@
 *.keystore
 signing.properties
 app/google-services.json
+*/build/*
+*.class
