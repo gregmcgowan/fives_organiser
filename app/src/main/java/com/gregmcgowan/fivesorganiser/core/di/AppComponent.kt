@@ -1,7 +1,7 @@
 package com.gregmcgowan.fivesorganiser.core.di
 
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
@@ -21,7 +21,7 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent : AndroidInjector<FivesOrganiserApp> {
 
-    fun coroutineContexts(): CoroutineContexts
+    fun coroutineDispatchers(): Dispatchers
 
     fun authentication(): Authentication
 

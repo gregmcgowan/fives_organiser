@@ -54,8 +54,6 @@ class MainActivity : BaseActivity() {
             }
             true
         }
-
-        mainViewModel.onViewCreated()
     }
 
     private fun render(mainScreenUiModel: MainScreenUiModel) {

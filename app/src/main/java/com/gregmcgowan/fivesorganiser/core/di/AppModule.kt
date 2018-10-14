@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.AndroidStrings
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
@@ -14,8 +14,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Singleton
 
 @Module(includes = [AppModule.Bindings::class])
@@ -27,7 +27,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun coroutines(): CoroutineContexts = CoroutineContexts(UI, CommonPool)
+    fun disptchers(): Dispatchers = Dispatchers(Main, IO)
 
     @Provides
     @Reusable

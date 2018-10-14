@@ -2,6 +2,10 @@ apply plugin: 'com.android.library'
 apply from: "../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 

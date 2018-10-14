@@ -4,12 +4,14 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.experimental.withTimeout
+import kotlinx.coroutines.withTimeout
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 private const val TIMEOUT = 10L
 
@@ -36,11 +38,10 @@ class FirebaseAuthentication @Inject constructor(
         return result
     }
 
-
     override suspend fun initialise() {
-        withTimeout(TIMEOUT, TimeUnit.SECONDS, {
+        withTimeout(TimeUnit.SECONDS.toMillis(TIMEOUT)) {
             handleCompletedResult(signInAnonymously())
-        })
+        }
     }
 
     private suspend fun signInAnonymously(): AuthResult {
@@ -49,7 +50,7 @@ class FirebaseAuthentication @Inject constructor(
                     .signInAnonymously()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            cont.resume(task.result)
+                            cont.resume(task.result!!)
                         } else {
                             cont.resumeWithException(task.exception as Throwable)
                         }

@@ -2,17 +2,17 @@ package com.gregmcgowan.fivesorgainser.playerlist
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import javax.inject.Inject
 
 class PlayerListViewModel @Inject constructor(
-        private val playerListUiModelMapper: PlayerListUiModelMapper,
+        private val mapper: PlayerListUiModelMapper,
         private val playersRepo: PlayerRepo,
-        coroutineContext: CoroutineContexts
-) : CoroutinesViewModel(coroutineContext) {
+        dispatchers: Dispatchers
+) : CoroutinesViewModel(dispatchers) {
 
     val playerUiModelLiveData: LiveData<PlayerListUiModel>
         get() = _playerUiModelLiveData
@@ -35,7 +35,7 @@ class PlayerListViewModel @Inject constructor(
 
         _playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
     }
-    
+
     fun addPlayerButtonPressed() {
         _playerListNavigationLiveData.value = PlayerListNavigationEvents.AddPlayerEvent
     }
@@ -45,9 +45,9 @@ class PlayerListViewModel @Inject constructor(
         _playerUiModelLiveData.value = playerUiModelLiveData.requireValue()
                 .copy(showLoading = true, showPlayers = false, showErrorMessage = false)
 
-        runOnBackgroundAndUpdateOnUI(
-                backgroundBlock = { playerListUiModelMapper.map(playersRepo.getPlayers()) },
-                uiBlock = { uiModel -> _playerUiModelLiveData.value = uiModel }
+        launch(
+                backgroundBlock = { mapper.map(playersRepo.getPlayers()) },
+                uiBlock = { _playerUiModelLiveData.value = it }
         )
     }
 

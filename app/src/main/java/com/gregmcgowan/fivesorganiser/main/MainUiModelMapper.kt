@@ -2,9 +2,10 @@ package com.gregmcgowan.fivesorganiser.main
 
 import javax.inject.Inject
 
-class  MainUiModelMapper @Inject constructor() {
+class MainUiModelMapper @Inject constructor() {
 
-    fun map(selectedScreen: MainScreen): MainScreenUiModel = MainScreenUiModel(
+    // TODO probably don't need this
+    fun map(selectedScreen: MainScreen) = MainScreenUiModel(
             screenToShow = selectedScreen,
             showContent = true,
             showLoading = false

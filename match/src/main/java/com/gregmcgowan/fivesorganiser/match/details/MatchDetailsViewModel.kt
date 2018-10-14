@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.match.details
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.core.setIfDifferent
@@ -18,12 +18,12 @@ private const val DEFAULT_NO_OF_PLAYERS = 10L
 internal const val NEW_MATCH_ID = ""
 
 class MatchDetailsViewModel @Inject constructor(
-        coroutineContexts: CoroutineContexts,
         private val matchId: String?,
         private val matchTypeHelper: MatchTypeHelper,
-        private val matchTimeAndLocationUiModelMapper: MatchDetailsUiModelMapper,
-        private val matchInteractor: MatchInteractor
-) : CoroutinesViewModel(coroutineContexts) {
+        private val mapper: MatchDetailsUiModelMapper,
+        private val matchInteractor: MatchInteractor,
+        dispatchers: Dispatchers
+) : CoroutinesViewModel(dispatchers) {
 
     private lateinit var match: Match
 
@@ -52,9 +52,9 @@ class MatchDetailsViewModel @Inject constructor(
                 selectedMatchTypeIndex = -1
         )
 
-        runOnBackgroundAndUpdateOnUI({
+        launch({
             match = matchId?.let { matchInteractor.getMatch(it) } ?: createDefault()
-            matchTimeAndLocationUiModelMapper.map(match)
+            mapper.map(match)
         }, { _uiModelLiveData.value = it })
 
     }
@@ -148,7 +148,7 @@ class MatchDetailsViewModel @Inject constructor(
                 showContent = false,
                 showCreateSquadButton = false
         )
-        runOnBackgroundAndUpdateOnUI({
+        launch({
             createOrSave()
         }, {
             //TODO handle errors
@@ -166,7 +166,7 @@ class MatchDetailsViewModel @Inject constructor(
                     showCreateSquadButton = false
             )
 
-            runOnBackgroundAndUpdateOnUI(
+            launch(
                     { createOrSave() },
                     //TODO handle errors
                     { _navLiveData.value = BackPressed })
@@ -186,8 +186,8 @@ class MatchDetailsViewModel @Inject constructor(
 
 
     private fun mapAndUpdateUi() {
-        runOnBackgroundAndUpdateOnUI(
-                backgroundBlock = { matchTimeAndLocationUiModelMapper.map(match) },
+        launch(
+                backgroundBlock = { mapper.map(match) },
                 uiBlock = { _uiModelLiveData.setIfDifferent(it) }
         )
     }

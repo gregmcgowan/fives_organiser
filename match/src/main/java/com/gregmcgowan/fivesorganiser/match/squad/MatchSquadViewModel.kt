@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.match.squad
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.match.PlayerAndMatchStatus
@@ -11,10 +11,10 @@ import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadListPlayerStatus.*
 import javax.inject.Inject
 
 class MatchSquadViewModel @Inject constructor(
-        private val uiModelMapper: MatchSquadUiModelMapper,
+        private val mapper: MatchSquadUiModelMapper,
         private val orchestrator: MatchSquadOrchestrator,
-        coroutineContext: CoroutineContexts
-) : CoroutinesViewModel(coroutineContext) {
+        dispatchers: Dispatchers
+) : CoroutinesViewModel(dispatchers) {
 
     val matchSquadUiModelLiveData: MutableLiveData<MatchSquadUiModel>
         get() = _matchSquadUiModelLiveData
@@ -35,10 +35,10 @@ class MatchSquadViewModel @Inject constructor(
 
         _matchSquadNavEventsLiveData.value = MatchSquadListNavEvent.Idle
 
-        runOnBackgroundAndUpdateOnUI({
+        launch({
             allPlayers = orchestrator.getPlayerAndMatchStatus().toMutableList()
-            uiModelMapper.map(allPlayers)
-        }, { uiModel -> _matchSquadUiModelLiveData.value = uiModel })
+            mapper.map(allPlayers)
+        }, { _matchSquadUiModelLiveData.value = it })
     }
 
     fun handlePlayerStatusChanged(playerId: String, matchSquadlistPlayerStatus: MatchSquadListPlayerStatus) {
@@ -65,7 +65,7 @@ class MatchSquadViewModel @Inject constructor(
         _matchSquadUiModelLiveData.value = _matchSquadUiModelLiveData.requireValue().copy(
                 showContent = false, showLoading = true
         )
-        runOnBackgroundAndUpdateOnUI(
+        launch(
                 backgroundBlock = { orchestrator.updatePlayerAndMatchStatus(allPlayers) },
                 uiBlock = { _matchSquadNavEventsLiveData.value = MatchSquadListNavEvent.CloseScreen }
         )

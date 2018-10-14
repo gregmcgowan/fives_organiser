@@ -3,6 +3,7 @@ package com.gregmcgowan.fivesorganiser.core.ui
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 
@@ -30,7 +31,7 @@ class DatePickerFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         arguments?.let {
-            return DatePickerDialog(activity,
+            return DatePickerDialog(activity as Context,
                     dateListener,
                     it.getInt(YEAR),
                     it.getInt(MONTH),

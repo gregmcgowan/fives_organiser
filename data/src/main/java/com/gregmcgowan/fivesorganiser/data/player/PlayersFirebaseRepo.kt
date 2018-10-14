@@ -3,7 +3,7 @@ package com.gregmcgowan.fivesorganiser.data.player
 import com.google.firebase.firestore.CollectionReference
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.data.ID_KEY
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 private const val PLAYERS_KEY = "Players"

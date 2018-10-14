@@ -27,7 +27,7 @@ class AndroidContactImporter @Inject constructor(
                 selectString,
                 null,
                 Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC")
-        return createContactList(cursor)
+        return cursor?.let { createContactList(cursor) } ?: emptyList()
     }
 
     private fun createContactList(cursor: Cursor): ArrayList<Contact> {
@@ -54,7 +54,7 @@ class AndroidContactImporter @Inject constructor(
         val phonesCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                 select, arrayOf(contactId), null)
 
-        if (phonesCursor.count > 0) {
+        if (phonesCursor != null && phonesCursor.count > 0) {
             phonesCursor.moveToFirst()
 
             val phoneNumber = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.NUMBER)
@@ -64,7 +64,7 @@ class AndroidContactImporter @Inject constructor(
             return Contact(name, phoneNumber, "", contactId.toLong())
         }
 
-        phonesCursor.close()
+        phonesCursor?.close()
         return null
     }
 

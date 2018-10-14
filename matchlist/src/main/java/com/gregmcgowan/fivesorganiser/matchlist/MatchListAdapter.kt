@@ -53,7 +53,7 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
         )
     }
 
-    class MatchViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class MatchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val matchTypeTextView: TextView by find(R.id.match_list_item_match_type)
         val dateAndTimeTextView: TextView by find(R.id.match_list_item_date_and_time)
         val dateTimeLocationBackground : View by find(R.id.match_list_item_date_time_location_background)

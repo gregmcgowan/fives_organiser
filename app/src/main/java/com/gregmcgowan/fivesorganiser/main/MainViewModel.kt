@@ -2,16 +2,16 @@ package com.gregmcgowan.fivesorganiser.main
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-        private val mainUiModelMapper: MainUiModelMapper,
+        private val mapper: MainUiModelMapper,
         private val authentication: Authentication,
-        coroutineContext: CoroutineContexts
-) : CoroutinesViewModel(coroutineContext) {
+        dispatchers: Dispatchers
+) : CoroutinesViewModel(dispatchers) {
 
     val uiModelLiveData: LiveData<MainScreenUiModel>
         get() = _uiModelLiveData
@@ -26,17 +26,14 @@ class MainViewModel @Inject constructor(
                 showContent = false,
                 showLoading = true
         )
-    }
 
-    fun onViewCreated() {
-        runOnBackgroundAndUpdateOnUI(
-                { authentication.initialise() },
-                { _ -> updateUiModel(currentScreen) }
-        )
+        launch(
+                backgroundBlock = { authentication.initialise() },
+                uiBlock = { updateUiModel(currentScreen) })
     }
 
     private fun updateUiModel(selectedScreen: MainScreen) {
-        _uiModelLiveData.value = mainUiModelMapper.map(selectedScreen)
+        _uiModelLiveData.value = mapper.map(selectedScreen)
     }
 
     fun handleMenuSelection(selectedScreen: MainScreen) {

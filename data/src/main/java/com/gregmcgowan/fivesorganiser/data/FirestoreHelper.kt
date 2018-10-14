@@ -5,7 +5,9 @@ import com.google.firebase.firestore.*
 
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import javax.inject.Inject
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class FirestoreHelper @Inject constructor(private val authentication: Authentication,
                                           private val firebaseFirestore: FirebaseFirestore) {
@@ -21,9 +23,9 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
     ): Map<String, Any> = suspendCoroutine { cont ->
         docRef.get()
                 .addOnCompleteListener { docSnapshot ->
-                    val data = docSnapshot.result.data
-                    if (docSnapshot.result.exists() && data != null) {
-                        data[ID_KEY] = docSnapshot.result.id
+                    val data = docSnapshot.result?.data
+                    if (data != null) {
+                        data[ID_KEY] = docSnapshot.result?.id
                         cont.resume(data)
                     } else {
                         cont.resumeWithException(
@@ -42,7 +44,7 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
         collectionReference
                 .document(documentId)
                 .set(data)
-                .addOnSuccessListener { _ ->
+                .addOnSuccessListener {
                     cont.resume(Unit)
                 }
                 .addOnFailureListener { exception ->

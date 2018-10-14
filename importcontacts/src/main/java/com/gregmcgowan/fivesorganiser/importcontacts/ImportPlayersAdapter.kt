@@ -50,7 +50,7 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
                 .inflate(R.layout.import_contacts_list_item, parent, false))
     }
 
-    class ContactViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val contactName: TextView by find(R.id.import_contacts_list_item_name)
         val contactCheckBox: CheckBox by find(R.id.import_contacts_checkbox)
 

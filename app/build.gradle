@@ -3,9 +3,12 @@ apply from: "../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
-
 kapt {
     correctErrorTypes = true
+}
+
+androidExtensions {
+    experimental = true
 }
 
 android {
@@ -14,17 +17,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-}
-
-
-androidExtensions {
-    experimental = true
-}
-
-kotlin {
-    experimental {
-        coroutines "enable"
     }
 }
 

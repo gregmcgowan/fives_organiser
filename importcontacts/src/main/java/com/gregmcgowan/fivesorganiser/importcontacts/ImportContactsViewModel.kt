@@ -3,18 +3,18 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.MainThread
-import com.gregmcgowan.fivesorganiser.core.CoroutineContexts
+import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import timber.log.Timber
 import javax.inject.Inject
 
 class ImportContactsViewModel @Inject constructor(
-        private val uiModelMapper: ImportContactsUiModelMapper,
+        private val mapper: ImportContactsUiModelMapper,
         private val orchestrator: ImportContactsOrchestrator,
         hasContactPermission: Boolean,
-        coroutineContexts: CoroutineContexts
-) : CoroutinesViewModel(coroutineContexts) {
+        dispatchers: Dispatchers
+) : CoroutinesViewModel(dispatchers) {
 
     private lateinit var contacts: List<Contact>
 
@@ -50,10 +50,10 @@ class ImportContactsViewModel @Inject constructor(
     }
 
     fun loadContacts() {
-        runOnBackgroundAndUpdateOnUI(
+        launch(
                 backgroundBlock = {
-                    this.contacts = orchestrator.getContacts()
-                    uiModelMapper.map(contacts, selectedContacts)
+                    contacts = orchestrator.getContacts()
+                    mapper.map(contacts, selectedContacts)
                 },
                 uiBlock = this::setUiModel
         )
@@ -63,7 +63,7 @@ class ImportContactsViewModel @Inject constructor(
         _contactUiModelLiveData.value = _contactUiModelLiveData.requireValue()
                 .copy(showLoading = true, showContent = false)
 
-        runOnBackgroundAndUpdateOnUI(
+        launch(
                 backgroundBlock = { orchestrator.saveSelectedContacts(selectedContacts) },
                 uiBlock = { _contactUiNavLiveData.value = ImportContactsNavEvent.CloseScreen }
         )
@@ -71,12 +71,12 @@ class ImportContactsViewModel @Inject constructor(
 
     fun contactSelected(contactId: Long) {
         selectedContacts.add(contactId)
-        setUiModel(uiModelMapper.map(contacts, selectedContacts))
+        setUiModel(mapper.map(contacts, selectedContacts))
     }
 
     fun contactDeselected(contactId: Long) {
         selectedContacts.remove(contactId)
-        setUiModel(uiModelMapper.map(contacts, selectedContacts))
+        setUiModel(mapper.map(contacts, selectedContacts))
     }
 
     @MainThread
