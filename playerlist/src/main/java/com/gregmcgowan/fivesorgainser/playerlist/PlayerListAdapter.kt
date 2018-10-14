@@ -5,9 +5,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.player_list_item.*
 
 class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
@@ -30,7 +30,7 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
     override fun getItemCount(): Int = playerList.size
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.playerNameTextView.text = playerList[position].name
+        holder.player_list_name.text = playerList[position].name
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
@@ -40,8 +40,10 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
         return PlayerViewHolder(view)
     }
 
-    class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val playerNameTextView: TextView by find(R.id.player_name)
+    class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+
+        override val containerView: View?
+            get() = itemView
     }
 
 }

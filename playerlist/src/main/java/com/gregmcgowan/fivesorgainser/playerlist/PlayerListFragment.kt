@@ -3,16 +3,15 @@ package com.gregmcgowan.fivesorgainser.playerlist
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import com.gregmcgowan.fivesorganiser.core.*
+import com.gregmcgowan.fivesorganiser.core.BaseFragment
+import com.gregmcgowan.fivesorganiser.core.observeNonNull
+import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsNavigator
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.players_list.*
 import javax.inject.Inject
 
 class PlayerListFragment : BaseFragment() {
@@ -27,13 +26,6 @@ class PlayerListFragment : BaseFragment() {
     lateinit var importContactsNavigator: ImportContactsNavigator
 
     private lateinit var playerListViewModel: PlayerListViewModel
-
-    private lateinit var progressBar: ProgressBar
-    private lateinit var playerList: RecyclerView
-    private lateinit var emptyState: View
-    private lateinit var emptyStateMessage: TextView
-    private lateinit var addPlayerButton: FloatingActionButton
-
     private val playerListAdapter = PlayerListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -46,12 +38,7 @@ class PlayerListFragment : BaseFragment() {
 
         AndroidSupportInjection.inject(this)
 
-        progressBar = find<ProgressBar>(R.id.progress_bar, view).value
-        playerList = find<RecyclerView>(R.id.player_list, view).value
-        emptyState = find<View>(R.id.player_list_empty_view_group, view).value
-        emptyStateMessage = find<TextView>(R.id.player_list_empty_message, view).value
-        addPlayerButton = find<FloatingActionButton>(R.id.player_list_fab, view).value
-        playerList.adapter = playerListAdapter
+        player_list.adapter = playerListAdapter
 
         playerListViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
@@ -65,7 +52,7 @@ class PlayerListFragment : BaseFragment() {
                 .playerListNavigationLiveData
                 .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
 
-        addPlayerButton.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
+        player_list_fab.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
     }
 
     override fun onResume() {
@@ -76,7 +63,7 @@ class PlayerListFragment : BaseFragment() {
     private fun handleNavEvent(navEvent: PlayerListNavigationEvents) {
         when (navEvent) {
             PlayerListNavigationEvents.AddPlayerEvent -> {
-                showAddPlayers()
+                importContactsNavigator.goToImportContacts()
             }
             PlayerListNavigationEvents.Idle -> {
                 // Do nothing
@@ -84,15 +71,11 @@ class PlayerListFragment : BaseFragment() {
         }
     }
 
-    private fun showAddPlayers() {
-        importContactsNavigator.goToImportContacts()
-    }
-
     private fun render(uiModel: PlayerListUiModel) {
-        progressBar.setVisibleOrGone(uiModel.showLoading)
-        emptyStateMessage.text = uiModel.errorMessage
-        emptyState.setVisibleOrGone(uiModel.showErrorMessage)
-        playerList.setVisibleOrGone(uiModel.showPlayers)
+        progress_bar.setVisibleOrGone(uiModel.showLoading)
+        player_list_empty_message.text = uiModel.errorMessage
+        player_list_empty_view_group.setVisibleOrGone(uiModel.showErrorMessage)
+        player_list.setVisibleOrGone(uiModel.showPlayers)
         playerListAdapter.setPlayers(uiModel.players.toMutableList())
     }
 

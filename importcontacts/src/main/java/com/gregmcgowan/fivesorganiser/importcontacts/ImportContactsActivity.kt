@@ -7,21 +7,15 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
-import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
-import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.import_contacts.*
 import javax.inject.Inject
-
 
 fun Context.importContactsIntent(): Intent {
     return Intent(this, ImportContactsActivity::class.java)
@@ -29,13 +23,10 @@ fun Context.importContactsIntent(): Intent {
 
 class ImportContactsActivity : BaseActivity(), PermissionResults {
 
-    @Inject lateinit var viewHolderFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var viewHolderFactory: ViewModelProvider.Factory
     private lateinit var importImportContactsViewModel: ImportContactsViewModel
 
-    private val mainContent: View  by find(R.id.import_contacts_main_content)
-    private val contactList: RecyclerView  by find(R.id.import_contacts_list)
-    private val progressBar: ProgressBar by find(R.id.import_contacts_progress_bar)
-    private val addButton: Button by find(R.id.import_contacts_add_button)
     private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
 
     private val permission = Permission(this, Manifest.permission.READ_CONTACTS)
@@ -47,9 +38,9 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.import_contacts)
-        setSupportActionBar(find<Toolbar>(R.id.toolbar).value)
+        setSupportActionBar(import_contacts_toolbar)
 
-        contactList.adapter = importPlayersAdapter
+        import_contacts_list.adapter = importPlayersAdapter
 
         importPlayersAdapter.contactListInteractions = object : ImportPlayersAdapter.ContactListInteraction {
             override fun contactSelected(contactId: Long) {
@@ -75,7 +66,7 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
                 .contactUiModelLiveData
                 .observeNonNull(this, this::render)
 
-        addButton.setOnClickListener { _ -> importImportContactsViewModel.onAddButtonPressed() }
+        import_contacts_add_button.setOnClickListener { importImportContactsViewModel.onAddButtonPressed() }
     }
 
     private fun handleNavEvents(navEvent: ImportContactsNavEvent) {
@@ -103,10 +94,10 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     }
 
     private fun render(uiModel: ImportContactsUiModel) {
-        progressBar.setVisibleOrGone(uiModel.showLoading)
-        mainContent.setVisibleOrGone(uiModel.showContent)
+        import_contacts_progress_bar.setVisibleOrGone(uiModel.showLoading)
+        import_contacts_main_content.setVisibleOrGone(uiModel.showContent)
+        import_contacts_add_button.isEnabled = uiModel.importContactsButtonEnabled
         importPlayersAdapter.setContacts(uiModel.contacts)
-        addButton.isEnabled = uiModel.importContactsButtonEnabled
     }
 
     private fun closeScreen() = finish()

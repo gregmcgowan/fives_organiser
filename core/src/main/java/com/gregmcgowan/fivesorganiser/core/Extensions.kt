@@ -1,19 +1,13 @@
 package com.gregmcgowan.fivesorganiser.core
 
-import android.app.Activity
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.support.annotation.IdRes
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
@@ -21,46 +15,6 @@ import android.widget.TextView
 fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
 }
-
-fun Fragment.requireStartActivity(intent: Intent) {
-    requireActivity().startActivity(intent)
-}
-
-fun Fragment.requireStartActivityForResult(intent: Intent, requestCode: Int) {
-    requireActivity().startActivityForResult(intent, requestCode)
-}
-
-
-@Suppress("UNCHECKED_CAST")
-fun <T : View> Activity.find(
-        @IdRes id: Int
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(id) }
-
-@Suppress("UNCHECKED_CAST")
-fun <T : View> Fragment.find(
-        @IdRes id: Int
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { activity!!.findViewById<T>(id) }
-
-@Suppress("UNCHECKED_CAST")
-fun <T : View> ViewGroup.find(
-        @IdRes id: Int
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(id) }
-
-@Suppress("UNCHECKED_CAST")
-fun <T : View> View.find(
-        @IdRes id: Int
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(id) }
-
-@Suppress("UNCHECKED_CAST")
-fun <T : View> RecyclerView.ViewHolder.find(
-        @IdRes id: Int
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { itemView.findViewById<T>(id) }
-
-@Suppress("UNCHECKED_CAST")
-fun <T : View> find(
-        @IdRes id: Int,
-        rootView: View
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { rootView.findViewById<T>(id) }
 
 fun Spinner.setIfNotEqual(index: Int) {
     if (this.selectedItemPosition != index) {

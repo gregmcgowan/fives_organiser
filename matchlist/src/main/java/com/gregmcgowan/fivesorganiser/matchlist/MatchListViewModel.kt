@@ -19,10 +19,11 @@ class MatchListViewModel @Inject constructor(
 
     val matchListUiModelLiveData: LiveData<MatchListUiModel>
         get() = _matchListUiModelLiveData
-    private val _matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
 
     val navigationLiveData: LiveData<MatchNavigationEvent>
         get() = _navigationLiveData
+
+    private val _matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
 
     private val _navigationLiveData = MutableLiveData<MatchNavigationEvent>()
 

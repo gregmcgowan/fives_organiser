@@ -5,19 +5,13 @@ import android.app.TimePickerDialog.OnTimeSetListener
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import com.gregmcgowan.fivesorganiser.core.setTextIfNotEqual
-import com.gregmcgowan.fivesorganiser.core.BaseFragment
-import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
-import com.gregmcgowan.fivesorganiser.core.observeNonNull
-import com.gregmcgowan.fivesorganiser.core.find
-import com.gregmcgowan.fivesorganiser.core.setIfNotEqual
-import com.gregmcgowan.fivesorganiser.core.updateIfChanged
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
 import com.gregmcgowan.fivesorganiser.core.ui.EditTextDebounce
 import com.gregmcgowan.fivesorganiser.core.ui.TimePickerFragment
@@ -27,6 +21,7 @@ import com.gregmcgowan.fivesorganiser.match.MatchFragment
 import com.gregmcgowan.fivesorganiser.match.R
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.match_details.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -46,20 +41,6 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val content: View by find(R.id.match_date_time_location_content_group)
-    private val progressBar: ProgressBar by find(R.id.match_details_progress_bar)
-    private val startTime: TextView by find(R.id.match_start_time)
-    private val endTime: TextView by find(R.id.match_end_time)
-    private val date: TextView by find(R.id.match_date)
-    private val location: EditText by find(R.id.match_location)
-    private val nextButton: Button by find(R.id.match_details_next_button)
-    private val matchType: Spinner by find(R.id.match_type_spinner)
-
-
-    private lateinit var dateListener: OnDateSetListener
-    private lateinit var startTimeListener: OnTimeSetListener
-    private lateinit var endTimeListener: OnTimeSetListener
 
     private lateinit var matchDateTimeLocationViewModel: MatchDetailsViewModel
     private lateinit var matchActivityViewModel: MatchActivityViewModel
@@ -82,7 +63,7 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
 
         AndroidSupportInjection.inject(this)
 
-        getAppCompatActivity().setSupportActionBar(find<Toolbar>(R.id.match_date_time_location_toolbar).value)
+        getAppCompatActivity().setSupportActionBar(match_date_time_location_toolbar)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         matchDateTimeLocationViewModel = ViewModelProviders
@@ -120,25 +101,15 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
     }
 
     private fun setListeners() {
-        startTimeListener = OnTimeSetListener { _, hour, minute ->
-            matchDateTimeLocationViewModel.startTimeUpdated(hour, minute)
-        }
-        endTimeListener = OnTimeSetListener { _, hour, minute ->
-            matchDateTimeLocationViewModel.endTimeUpdated(hour, minute)
-        }
-        dateListener = OnDateSetListener { _, year, month, date ->
-            matchDateTimeLocationViewModel.dateUpdated(year, month, date)
-        }
+        match_start_time.setOnClickListener { matchDateTimeLocationViewModel.startTimeSelected() }
+        match_end_time.setOnClickListener { matchDateTimeLocationViewModel.endTimeSelected() }
+        match_date.setOnClickListener { matchDateTimeLocationViewModel.dateSelected() }
 
-        startTime.setOnClickListener { matchDateTimeLocationViewModel.startTimeSelected() }
-        endTime.setOnClickListener { matchDateTimeLocationViewModel.endTimeSelected() }
-        date.setOnClickListener { matchDateTimeLocationViewModel.dateSelected() }
-
-        val editTextDebounce = EditTextDebounce(location)
+        val editTextDebounce = EditTextDebounce(match_location)
         editTextDebounce.watch { s -> matchDateTimeLocationViewModel.locationUpdated(s) }
-        nextButton.setOnClickListener { matchDateTimeLocationViewModel.nextButtonPressed() }
+        match_details_next_button.setOnClickListener { matchDateTimeLocationViewModel.nextButtonPressed() }
 
-        matchType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        match_type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(adapter: AdapterView<*>?) {
             }
 
@@ -147,8 +118,6 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
                 matchDateTimeLocationViewModel.matchTypeSelected(itemAtPosition)
             }
         }
-
-
     }
 
     private fun setMatchTypeAdapter() {
@@ -158,22 +127,22 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
                 mutableListOf())
 
         matchTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        matchType.adapter = matchTypeSpinnerAdapter
+        match_type_spinner.adapter = matchTypeSpinnerAdapter
     }
 
 
     private fun render(uiModel: MatchDetailsUiModel) {
         Timber.d("Rendering $uiModel")
 
-        content.setVisibleOrGone(uiModel.showContent)
-        progressBar.setVisibleOrGone(uiModel.loading)
-        startTime.setTextIfNotEqual(uiModel.startTime)
-        endTime.setTextIfNotEqual(uiModel.endTime)
-        date.setTextIfNotEqual(uiModel.date)
-        location.setTextIfNotEqual(uiModel.location)
+        match_date_time_location_content_group.setVisibleOrGone(uiModel.showContent)
+        match_details_progress_bar.setVisibleOrGone(uiModel.loading)
+        match_start_time.setTextIfNotEqual(uiModel.startTime)
+        match_end_time.setTextIfNotEqual(uiModel.endTime)
+        match_date.setTextIfNotEqual(uiModel.date)
+        match_location.setTextIfNotEqual(uiModel.location)
         matchTypeSpinnerAdapter.updateIfChanged(uiModel.matchTypeOptions)
-        matchType.setIfNotEqual(uiModel.selectedMatchTypeIndex)
-        nextButton.setVisibleOrGone(uiModel.showCreateSquadButton)
+        match_type_spinner.setIfNotEqual(uiModel.selectedMatchTypeIndex)
+        match_details_next_button.setVisibleOrGone(uiModel.showCreateSquadButton)
     }
 
     private fun handleNavEvent(navEvent: MatchDetailsNavEvent) {
@@ -190,7 +159,9 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
                         navEvent.hour,
                         navEvent.minute,
                         true,
-                        startTimeListener
+                        OnTimeSetListener { _, hour, minute ->
+                            matchDateTimeLocationViewModel.startTimeUpdated(hour, minute)
+                        }
                 )
             }
             is ShowEndTimePicker -> {
@@ -198,7 +169,9 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
                         navEvent.hour,
                         navEvent.minute,
                         true,
-                        endTimeListener
+                        OnTimeSetListener { _, hour, minute ->
+                            matchDateTimeLocationViewModel.endTimeUpdated(hour, minute)
+                        }
                 )
             }
             is GoToSquadScreenButtonPressed -> {
@@ -215,7 +188,9 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
 
     private fun showDatePickerDialog(year: Int, month: Int, day: Int) {
         val newFragment = DatePickerFragment.newInstance(year, month, day)
-        newFragment.dateListener = dateListener
+        newFragment.dateListener = OnDateSetListener { _, updatedYear, updatedMonth, date ->
+            matchDateTimeLocationViewModel.dateUpdated(updatedYear, updatedMonth, date)
+        }
         newFragment.show(fragmentManager, "datePicker")
     }
 

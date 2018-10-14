@@ -5,10 +5,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.TextView
-import com.gregmcgowan.fivesorganiser.core.find
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.import_contacts_list_item.*
 
 class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactViewHolder>() {
 
@@ -28,8 +27,8 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
         val contact = contactList[position]
 
-        holder.contactName.text = contact.name
-        holder.contactCheckBox.setOnCheckedChangeListener { _, selected ->
+        holder.import_contacts_list_item_name.text = contact.name
+        holder.import_contacts_checkbox.setOnCheckedChangeListener { _, selected ->
             contactListInteractions?.let {
                 if (selected) {
                     it.contactSelected(contact.contactId)
@@ -38,7 +37,7 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
                 }
             }
         }
-        holder.contactCheckBox.isChecked = contact.isSelected
+        holder.import_contacts_checkbox.isChecked = contact.isSelected
     }
 
     override fun getItemCount(): Int = contactList.size
@@ -50,10 +49,10 @@ class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactVi
                 .inflate(R.layout.import_contacts_list_item, parent, false))
     }
 
-    class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val contactName: TextView by find(R.id.import_contacts_list_item_name)
-        val contactCheckBox: CheckBox by find(R.id.import_contacts_checkbox)
+    class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
 
+        override val containerView: View?
+            get() = itemView
     }
 
     interface ContactListInteraction {
