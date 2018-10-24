@@ -1,9 +1,9 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.annotation.MainThread
-import com.gregmcgowan.fivesorganiser.core.Dispatchers
+import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import timber.log.Timber
@@ -11,10 +11,11 @@ import javax.inject.Inject
 
 class ImportContactsViewModel @Inject constructor(
         private val mapper: ImportContactsUiModelMapper,
-        private val orchestrator: ImportContactsOrchestrator,
+        private val savePlayersUseCase: SavePlayersUseCase,
+        private val getContactsUseCase: GetContactsUseCase,
         hasContactPermission: Boolean,
-        dispatchers: Dispatchers
-) : CoroutinesViewModel(dispatchers) {
+        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
+) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
     private lateinit var contacts: List<Contact>
 
@@ -49,14 +50,8 @@ class ImportContactsViewModel @Inject constructor(
         }
     }
 
-    fun loadContacts() {
-        launch(
-                backgroundBlock = {
-                    contacts = orchestrator.getContacts()
-                    mapper.map(contacts, selectedContacts)
-                },
-                uiBlock = this::setUiModel
-        )
+    fun onContactsPermissionGranted() {
+        loadContacts()
     }
 
     fun onAddButtonPressed() {
@@ -64,7 +59,7 @@ class ImportContactsViewModel @Inject constructor(
                 .copy(showLoading = true, showContent = false)
 
         launch(
-                backgroundBlock = { orchestrator.saveSelectedContacts(selectedContacts) },
+                backgroundBlock = { savePlayersUseCase.execute(selectedContacts) },
                 uiBlock = { _contactUiNavLiveData.value = ImportContactsNavEvent.CloseScreen }
         )
     }
@@ -77,6 +72,16 @@ class ImportContactsViewModel @Inject constructor(
     fun contactDeselected(contactId: Long) {
         selectedContacts.remove(contactId)
         setUiModel(mapper.map(contacts, selectedContacts))
+    }
+
+    private fun loadContacts() {
+        launch(
+                backgroundBlock = {
+                    contacts = getContactsUseCase.execute()
+                    mapper.map(contacts, selectedContacts)
+                },
+                uiBlock = this::setUiModel
+        )
     }
 
     @MainThread

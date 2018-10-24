@@ -4,8 +4,7 @@ import javax.inject.Inject
 
 class ImportContactsUiModelMapper @Inject constructor() {
 
-    fun map(contacts: List<Contact>,
-            selectedContacts: Set<Long>) =
+    fun map(contacts: List<Contact>, selectedContacts: Set<Long>) =
             ImportContactsUiModel(
                     showLoading = false,
                     showContent = true,

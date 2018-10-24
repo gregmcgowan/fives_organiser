@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorgainser.playerlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.Dispatchers
+import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
@@ -11,8 +11,8 @@ import javax.inject.Inject
 class PlayerListViewModel @Inject constructor(
         private val mapper: PlayerListUiModelMapper,
         private val playersRepo: PlayerRepo,
-        dispatchers: Dispatchers
-) : CoroutinesViewModel(dispatchers) {
+        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
+) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
     val playerUiModelLiveData: LiveData<PlayerListUiModel>
         get() = _playerUiModelLiveData

@@ -60,7 +60,7 @@ class AndroidContactImporter @Inject constructor(
             val phoneNumber = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.NUMBER)
             val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
             phonesCursor.close()
-            //TODO
+            //TODO actually add email address
             return Contact(name, phoneNumber, "", contactId.toLong())
         }
 
