@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.match.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.Dispatchers
+import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.core.setIfDifferent
@@ -22,8 +22,8 @@ class MatchDetailsViewModel @Inject constructor(
         private val matchTypeHelper: MatchTypeHelper,
         private val mapper: MatchDetailsUiModelMapper,
         private val matchInteractor: MatchInteractor,
-        dispatchers: Dispatchers
-) : CoroutinesViewModel(dispatchers) {
+        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
+) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
     private lateinit var match: Match
 

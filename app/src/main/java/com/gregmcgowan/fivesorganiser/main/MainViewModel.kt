@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.Dispatchers
+import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import javax.inject.Inject
@@ -10,8 +10,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
         private val mapper: MainUiModelMapper,
         private val authentication: Authentication,
-        dispatchers: Dispatchers
-) : CoroutinesViewModel(dispatchers) {
+        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
+) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
     val uiModelLiveData: LiveData<MainScreenUiModel>
         get() = _uiModelLiveData

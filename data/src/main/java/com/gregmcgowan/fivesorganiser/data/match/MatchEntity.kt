@@ -10,7 +10,7 @@ data class MatchEntity(
 )
 
 data class MatchSquadEntity(
-        val matchId : String = "",
+        val matchId : String,
         val invited: List<String> = emptyList(),
         val confirmed: List<String> = emptyList(),
         val unsure: List<String> = emptyList(),

@@ -2,16 +2,16 @@ package com.gregmcgowan.fivesorganiser.match
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.Dispatchers
+import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.ShowSquad
 import java.util.*
 import javax.inject.Inject
 
 class MatchActivityViewModel @Inject constructor(
-        dispatchers: Dispatchers,
+        coroutineDisptachersAndContext: CoroutineDisptachersAndContext,
         matchEvent : MatchNavigationEvent
-) : CoroutinesViewModel(dispatchers) {
+) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
     val matchNavEvents: LiveData<MatchNavigationEvent>
         get() = _matchNavEvents

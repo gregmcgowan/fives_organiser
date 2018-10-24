@@ -10,4 +10,9 @@ dependencies {
     api "com.google.firebase:firebase-database:${versions.firebase_database}"
     api "com.google.firebase:firebase-firestore:${versions.firestore}"
 
+    testImplementation "junit:junit:${versions.junit}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+    testImplementation "android.arch.core:core-testing:${versions.androidx.core_testing}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+    testImplementation "org.mockito:mockito-core:${versions.mockito}"
 }

@@ -17,8 +17,7 @@ class MatchInteractor @Inject constructor(private val matchRepo: MatchRepo,
                             squadSize: Long,
                             location: String): Match {
         val match = matchRepo.createMatch(startTime, endTime, squadSize, location)
-        val squad = matchSquad.createMatchSquad(matchId = match.matchId)
-        return combineMatchAndSquad(match, squad, emptyMap())
+        return combineMatchAndSquad(match, matchSquad.createMatchSquad(match.matchId), emptyMap())
     }
 
     suspend fun saveMatch(match: Match) {

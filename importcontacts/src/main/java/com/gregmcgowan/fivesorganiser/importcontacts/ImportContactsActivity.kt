@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
+import com.gregmcgowan.fivesorganiser.core.ViewModelActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
@@ -21,11 +22,12 @@ fun Context.importContactsIntent(): Intent {
     return Intent(this, ImportContactsActivity::class.java)
 }
 
-class ImportContactsActivity : BaseActivity(), PermissionResults {
+class ImportContactsActivity : BaseActivity(), PermissionResults, ViewModelActivity {
 
-    @Inject
-    lateinit var viewHolderFactory: ViewModelProvider.Factory
-    private lateinit var importImportContactsViewModel: ImportContactsViewModel
+    override lateinit var viewHolderFactory: ViewModelProvider.Factory
+        @Inject set
+
+    lateinit var importImportContactsViewModel: ImportContactsViewModel
 
     private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
 
@@ -84,7 +86,7 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     }
 
     override fun onPermissionGranted() {
-        importImportContactsViewModel.loadContacts()
+        importImportContactsViewModel.onContactsPermissionGranted()
     }
 
     override fun onPermissionDenied(userSaidNever: Boolean) {
@@ -106,6 +108,5 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
         setResult(Activity.RESULT_OK)
         closeScreen()
     }
-
 
 }
