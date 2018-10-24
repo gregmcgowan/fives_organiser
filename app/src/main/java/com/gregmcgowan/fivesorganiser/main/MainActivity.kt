@@ -1,10 +1,10 @@
 package com.gregmcgowan.fivesorganiser.main
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.transition.TransitionManager
-import android.support.v4.app.Fragment
+import androidx.transition.TransitionManager
+import androidx.fragment.app.Fragment
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity

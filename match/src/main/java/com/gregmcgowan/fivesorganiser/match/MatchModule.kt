@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.match
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
 import com.gregmcgowan.fivesorganiser.data.match.MatchRepoModule

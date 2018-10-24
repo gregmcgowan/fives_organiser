@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.core
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
 
 open class CoroutinesViewModel(private val dispatchers: Dispatchers) : ViewModel() {

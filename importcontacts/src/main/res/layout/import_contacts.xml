@@ -5,7 +5,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
             android:id="@+id/import_contacts_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -24,12 +24,12 @@
             android:paddingTop="?attr/actionBarSize"
             android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/import_contacts_list"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/import_contacts_list_item"/>
         <Button
                 android:id="@+id/import_contacts_add_button"

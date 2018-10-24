@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.core.permissions
 
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.support.v4.app.ActivityCompat
+import androidx.core.app.ActivityCompat
 
 fun Activity.getPermissionResults(permission: Permission,
                                   results: PermissionResults,

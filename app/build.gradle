@@ -16,7 +16,7 @@ android {
         applicationId "com.gregmcgowan.fivesorganiser"
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 
@@ -33,15 +33,15 @@ dependencies {
     implementation project(":matchlist")
     implementation project(':match-navigator')
 
-    implementation "com.android.support:design:$rootProject.ext.supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraintLayoutVersion"
+    implementation "com.google.android.material:material:${versions.material}"
+    implementation "androidx.cardview:cardview:${versions.androidx.card_view}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
-    implementation "android.arch.lifecycle:runtime:$rootProject.ext.lifeCyclesRuntimesVersion"
-    kapt "android.arch.lifecycle:compiler:$rootProject.ext.lifeCyclesCompilerVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
 
-    kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
-    kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
 }
 

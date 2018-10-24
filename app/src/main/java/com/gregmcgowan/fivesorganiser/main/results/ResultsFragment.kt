@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.main.results
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 class ResultsFragment : Fragment() {
 

@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.core.ui
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 
 class DiffUtilCallback<out T>(private val oldList: List<T>,
                               private val newList: List<T>,

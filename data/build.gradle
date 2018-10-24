@@ -7,7 +7,7 @@ dependencies {
 
     implementation project(":core")
 
-    api "com.google.firebase:firebase-database:$rootProject.ext.firebaseDatabaseVersion"
-    api "com.google.firebase:firebase-firestore:$rootProject.ext.firestoreVersion"
+    api "com.google.firebase:firebase-database:${versions.firebase_database}"
+    api "com.google.firebase:firebase-firestore:${versions.firestore}"
 
 }

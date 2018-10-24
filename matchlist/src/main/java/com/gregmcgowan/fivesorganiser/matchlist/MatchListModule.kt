@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import dagger.Binds
 import dagger.Module

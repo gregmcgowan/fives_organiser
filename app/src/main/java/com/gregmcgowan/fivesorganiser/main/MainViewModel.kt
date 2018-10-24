@@ -1,7 +1,7 @@
 package com.gregmcgowan.fivesorganiser.main
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.Dispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
@@ -29,7 +29,8 @@ class MainViewModel @Inject constructor(
 
         launch(
                 backgroundBlock = { authentication.initialise() },
-                uiBlock = { updateUiModel(currentScreen) })
+                uiBlock = { updateUiModel(currentScreen) }
+        )
     }
 
     private fun updateUiModel(selectedScreen: MainScreen) {

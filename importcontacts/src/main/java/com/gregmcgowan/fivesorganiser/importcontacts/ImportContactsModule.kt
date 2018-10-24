@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.content.ContentResolver
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey

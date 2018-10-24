@@ -1,7 +1,7 @@
 package com.gregmcgowan.fivesorganiser.match.squad
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
