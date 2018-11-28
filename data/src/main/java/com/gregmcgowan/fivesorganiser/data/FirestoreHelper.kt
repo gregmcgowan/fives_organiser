@@ -1,21 +1,56 @@
 package com.gregmcgowan.fivesorganiser.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
-
+import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import javax.inject.Inject
-import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class FirestoreHelper @Inject constructor(private val authentication: Authentication,
                                           private val firebaseFirestore: FirebaseFirestore) {
-
     fun getUserDocRef(): DocumentReference {
         return firebaseFirestore
                 .collection(authentication.getUserId())
                 .document("User ${authentication.getUserId()}")
+    }
+
+    fun <T> changesForCollection(collectionReference: CollectionReference,
+                                 map: (Map<String, Any>) -> T)
+            : LiveData<Either<Exception, DataUpdate<T>>> {
+        val liveData = MutableLiveData<Either<Exception, DataUpdate<T>>>()
+        collectionReference.addSnapshotListener { querySnapshot, firebaseException ->
+            if (firebaseException != null) {
+                liveData.postValue(Either.Left(firebaseException))
+            } else {
+                querySnapshot?.let { liveData.postValue(Either.Right(getDataChangeList(it, map))) }
+            }
+        }
+        return liveData
+    }
+
+    private fun <T> getDataChangeList(querySnapshot: QuerySnapshot,
+                                      map: (Map<String, Any>) -> T): DataUpdate<T> {
+        val listOfChanges = querySnapshot.documentChanges.mapNotNull { it ->
+            it?.let { documentChange ->
+                val data = documentChange.document.data
+                data[ID_KEY] = documentChange.document.id
+                DataChange(mapToDataChange(documentChange.type), map(data))
+            }
+        }
+        return DataUpdate(listOfChanges)
+    }
+
+    private fun mapToDataChange(documentChange: DocumentChange.Type): DataChangeType {
+        return when (documentChange) {
+            DocumentChange.Type.ADDED -> DataChangeType.Added
+            DocumentChange.Type.MODIFIED -> DataChangeType.Modified
+            DocumentChange.Type.REMOVED -> DataChangeType.Removed
+        }
     }
 
     suspend fun getData(
@@ -33,9 +68,7 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
                                         "does not exist"))
                     }
                 }
-                .addOnFailureListener { exception ->
-                    cont.resumeWithException(exception)
-                }
+                .addOnFailureListener { exception -> cont.resumeWithException(exception) }
     }
 
     suspend fun setData(collectionReference: CollectionReference,
@@ -44,24 +77,16 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
         collectionReference
                 .document(documentId)
                 .set(data)
-                .addOnSuccessListener {
-                    cont.resume(Unit)
-                }
-                .addOnFailureListener { exception ->
-                    cont.resumeWithException(exception)
-                }
+                .addOnSuccessListener { cont.resume(Unit) }
+                .addOnFailureListener { exception -> cont.resumeWithException(exception) }
     }
 
     suspend fun addData(collectionReference: CollectionReference,
                         data: Map<String, Any>): String = suspendCoroutine { cont ->
         collectionReference
                 .add(data)
-                .addOnSuccessListener { docReference ->
-                    cont.resume(docReference.id)
-                }
-                .addOnFailureListener { exception ->
-                    cont.resumeWithException(exception)
-                }
+                .addOnSuccessListener { docReference -> cont.resume(docReference.id) }
+                .addOnFailureListener { exception -> cont.resumeWithException(exception) }
     }
 
     suspend fun setData(documentReference: DocumentReference,
@@ -74,22 +99,13 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
         }
 
         setRef
-                .addOnCompleteListener {
-                    cont.resume(Unit)
-                }
-                .addOnFailureListener { exception ->
-                    cont.resumeWithException(exception)
-                }
+                .addOnCompleteListener { cont.resume(Unit) }
+                .addOnFailureListener { exception -> cont.resumeWithException(exception) }
     }
 
     suspend fun runQuery(query: Query): QuerySnapshot = suspendCoroutine { cont ->
         query.get()
-                .addOnSuccessListener { querySnapshot ->
-                    cont.resume(querySnapshot)
-                }
-                .addOnFailureListener { exception ->
-                    cont.resumeWithException(exception)
-                }
-
+                .addOnSuccessListener { querySnapshot -> cont.resume(querySnapshot) }
+                .addOnFailureListener { exception -> cont.resumeWithException(exception) }
     }
 }

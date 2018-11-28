@@ -6,6 +6,7 @@ import com.google.common.truth.Truth
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.withTimeout
+import java.lang.IllegalStateException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -105,12 +106,12 @@ inline fun <T> LiveData<T>.captureValues(block: LiveDataValueCapture<T>.() -> Un
 /**
  * Get the current value from a LiveData without needing to register an observer.
  */
-fun <T> LiveData<T>.getValueForTest(): T? {
+fun <T : Any> LiveData<T>.getValueForTest(): T {
     var value: T? = null
     var observer = Observer<T> {
         value = it
     }
     observeForever(observer)
     removeObserver(observer)
-    return value
+    return value ?: throw IllegalStateException("Cannot return null value from live data")
 }

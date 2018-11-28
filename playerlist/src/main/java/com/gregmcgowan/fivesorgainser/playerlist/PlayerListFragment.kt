@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
+import com.gregmcgowan.fivesorganiser.core.setTextIfValidRes
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsNavigator
 import dagger.android.support.AndroidSupportInjection
@@ -22,10 +23,12 @@ class PlayerListFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
-    lateinit var importContactsNavigator: ImportContactsNavigator
+    lateinit var navigator: ImportContactsNavigator
 
     private lateinit var playerListViewModel: PlayerListViewModel
+
     private val playerListAdapter = PlayerListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -55,15 +58,10 @@ class PlayerListFragment : BaseFragment() {
         player_list_fab.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
     }
 
-    override fun onResume() {
-        super.onResume()
-        playerListViewModel.onViewShown()
-    }
-
     private fun handleNavEvent(navEvent: PlayerListNavigationEvents) {
         when (navEvent) {
             PlayerListNavigationEvents.AddPlayerEvent -> {
-                importContactsNavigator.goToImportContacts()
+                navigator.goToImportContacts()
             }
             PlayerListNavigationEvents.Idle -> {
                 // Do nothing
@@ -73,7 +71,7 @@ class PlayerListFragment : BaseFragment() {
 
     private fun render(uiModel: PlayerListUiModel) {
         progress_bar.setVisibleOrGone(uiModel.showLoading)
-        player_list_empty_message.text = uiModel.errorMessage
+        player_list_empty_message.setTextIfValidRes(uiModel.errorMessage)
         player_list_empty_view_group.setVisibleOrGone(uiModel.showErrorMessage)
         player_list.setVisibleOrGone(uiModel.showPlayers)
         playerListAdapter.setPlayers(uiModel.players.toMutableList())

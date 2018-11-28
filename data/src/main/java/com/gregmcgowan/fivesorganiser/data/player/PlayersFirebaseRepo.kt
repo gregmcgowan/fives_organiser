@@ -1,6 +1,9 @@
 package com.gregmcgowan.fivesorganiser.data.player
 
+import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.CollectionReference
+import com.gregmcgowan.fivesorganiser.core.Either
+import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.data.ID_KEY
 import kotlinx.coroutines.runBlocking
@@ -17,6 +20,10 @@ class PlayersFirebaseRepo @Inject constructor(
         private val firestoreHelper: FirestoreHelper
 ) : PlayerRepo {
 
+    override fun playerUpdateLiveData(): LiveData<Either<Exception, DataUpdate<Player>>> {
+        return firestoreHelper.changesForCollection(getPlayersRef(), ::mapToPlayer)
+    }
+
     override suspend fun getPlayers(): List<Player> {
         return firestoreHelper
                 .runQuery(getPlayersRef().orderBy(NAME_KEY))
@@ -27,39 +34,34 @@ class PlayersFirebaseRepo @Inject constructor(
                         mapToPlayer(data)
                     }
                 }
-
     }
 
     override suspend fun addPlayer(name: String,
                                    email: String,
                                    phoneNumber: String,
                                    contactId: Long) {
-        val map = mutableMapOf<String, Any>()
-        map[NAME_KEY] = name
-        map[EMAIL_KEY] = email
-        map[PHONE_NUMBER] = phoneNumber
-        map[CONTACT_ID] = contactId
-        map[TIMESTAMP_KEY] = System.currentTimeMillis()
-
-        runBlocking {
-            getPlayersRef()
-                    .add(map)
+        val map = mutableMapOf<String, Any>().apply {
+            this[NAME_KEY] = name
+            this[EMAIL_KEY] = email
+            this[PHONE_NUMBER] = phoneNumber
+            this[CONTACT_ID] = contactId
+            this[TIMESTAMP_KEY] = System.currentTimeMillis()
         }
+
+        runBlocking { getPlayersRef().add(map) }
     }
 
     private fun getPlayersRef(): CollectionReference {
         return firestoreHelper.getUserDocRef().collection(PLAYERS_KEY)
     }
 
-    private fun mapToPlayer(map: Map<String, Any>): Player {
-        return Player(
-                playerId = map[ID_KEY] as String,
-                name = map[NAME_KEY] as String,
-                phoneNumber = map[PHONE_NUMBER] as String,
-                email = map[EMAIL_KEY] as String,
-                contactId = map[CONTACT_ID] as Long
-        )
-    }
+    private fun mapToPlayer(map: Map<String, Any>) = Player(
+            playerId = map[ID_KEY] as String,
+            name = map[NAME_KEY] as String,
+            phoneNumber = map[PHONE_NUMBER] as String,
+            email = map[EMAIL_KEY] as String,
+            contactId = map[CONTACT_ID] as Long
+    )
 
 
 }

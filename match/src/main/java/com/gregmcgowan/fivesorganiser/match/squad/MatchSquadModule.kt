@@ -27,6 +27,7 @@ class MatchSquadModule {
 
     @Module
     interface Bindings {
+
         @Binds
         @IntoMap
         @ViewModelKey(MatchSquadViewModel::class)
@@ -34,7 +35,7 @@ class MatchSquadModule {
 
 
         @Binds
-        fun interactions(impl :MatchSquadFragment) : MatchSquadListInteractions
+        fun interactions(impl: MatchSquadFragment): MatchSquadListInteractions
 
     }
 
