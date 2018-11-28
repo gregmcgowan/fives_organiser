@@ -122,7 +122,6 @@ class ImportContactsViewModelTest {
         assertThat(actualContentOutput, equalTo(fixtUiModel))
     }
 
-
     @Test
     fun `onContactSelected() updates model when none are selected`() = runBlocking {
         // initial setup
@@ -208,7 +207,7 @@ class ImportContactsViewModelTest {
         sut.contactSelected(firstContactId)
         testDispatchers.getTestCoroutineContext().triggerActions()
 
-        // add anotehr contact
+        // add another contact
         val fixtSecondUiModel = fixture.create(ImportContactsUiModel::class.java)
         val secondContactID = fixtUiModel.contacts[1].contactId
         whenever(mockUiModelMaper.map(fixtContacts, setOf(firstContactId, secondContactID))).thenReturn(fixtSecondUiModel)

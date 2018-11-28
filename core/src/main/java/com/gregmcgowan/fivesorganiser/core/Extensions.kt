@@ -44,6 +44,12 @@ fun <T : TextView> T.setTextIfNotEqual(text: CharSequence) {
     }
 }
 
+fun <T : TextView> T.setTextIfValidRes(textResId: Int) {
+    if (textResId != -1) {
+        this.setText(textResId)
+    }
+}
+
 fun View.setVisibleOrGone(visible: Boolean) {
     if (visible) {
         this.visibility = View.VISIBLE

@@ -18,8 +18,7 @@ class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolde
                 DiffUtilCallback(
                         oldList = playerList,
                         newList = newPlayers,
-                        //TODO change to id
-                        itemsAreTheSame = { p1, p2 -> p1.name == p2.name }
+                        itemsAreTheSame = { p1, p2 -> p1.id == p2.id }
                 ))
         this.playerList.clear()
         this.playerList.addAll(newPlayers)
