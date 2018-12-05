@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
@@ -17,31 +16,35 @@ class ImportContactsViewModel @Inject constructor(
         coroutineDisptachersAndContext: CoroutineDisptachersAndContext
 ) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
-    private lateinit var contacts: List<Contact>
-
-    private val selectedContacts: MutableSet<Long> = mutableSetOf()
-
     val contactUiModelLiveData: LiveData<ImportContactsUiModel>
         get() = _contactUiModelLiveData
-
     private val _contactUiModelLiveData = MutableLiveData<ImportContactsUiModel>()
 
     val contactUiNavLiveData: LiveData<ImportContactsNavEvent>
         get() = _contactUiNavLiveData
-
     private val _contactUiNavLiveData = MutableLiveData<ImportContactsNavEvent>()
+
+    private val selectedContacts: Set<Long>
+        get() {
+            return _contactUiModelLiveData.requireValue()
+                    .contacts
+                    .filter { it.isSelected }
+                    .map { it.contactId }
+                    .toSet()
+        }
 
     init {
         _contactUiModelLiveData.value = ImportContactsUiModel(
                 contacts = emptyList(),
                 showLoading = true,
                 showContent = false,
-                importContactsButtonEnabled = false,
-                showErrorMessage = false,
-                errorMessage = null
-
+                importContactsButtonEnabled = false
         )
 
+        start(hasContactPermission)
+    }
+
+    private fun start(hasContactPermission: Boolean) {
         if (hasContactPermission) {
             _contactUiNavLiveData.value = ImportContactsNavEvent.Idle
             loadContacts()
@@ -54,40 +57,65 @@ class ImportContactsViewModel @Inject constructor(
         loadContacts()
     }
 
-    fun onAddButtonPressed() {
-        _contactUiModelLiveData.value = _contactUiModelLiveData.requireValue()
-                .copy(showLoading = true, showContent = false)
-
-        launch(
-                backgroundBlock = { savePlayersUseCase.execute(selectedContacts) },
-                uiBlock = { _contactUiNavLiveData.value = ImportContactsNavEvent.CloseScreen }
-        )
-    }
-
-    fun contactSelected(contactId: Long) {
-        selectedContacts.add(contactId)
-        setUiModel(mapper.map(contacts, selectedContacts))
-    }
-
-    fun contactDeselected(contactId: Long) {
-        selectedContacts.remove(contactId)
-        setUiModel(mapper.map(contacts, selectedContacts))
-    }
-
     private fun loadContacts() {
         launch(
                 backgroundBlock = {
-                    contacts = getContactsUseCase.execute()
-                    mapper.map(contacts, selectedContacts)
+                    getContactsUseCase.execute().either(
+                            { handleException(it) },
+                            { mapper.map(it, selectedContacts) }
+                    )
+
                 },
-                uiBlock = this::setUiModel
+                uiBlock = {
+                    Timber.d("Setting contact list UI model to $it")
+                    _contactUiModelLiveData.value = it
+                }
         )
     }
 
-    @MainThread
-    private fun setUiModel(newUiModel: ImportContactsUiModel) {
-        Timber.d("Setting contact list UI model to ${_contactUiModelLiveData.value}")
-        _contactUiModelLiveData.value = newUiModel
+    private fun handleException(exception: Exception): ImportContactsUiModel {
+        TODO("Log exception and show retry button")
+    }
+
+    fun onAddButtonPressed() {
+        _contactUiModelLiveData.value = _contactUiModelLiveData.requireValue()
+                .copy(showLoading = true, showContent = false)
+        launch(
+                backgroundBlock = {
+                    savePlayersUseCase.execute(selectedContacts).either(
+                            { handleSavingException(it) },
+                            { ImportContactsNavEvent.CloseScreen }
+                    )
+                },
+                uiBlock = { _contactUiNavLiveData.value = it }
+        )
+    }
+
+    private fun handleSavingException(it: java.lang.Exception): ImportContactsNavEvent {
+        TODO("Log exception and show content again")
+    }
+
+    fun contactSelected(contactId: Long) {
+        updateContactSelectedStatus(contactId, true)
+    }
+
+    fun contactDeselected(contactId: Long) {
+        updateContactSelectedStatus(contactId, false)
+    }
+
+    private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
+        val currentUiModel = _contactUiModelLiveData.requireValue()
+        val currentContacts = currentUiModel.contacts
+
+        val indexOfFirst = currentContacts.indexOfFirst { it.contactId == contactId }
+        if (indexOfFirst != -1) {
+            val newContactItem = currentContacts[indexOfFirst].copy(isSelected = selected)
+            val newMutableList = currentContacts.toMutableList()
+            newMutableList[indexOfFirst] = newContactItem
+
+            _contactUiModelLiveData.value = _contactUiModelLiveData.requireValue()
+                    .copy(contacts = newMutableList)
+        }
     }
 
 

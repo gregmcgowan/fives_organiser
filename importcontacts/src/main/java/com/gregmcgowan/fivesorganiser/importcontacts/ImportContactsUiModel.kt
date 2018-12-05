@@ -1,5 +1,8 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
+import androidx.annotation.StringRes
+import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+
 sealed class ImportContactsNavEvent {
     object Idle : ImportContactsNavEvent()
     object RequestPermission : ImportContactsNavEvent()
@@ -11,8 +14,7 @@ data class ImportContactsUiModel(
         val showLoading: Boolean,
         val showContent: Boolean,
         val importContactsButtonEnabled: Boolean,
-        val showErrorMessage: Boolean,
-        val errorMessage: String?
+        @StringRes val errorMessage: Int = NO_STRING_RES_ID
 )
 
 data class ContactItemUiModel(

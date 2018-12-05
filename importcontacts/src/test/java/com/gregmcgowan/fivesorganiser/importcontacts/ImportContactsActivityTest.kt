@@ -12,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
+import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 import com.gregmgowan.fivesorganiser.test_shared.MockViewModelProviderFactory
 import com.gregmgowan.fivesorganiser.test_shared.RecyclerViewItemCountAssertion
 import com.gregmgowan.fivesorganiser.test_shared.TestApp
@@ -22,6 +23,7 @@ import org.hamcrest.Matchers.not
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -30,9 +32,10 @@ import org.robolectric.annotation.Config
 @Config(application = TestApp::class)
 class ImportContactsActivityTest {
 
-    private lateinit var fixture : JFixture
+    private lateinit var fixture: JFixture
 
-    @Fixture lateinit var fixtContactUiModels : List<ContactItemUiModel>
+    @Fixture
+    lateinit var fixtContactUiModels: List<ContactItemUiModel>
 
     @Before
     fun setUp() {
@@ -84,18 +87,18 @@ class ImportContactsActivityTest {
         launch(ImportContactsActivity::class.java).apply { moveToState(Lifecycle.State.RESUMED) }
 
         uiModelMutableLiveData.value = ImportContactsUiModel(
-                emptyList(),
-                true,
-                false,
-                false,
-                false,
-                null)
+                contacts = emptyList(),
+                showLoading = true,
+                showContent = false,
+                importContactsButtonEnabled = false,
+                errorMessage = NO_STRING_RES_ID)
 
         onView(withId(R.id.import_contacts_toolbar)).check(matches(isDisplayed()))
         onView(withId(R.id.import_contacts_progress_bar)).check(matches(isDisplayed()))
         onView(withId(R.id.import_contacts_main_content)).check(matches(not(isDisplayed())))
         onView(withId(R.id.import_contacts_add_button)).check(matches(not(isDisplayed())))
         onView(withId(R.id.import_contacts_add_button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.import_contacts_error_message)).check(matches(not(isDisplayed())))
         onView(withId(R.id.import_contacts_list)).check(RecyclerViewItemCountAssertion(0))
     }
 
@@ -117,19 +120,57 @@ class ImportContactsActivityTest {
         launch(ImportContactsActivity::class.java).apply { moveToState(Lifecycle.State.RESUMED) }
 
         uiModelMutableLiveData.value = ImportContactsUiModel(
-                fixtContactUiModels,
-                false,
-                true,
-                false,
-                false,
-                null)
+                contacts = fixtContactUiModels,
+                showLoading = false,
+                showContent = true,
+                importContactsButtonEnabled = false,
+                errorMessage = NO_STRING_RES_ID)
 
         onView(withId(R.id.import_contacts_toolbar)).check(matches(isDisplayed()))
         onView(withId(R.id.import_contacts_progress_bar)).check(matches(not(isDisplayed())))
         onView(withId(R.id.import_contacts_main_content)).check(matches((isDisplayed())))
         onView(withId(R.id.import_contacts_add_button)).check(matches(isDisplayed()))
         onView(withId(R.id.import_contacts_add_button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.import_contacts_error_message)).check(matches(not(isDisplayed())))
         onView(withId(R.id.import_contacts_list)).check(RecyclerViewItemCountAssertion(fixtContactUiModels.size))
+    }
+
+
+    @Test
+    @Ignore
+    fun `shows empty message`() {
+        val uiModelMutableLiveData = MutableLiveData<ImportContactsUiModel>()
+        val navEventMutableLiveData = MutableLiveData<ImportContactsNavEvent>()
+
+        injectViewModeProviderFactory(object : MockViewModelProviderFactory() {
+            // Can we somehow infer the type of the ViewModel??
+            override fun <T : ViewModel?> init(viewModel: T?) {
+                if (viewModel is ImportContactsViewModel) {
+                    whenever(viewModel.contactUiModelLiveData).thenReturn(uiModelMutableLiveData)
+                    whenever(viewModel.contactUiNavLiveData).thenReturn(navEventMutableLiveData)
+                }
+            }
+        })
+
+        launch(ImportContactsActivity::class.java).apply { moveToState(Lifecycle.State.RESUMED) }
+
+        uiModelMutableLiveData.value = ImportContactsUiModel(
+                contacts = emptyList(),
+                showLoading = false,
+                showContent = false,
+                importContactsButtonEnabled = false,
+                errorMessage = R.string.no_contacts_message)
+
+        onView(withId(R.id.import_contacts_toolbar)).check(matches(isDisplayed()))
+        onView(withId(R.id.import_contacts_progress_bar)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.import_contacts_main_content)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.import_contacts_add_button)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.import_contacts_add_button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.import_contacts_error_message)).check(matches(withText(R.string.no_contacts_message)))
+        // TODO this test fails on this line, it will pass if a width and height is hardcoded on the text view
+        // TODO the widget is visible but with no width and height
+        onView(withId(R.id.import_contacts_error_message)).check(matches(isDisplayed()))
+        onView(withId(R.id.import_contacts_list)).check(RecyclerViewItemCountAssertion(0))
     }
 
     @Test

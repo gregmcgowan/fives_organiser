@@ -8,12 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import com.gregmcgowan.fivesorganiser.core.BaseActivity
-import com.gregmcgowan.fivesorganiser.core.ViewModelActivity
-import com.gregmcgowan.fivesorganiser.core.observeNonNull
+import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
-import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.import_contacts.*
 import javax.inject.Inject
@@ -98,6 +95,8 @@ class ImportContactsActivity : BaseActivity(), PermissionResults, ViewModelActiv
     private fun render(uiModel: ImportContactsUiModel) {
         import_contacts_progress_bar.setVisibleOrGone(uiModel.showLoading)
         import_contacts_main_content.setVisibleOrGone(uiModel.showContent)
+        import_contacts_error_message.setVisibleOrGone(uiModel.errorMessage != NO_STRING_RES_ID)
+        import_contacts_error_message.setTextIfValidRes(uiModel.errorMessage)
         import_contacts_add_button.isEnabled = uiModel.importContactsButtonEnabled
         importPlayersAdapter.setContacts(uiModel.contacts)
     }

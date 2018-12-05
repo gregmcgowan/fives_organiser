@@ -8,10 +8,12 @@ import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import runBlockingUnit
 import java.lang.RuntimeException
 
 class GetContactsUseCaseTest {
@@ -46,10 +48,10 @@ class GetContactsUseCaseTest {
         whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
 
-        val output = sut.execute()
-
-        assertThat(output).containsAllIn(fixtContacts)
-        Unit
+        sut.execute().either(
+                { fail() },
+                { contacts -> assertThat(contacts).containsAllIn(fixtContacts) }
+        )
     }
 
     @Test
@@ -66,31 +68,31 @@ class GetContactsUseCaseTest {
         whenever(mockPlayerRepo.getPlayers()).thenReturn(listOf(fixtPlayerAdded))
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
 
-        val output = sut.execute()
+        sut.execute().either(
+                { fail() },
+                { contacts ->
+                    assertThat(contacts).containsAllIn(
+                            arrayOf(fixtContacts[0], fixtContacts[2])
+                    )
+                }
+        )
 
-        assertThat(output).containsAllIn(arrayOf(fixtContacts[0], fixtContacts[2]))
-
-        Unit
     }
 
     @Test(expected = RuntimeException::class)
-    fun `get contacts throws when player repo throws`() = runBlocking {
+    fun `get contacts throws when player repo throws`() = runBlockingUnit {
         whenever(mockPlayerRepo.getPlayers())
                 .thenThrow(fixture.create(RuntimeException::class.java))
 
         sut.execute()
-
-        Unit
     }
 
     @Test(expected = RuntimeException::class)
-    fun `get contacts when contact importer throws`() = runBlocking {
+    fun `get contacts when contact importer throws`() = runBlockingUnit {
         whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
         whenever(mockContactsImporter.getAllContacts())
                 .thenThrow(fixture.create(RuntimeException::class.java))
 
         sut.execute()
-
-        Unit
     }
 }
