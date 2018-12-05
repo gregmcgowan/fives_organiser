@@ -1,7 +1,10 @@
 package com.gregmcgowan.fivesorganiser.data.match
 
+import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.SetOptions
+import com.gregmcgowan.fivesorganiser.core.Either
+import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.data.ID_KEY
 import org.threeten.bp.ZonedDateTime
@@ -46,6 +49,10 @@ class MatchFirebaseRepo @Inject constructor(
         map[NUMBER_OF_PLAYERS_KEY] = match.numberOfPlayers
 
         firestoreHelper.setData(matches().document(match.matchId), map, SetOptions.merge())
+    }
+
+    override fun getMatchUpdates(): LiveData<Either<Exception, DataUpdate<MatchEntity>>> {
+        return firestoreHelper.changesForCollection(matches(), ::mapToMatch)
     }
 
     private fun matches(): CollectionReference {

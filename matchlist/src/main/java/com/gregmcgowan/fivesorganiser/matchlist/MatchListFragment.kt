@@ -24,6 +24,7 @@ class MatchListFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var matchNavigator: MatchNavigator
 
@@ -79,8 +80,4 @@ class MatchListFragment : BaseFragment() {
         matchNavigator.handleEvent(navEvent)
     }
 
-    override fun onResume() {
-        super.onResume()
-        matchListViewModel.onViewShown()
-    }
 }

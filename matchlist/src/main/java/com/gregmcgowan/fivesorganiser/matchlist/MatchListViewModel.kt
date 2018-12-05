@@ -1,18 +1,19 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
-import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
+import com.gregmcgowan.fivesorganiser.data.DataUpdate
+import com.gregmcgowan.fivesorganiser.data.match.Match
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class MatchListViewModel @Inject constructor(
-        private val matchInteractor: MatchInteractor,
+        private val getMatchUpdatesUseCase: GetMatchUpdatesUseCase,
         private val mapper: MatchListUiModelMappers,
         coroutineDisptachersAndContext: CoroutineDisptachersAndContext
 ) : CoroutinesViewModel(coroutineDisptachersAndContext) {
@@ -20,10 +21,10 @@ class MatchListViewModel @Inject constructor(
     val matchListUiModelLiveData: LiveData<MatchListUiModel>
         get() = _matchListUiModelLiveData
 
+    private val _matchListUiModelLiveData = MediatorLiveData<MatchListUiModel>()
+
     val navigationLiveData: LiveData<MatchNavigationEvent>
         get() = _navigationLiveData
-
-    private val _matchListUiModelLiveData = MutableLiveData<MatchListUiModel>()
 
     private val _navigationLiveData = MutableLiveData<MatchNavigationEvent>()
 
@@ -37,30 +38,22 @@ class MatchListViewModel @Inject constructor(
         )
 
         _navigationLiveData.value = Idle
+
+        _matchListUiModelLiveData.addSource(getMatchUpdatesUseCase.execute()) {
+            it.either(
+                    { exception -> handleException(exception) },
+                    { matchUpdates -> handleMatchUpdates(matchUpdates) }
+            )
+        }
+
     }
 
-
-    fun onViewShown() {
-        _navigationLiveData.value = Idle
-
-        updateUiModel(
-                _matchListUiModelLiveData.requireValue().copy(
-                        showList = false,
-                        showProgressBar = true,
-                        showEmptyView = false
-                )
-        )
-
-        launch(
-                backgroundBlock = { mapper.map(matchInteractor.getAllMatches()) },
-                uiBlock = { uiModel -> updateUiModel(uiModel) }
-        )
+    private fun handleMatchUpdates(matchUpdates: DataUpdate<Match>) {
+        _matchListUiModelLiveData.postValue(mapper.map(_matchListUiModelLiveData.requireValue(), matchUpdates))
     }
 
-    private fun updateUiModel(model: MatchListUiModel) {
-        Timber.d("Setting match list UI model to ${_matchListUiModelLiveData.value}")
-        _matchListUiModelLiveData.value = model
-
+    private fun handleException(exception: Exception): Any {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun addMatchButtonPressed() {
@@ -75,4 +68,8 @@ class MatchListViewModel @Inject constructor(
         _navigationLiveData.value = ShowSquad(matchId)
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        getMatchUpdatesUseCase.cleanup()
+    }
 }

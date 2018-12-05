@@ -1,60 +1,65 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
 import com.gregmcgowan.fivesorganiser.core.Strings
-import com.gregmcgowan.fivesorganiser.core.ZonedDateTimeFormatter
+import com.gregmcgowan.fivesorganiser.data.DataChange
+import com.gregmcgowan.fivesorganiser.data.DataChangeType
+import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.match.Match
-import com.gregmcgowan.fivesorganiser.data.match.MatchTypeHelper
-import com.gregmcgowan.fivesorganiser.data.match.PlayerMatchSquadStatus
-import com.gregmcgowan.fivesorganiser.data.match.getPlayersWithStatus
 import javax.inject.Inject
 
 class MatchListUiModelMappers @Inject constructor(
         private val strings: Strings,
-        private val dateTimeFormatter: ZonedDateTimeFormatter,
-        private val matchTypeHelper: MatchTypeHelper
+        private val listItemMapper: MatchListItemUiModelMapper
 ) {
 
-    fun map(matches: List<Match>): MatchListUiModel =
-            MatchListUiModel(
-                    showEmptyView = matches.isEmpty(),
-                    showProgressBar = false,
-                    showList = true,
-                    matches = matches.map(this::mapMatch),
-                    emptyMessage = getErrorMessage(matches)
-            )
+    fun map(existingUiModel: MatchListUiModel, update: DataUpdate<Match>): MatchListUiModel {
+        val updatedMatchListModels = updateMatches(existingUiModel.matches, update.changes)
 
+        val matchesExist = updatedMatchListModels.isNotEmpty()
 
-    private fun mapMatch(match: Match): MatchListItemUiModel {
-        val expectedSquadSize = match.squad.expectedSize.toInt()
-        val numberOfConfirmedPlayers = match.squad.getPlayersWithStatus(PlayerMatchSquadStatus.CONFIRMED).size
-
-        return MatchListItemUiModel(
-                matchId = match.matchId,
-                matchType = matchTypeHelper.getMatchType(match.squad.expectedSize.toInt()),
-                dateAndTime = getDateAndTime(match),
-                location = match.location,
-                squadStatus = getSquadStatus(expectedSquadSize - numberOfConfirmedPlayers)
+        return MatchListUiModel(
+                showEmptyView = !matchesExist,
+                showProgressBar = false,
+                showList = matchesExist,
+                matches = updatedMatchListModels,
+                emptyMessage = getErrorMessage(updatedMatchListModels)
         )
     }
 
-    private fun getDateAndTime(match: Match): String = strings.getString(
-            R.string.match_list_summary_format,
-            dateTimeFormatter.formatDate(match.start),
-            dateTimeFormatter.formatTime(match.start),
-            dateTimeFormatter.formatTime(match.end)
-    )
+    private fun updateMatches(existingMatchUiModels: List<MatchListItemUiModel>,
+                              updates: List<DataChange<Match>>): List<MatchListItemUiModel> {
+        val newList = existingMatchUiModels.toMutableList()
+        updates.forEach { update ->
+            val match = update.data
+            val findPlayerIndex = existingMatchUiModels.indexOfFirst { it.matchId == match.matchId }
+            when (update.type) {
+                DataChangeType.Added -> {
+                    if (findPlayerIndex == -1) {
+                        newList.add(listItemMapper.map(match))
+                    }
+                }
+                DataChangeType.Modified -> {
+                    if (findPlayerIndex != -1) {
+                        newList[findPlayerIndex] = listItemMapper.map(match)
+                    }
+                }
+                DataChangeType.Removed -> {
+                    if (findPlayerIndex != -1) {
+                        newList.removeAt(findPlayerIndex)
+                    }
+                }
+            }
+        }
 
-    private fun getSquadStatus(playersNeeded: Int): String = if (playersNeeded == 0) {
-        strings.getString(R.string.match_list_full_squad_status)
-    } else {
-        strings.getString(R.string.match_list_more_players_needed_squad_status, playersNeeded)
+        return newList
     }
 
-    private fun getErrorMessage(matches: List<Match>): String? = if (matches.isEmpty()) {
+    private fun getErrorMessage(matches: List<MatchListItemUiModel>): String? = if (matches.isEmpty()) {
         strings.getString(R.string.match_list_empty_text)
     } else {
         null
     }
+
 
 }
 

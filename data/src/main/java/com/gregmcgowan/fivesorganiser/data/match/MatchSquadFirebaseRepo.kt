@@ -1,8 +1,12 @@
 package com.gregmcgowan.fivesorganiser.data.match
 
+import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.CollectionReference
+import com.gregmcgowan.fivesorganiser.core.Either
+import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.data.ID_KEY
+import java.lang.Exception
 import javax.inject.Inject
 
 private const val MATCHES_SQUAD_KEY = "MatchSquad"
@@ -14,6 +18,11 @@ private const val DECLINED_PLAYER_IDS_KEY = "declinedPlayerIds"
 class MatchSquadFirebaseRepo @Inject constructor(
         private val firestoreHelper: FirestoreHelper
 ) : MatchSquadRepo {
+
+
+    override fun getSquadUpdates(): LiveData<Either<Exception, DataUpdate<MatchSquadEntity>>> {
+        return firestoreHelper.changesForCollection(matchSquad(), ::mapToSquadEntity)
+    }
 
     override suspend fun createMatchSquad(matchId: String,
                                           invited: List<String>,

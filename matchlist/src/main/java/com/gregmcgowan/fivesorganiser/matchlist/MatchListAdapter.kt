@@ -49,8 +49,7 @@ class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder =
             MatchViewHolder(LayoutInflater.from(parent.context)
-                    .inflate(R.layout.match_list_item, parent, false)
-            )
+                    .inflate(R.layout.match_list_item, parent, false))
 
     class MatchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
 

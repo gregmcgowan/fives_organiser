@@ -11,7 +11,7 @@ class PlayerListUiModelMapper @Inject constructor() {
 
     fun map(existingModel: PlayerListUiModel, update: DataUpdate<Player>): PlayerListUiModel {
 
-        val updatedPlayerUiModels = updatePlayers(existingModel.players.toMutableList(), update.changes)
+        val updatedPlayerUiModels = updatePlayers(existingModel.players, update.changes)
         val playersExist = updatedPlayerUiModels.isNotEmpty()
 
         return existingModel.copy(
@@ -24,31 +24,32 @@ class PlayerListUiModelMapper @Inject constructor() {
     }
 
 
-    private fun updatePlayers(existingPlayerUiModels: MutableList<PlayerListItemUiModel>,
+    private fun updatePlayers(existingPlayerUiModels: List<PlayerListItemUiModel>,
                               updates: List<DataChange<Player>>): List<PlayerListItemUiModel> {
+        val newList = existingPlayerUiModels.toMutableList()
         updates.forEach { update ->
             val player = update.data
             val findPlayerIndex = existingPlayerUiModels.indexOfFirst { it.id == player.playerId }
             when (update.type) {
                 Added -> {
                     if (findPlayerIndex == -1) {
-                        existingPlayerUiModels.add(map(player))
+                        newList.add(map(player))
                     }
                 }
                 Modified -> {
                     if (findPlayerIndex != -1) {
-                        existingPlayerUiModels[findPlayerIndex] = map(player)
+                        newList[findPlayerIndex] = map(player)
                     }
                 }
                 Removed -> {
                     if (findPlayerIndex != -1) {
-                        existingPlayerUiModels.removeAt(findPlayerIndex)
+                        newList.removeAt(findPlayerIndex)
                     }
                 }
             }
         }
-        existingPlayerUiModels.sortBy { it.name }
-        return existingPlayerUiModels
+        newList.sortBy { it.name }
+        return newList
     }
 
     private fun map(player: Player) = PlayerListItemUiModel(player.playerId, player.name)
