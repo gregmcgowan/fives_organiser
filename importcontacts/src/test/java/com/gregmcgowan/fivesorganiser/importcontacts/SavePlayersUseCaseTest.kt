@@ -41,14 +41,14 @@ class SavePlayersUseCaseTest {
         )
     }
 
-
     @Test
     fun `save selected contacts`() = runBlocking {
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
         val fixtContact = fixtContacts[1]
 
-        sut.execute(setOf(fixtContact.contactId))
+        val output = sut.execute(setOf(fixtContact.contactId))
 
+        assert(output.isRight)
         verify(mockPlayerRepo).addPlayer(
                 fixtContact.name,
                 fixtContact.emailAddress,
@@ -62,7 +62,9 @@ class SavePlayersUseCaseTest {
     fun `do save when there is no selected contacts`() = runBlocking {
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
 
-        sut.execute(emptySet())
+        val output = sut.execute(emptySet())
+
+        assert(output.isRight)
         verifyZeroInteractions(mockPlayerRepo)
     }
 }
