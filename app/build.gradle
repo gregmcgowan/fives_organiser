@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply from: "../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 kapt {
     correctErrorTypes = true
@@ -32,6 +33,9 @@ dependencies {
     implementation project(":match")
     implementation project(":matchlist")
     implementation project(':match-navigator')
+
+    implementation "com.google.firebase:firebase-core:${versions.firebase_core}"
+    implementation "com.crashlytics.sdk.android:crashlytics:${versions.crashlytics}"
 
     implementation "com.google.android.material:material:${versions.material}"
     implementation "androidx.cardview:cardview:${versions.androidx.card_view}"
