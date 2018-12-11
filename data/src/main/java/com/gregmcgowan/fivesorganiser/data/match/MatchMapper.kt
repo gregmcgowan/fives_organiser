@@ -7,15 +7,14 @@ import javax.inject.Inject
 class MatchMapper @Inject constructor() {
 
     fun map(match: MatchEntity,
-            squad: MatchSquadEntity,
-            players: Map<String, Player>): Match {
+            allPlayers: Map<String, Player>): Match {
 
         val playerAndMatchStatuses = mutableListOf<PlayerAndMatchStatus>()
 
-        populateList(squad.invited, PlayerMatchSquadStatus.INVITED, players, playerAndMatchStatuses)
-        populateList(squad.confirmed, PlayerMatchSquadStatus.CONFIRMED, players, playerAndMatchStatuses)
-        populateList(squad.declined, PlayerMatchSquadStatus.DECLINED, players, playerAndMatchStatuses)
-        populateList(squad.unsure, PlayerMatchSquadStatus.UNSURE, players, playerAndMatchStatuses)
+        populateList(match.invited, PlayerMatchSquadStatus.INVITED, allPlayers, playerAndMatchStatuses)
+        populateList(match.confirmed, PlayerMatchSquadStatus.CONFIRMED, allPlayers, playerAndMatchStatuses)
+        populateList(match.declined, PlayerMatchSquadStatus.DECLINED, allPlayers, playerAndMatchStatuses)
+        populateList(match.unsure, PlayerMatchSquadStatus.UNSURE, allPlayers, playerAndMatchStatuses)
 
         return Match(
                 matchId = match.matchId,

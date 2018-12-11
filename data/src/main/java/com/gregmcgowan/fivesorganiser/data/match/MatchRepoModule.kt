@@ -12,7 +12,4 @@ interface MatchRepoModule {
     @Reusable
     fun matchRepo(matchFirebaseRepo: MatchFirebaseRepo): MatchRepo
 
-    @Binds
-    @Reusable
-    fun matchSquadRepo(matchSquadFirebaseRepo: MatchSquadFirebaseRepo): MatchSquadRepo
 }

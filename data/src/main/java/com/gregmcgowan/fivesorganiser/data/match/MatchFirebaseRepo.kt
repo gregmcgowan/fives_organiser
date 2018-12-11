@@ -17,6 +17,10 @@ private const val END_DATE_TIME_KEY = "endDateTime"
 private const val LOCATION_KEY = "location"
 private const val NUMBER_OF_PLAYERS_KEY = "numberOfPlayers"
 private const val TIMESTAMP_KEY = "timestamp"
+private const val INVITED_PLAYER_IDS_KEY = "invitedPlayerIds"
+private const val CONFIRMED_PLAYER_IDS_KEY = "confirmedPlayerIds"
+private const val UNSURE_PLAYER_IDS_KEY = "unsurePlayerIds"
+private const val DECLINED_PLAYER_IDS_KEY = "declinedPlayerIds"
 
 class MatchFirebaseRepo @Inject constructor(
         private val firestoreHelper: FirestoreHelper
@@ -42,12 +46,16 @@ class MatchFirebaseRepo @Inject constructor(
     }
 
     override suspend fun saveMatch(match: MatchEntity) {
-        val map = mutableMapOf<String, Any>()
-        map[START_DATE_TIME_KEY] = match.startDateTime
-        map[END_DATE_TIME_KEY] = match.endDateTime
-        map[LOCATION_KEY] = match.location
-        map[NUMBER_OF_PLAYERS_KEY] = match.numberOfPlayers
-
+        val map = mapOf(
+                START_DATE_TIME_KEY to match.startDateTime,
+                END_DATE_TIME_KEY to match.endDateTime,
+                LOCATION_KEY to match.location,
+                NUMBER_OF_PLAYERS_KEY to match.numberOfPlayers,
+                INVITED_PLAYER_IDS_KEY to match.invited,
+                CONFIRMED_PLAYER_IDS_KEY to match.confirmed,
+                UNSURE_PLAYER_IDS_KEY to match.unsure,
+                DECLINED_PLAYER_IDS_KEY to match.declined
+        )
         firestoreHelper.setData(matches().document(match.matchId), map, SetOptions.merge())
     }
 
@@ -55,14 +63,11 @@ class MatchFirebaseRepo @Inject constructor(
         return firestoreHelper.changesForCollection(matches(), ::mapToMatch)
     }
 
-    private fun matches(): CollectionReference {
-        return firestoreHelper.getUserDocRef().collection(MATCHES_KEY)
-    }
+    private fun matches(): CollectionReference =
+            firestoreHelper.getUserDocRef().collection(MATCHES_KEY)
 
-    override suspend fun getMatch(matchID: String): MatchEntity {
-        val data = firestoreHelper.getData(matches().document(matchID))
-        return mapToMatch(data)
-    }
+    override suspend fun getMatch(matchID: String): MatchEntity =
+            mapToMatch(firestoreHelper.getData(matches().document(matchID)))
 
     override suspend fun getAllMatches(): List<MatchEntity> {
         return firestoreHelper.runQuery(matches().orderBy(TIMESTAMP_KEY))
@@ -81,8 +86,20 @@ class MatchFirebaseRepo @Inject constructor(
                 location = map[LOCATION_KEY] as String,
                 startDateTime = map[START_DATE_TIME_KEY] as String,
                 endDateTime = map[END_DATE_TIME_KEY] as String,
-                numberOfPlayers = (map[NUMBER_OF_PLAYERS_KEY] as Long)
+                numberOfPlayers = (map[NUMBER_OF_PLAYERS_KEY] as Long),
+                invited = getList(map, INVITED_PLAYER_IDS_KEY),
+                confirmed = getList(map, CONFIRMED_PLAYER_IDS_KEY),
+                unsure = getList(map, UNSURE_PLAYER_IDS_KEY),
+                declined = getList(map, DECLINED_PLAYER_IDS_KEY)
+
         )
+    }
+
+    private fun getList(map: Map<String, Any>, key: String): List<String> {
+        if (map.containsKey(key)) {
+            return map[key] as List<String>
+        }
+        return emptyList()
     }
 
 

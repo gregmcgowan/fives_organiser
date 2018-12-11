@@ -2,11 +2,8 @@ package com.gregmcgowan.fivesorganiser.matchlist
 
 import TEST_COROUTINE_DISPTACHERS_AND_CONTEXT
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
@@ -16,7 +13,7 @@ class MatchListViewModelTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Mock
-    lateinit var mockMatchInteractor: MatchInteractor
+    lateinit var mockMatchUpdatesUseCase: GetMatchUpdatesUseCase
 
     @Mock
     lateinit var mockMapper: MatchListUiModelMappers
@@ -29,18 +26,11 @@ class MatchListViewModelTest {
         MockitoAnnotations.initMocks(this)
 
         sut = MatchListViewModel(
-                mockMatchInteractor,
+                mockMatchUpdatesUseCase,
                 mockMapper,
                 TEST_COROUTINE_DISPTACHERS_AND_CONTEXT
         )
     }
 
-    @Test
-    fun onViewShown() {
-        sut.onViewShown()
-
-        val output = sut.matchListUiModelLiveData.value
-        assertNotNull(output)
-    }
 
 }
