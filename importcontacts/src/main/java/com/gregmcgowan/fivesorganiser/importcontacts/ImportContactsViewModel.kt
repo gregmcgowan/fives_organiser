@@ -110,11 +110,18 @@ class ImportContactsViewModel @Inject constructor(
         val indexOfFirst = currentContacts.indexOfFirst { it.contactId == contactId }
         if (indexOfFirst != -1) {
             val newContactItem = currentContacts[indexOfFirst].copy(isSelected = selected)
-            val newMutableList = currentContacts.toMutableList()
-            newMutableList[indexOfFirst] = newContactItem
+            val updatedContactItemList = currentContacts.toMutableList().apply {
+                this[indexOfFirst] = newContactItem
+            }
+            val addButtonEnabled = updatedContactItemList.indexOfFirst { it.isSelected } != -1
 
-            _contactUiModelLiveData.value = _contactUiModelLiveData.requireValue()
-                    .copy(contacts = newMutableList)
+            _contactUiModelLiveData.value = currentUiModel
+                    .copy(
+                            contacts = updatedContactItemList,
+                            importContactsButtonEnabled = addButtonEnabled
+                    )
+        } else {
+            //TODO log that we cannot find the contact to udpate
         }
     }
 

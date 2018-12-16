@@ -47,10 +47,10 @@ class ImportContactsViewModelTest {
     lateinit var mockGetContactsUseCase: GetContactsUseCase
 
     @Fixture
-    lateinit var fixtUiModel: ImportContactsUiModel
+    lateinit var fixtContacts: List<Contact>
 
     @Fixture
-    lateinit var fixtContacts: List<Contact>
+    lateinit var fixtContactsUiModel: List<ContactItemUiModel>
 
     private lateinit var sut: ImportContactsViewModel
 
@@ -73,7 +73,7 @@ class ImportContactsViewModelTest {
     @Test
     fun `init() with permission sends idle event`() = runBlocking {
         // setup
-        setupMocks(fixtContacts, fixtUiModel)
+        setupMocks(fixtContacts, createInitialUiModel())
         setupSut(contactPermission = true)
 
         // run
@@ -87,7 +87,8 @@ class ImportContactsViewModelTest {
     @Test
     fun `init() when permission is granted shows loading then content`() = runBlocking {
         // setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(contactPermission = true)
 
         // verify loading UI
@@ -99,7 +100,7 @@ class ImportContactsViewModelTest {
 
         // verify
         val actualContentOutput = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualContentOutput, equalTo(fixtUiModel))
+        assertThat(actualContentOutput, equalTo(fixtInitialUiModel))
     }
 
     @Test
@@ -117,7 +118,8 @@ class ImportContactsViewModelTest {
     @Test
     fun `onContactsPermissionGranted() loads contacts`() = runBlocking {
         // setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(contactPermission = false)
 
         // verify loading
@@ -130,59 +132,64 @@ class ImportContactsViewModelTest {
 
         // verify output
         val actualContentOutput = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualContentOutput, equalTo(fixtUiModel))
+        assertThat(actualContentOutput, equalTo(fixtInitialUiModel))
     }
 
     @Test
     fun `onContactSelected() updates model when none are selected`() = runBlocking {
         // initial setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(contactPermission = true)
         testDispatchers.getTestCoroutineContext().triggerActions()
         val initialUiModel = sut.contactUiModelLiveData.getValueForTest()
 
         // add contact
-        val contactId = fixtUiModel.contacts[0].contactId
+        val contactId = fixtInitialUiModel.contacts[0].contactId
         sut.contactSelected(contactId)
 
         // check ui model is updated correctly
         val expectedContactUiModelList = updateContact(initialUiModel, selectedContacts = setOf(0))
         val actualUpdatedModel = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedContactUiModelList)))
+        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedContactUiModelList,
+                importContactsButtonEnabled = true)))
     }
 
     @Test
     fun `onContactSelected() updates model when some are already are selected`() = runBlocking {
         // initial setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(contactPermission = true)
         testDispatchers.getTestCoroutineContext().triggerActions()
         val initialUiModel = sut.contactUiModelLiveData.getValueForTest()
 
         // add contact
-        val firstContactId = fixtUiModel.contacts[0].contactId
+        val firstContactId = fixtInitialUiModel.contacts[0].contactId
         sut.contactSelected(firstContactId)
 
         // add another
-        val secondContactId = fixtUiModel.contacts[1].contactId
+        val secondContactId = fixtInitialUiModel.contacts[1].contactId
         sut.contactSelected(secondContactId)
 
         // check the second UI model is emitted
         val expectedContactUiModelList = updateContact(initialUiModel, selectedContacts = setOf(0, 1))
         val actualUpdatedModel = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedContactUiModelList)))
+        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedContactUiModelList,
+                importContactsButtonEnabled = true)))
     }
 
     @Test
     fun `onContactDeselected() when only 1 is already selected`() = runBlocking {
         // initial setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(contactPermission = true)
         testDispatchers.getTestCoroutineContext().triggerActions()
         val initialUiModel = sut.contactUiModelLiveData.getValueForTest()
 
         // add contact
-        val firstContactId = fixtUiModel.contacts[0].contactId
+        val firstContactId = fixtInitialUiModel.contacts[0].contactId
         sut.contactSelected(firstContactId)
 
         // deselect
@@ -190,23 +197,24 @@ class ImportContactsViewModelTest {
 
         // check that the ui model is back to initial
         val actualUpdatedModel = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualUpdatedModel, equalTo(initialUiModel))
+        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(importContactsButtonEnabled = false)))
     }
 
     @Test
     fun `onContactDeselected() when there is more than 1 selected`() = runBlocking {
         // initial setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(contactPermission = true)
         testDispatchers.getTestCoroutineContext().triggerActions()
         val initialUiModel = sut.contactUiModelLiveData.getValueForTest()
 
         // add contact
-        val firstContactId = fixtUiModel.contacts[0].contactId
+        val firstContactId = fixtInitialUiModel.contacts[0].contactId
         sut.contactSelected(firstContactId)
 
         // add another contact
-        val secondContactID = fixtUiModel.contacts[1].contactId
+        val secondContactID = fixtInitialUiModel.contacts[1].contactId
         sut.contactSelected(secondContactID)
 
         // deselect first one
@@ -215,19 +223,21 @@ class ImportContactsViewModelTest {
         // check the second UI model is emitted
         val expectedUiModelList = updateContact(initialUiModel, selectedContacts = setOf(1))
         val actualUpdatedModel = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedUiModelList)))
+        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedUiModelList,
+                importContactsButtonEnabled = true)))
     }
 
     @Test
     fun `onAddButtonPressed() saves contacts and close screens`() = runBlocking {
         // initial setup
-        setupMocks(fixtContacts, fixtUiModel)
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
         setupSut(true)
         testDispatchers.getTestCoroutineContext().triggerActions()
         val initialUiModel = sut.contactUiModelLiveData.getValueForTest()
 
         //add contact
-        val contactId = fixtUiModel.contacts[0].contactId
+        val contactId = fixtInitialUiModel.contacts[0].contactId
         sut.contactSelected(contactId)
 
         //run
@@ -238,7 +248,12 @@ class ImportContactsViewModelTest {
         // check models
         val expectedUiModelList = updateContact(initialUiModel, selectedContacts = setOf(0))
         val actualUpdatedModel = sut.contactUiModelLiveData.getValueForTest()
-        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(contacts = expectedUiModelList)))
+        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(
+                contacts = expectedUiModelList,
+                showLoading = true,
+                showContent = false,
+                importContactsButtonEnabled = true
+        )))
 
         // check models and mocks
         val actualContentOutput = sut.contactUiNavLiveData.getValueForTest()
@@ -266,6 +281,16 @@ class ImportContactsViewModelTest {
                 else -> contactItemUiModel
             }
         }
+    }
+
+    private fun createInitialUiModel(): ImportContactsUiModel {
+        return ImportContactsUiModel(
+                contacts = fixtContactsUiModel,
+                showLoading = false,
+                showContent = true,
+                importContactsButtonEnabled = false
+        )
+
     }
 
     private suspend fun setupMocks(contacts: List<Contact>,
