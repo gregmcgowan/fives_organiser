@@ -11,5 +11,6 @@
     <string name="match_update_squad_button_text">Update</string>
     <string name="match_squad_size_required_label">required</string>
     <string name="match_current_status_label_text">Current</string>
+    <string name="match_type">Match Type</string>
 
 </resources>
