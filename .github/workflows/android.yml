@@ -17,5 +17,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name : google services
+      env:  
+        GOOGLE_SERVICES_KEY: ${{ secrets.GOOGLE_SERVICES_KEY }}
+      run: |  
+        ./signing/setup.sh "$env:GOOGLE_SERVICES_KEY"
     - name: Build with Gradle
       run: ./gradlew build
