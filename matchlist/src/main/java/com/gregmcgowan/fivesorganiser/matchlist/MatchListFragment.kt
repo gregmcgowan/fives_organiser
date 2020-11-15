@@ -1,21 +1,22 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent
 import com.gregmcgowan.fivesorganiser.match.MatchNavigator
 import com.gregmcgowan.fivesorganiser.matchlist.MatchListAdapter.MatchListInteraction
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.match_list.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MatchListFragment : BaseFragment() {
 
     companion object {
@@ -24,6 +25,7 @@ class MatchListFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var matchNavigator: MatchNavigator
 
@@ -39,8 +41,6 @@ class MatchListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         match_list.adapter = matchListAdapter
-
-        AndroidSupportInjection.inject(this)
 
         matchListViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
