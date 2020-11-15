@@ -1,10 +1,10 @@
 package com.gregmcgowan.fivesorganiser.main
 
+import android.os.Bundle
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import android.os.Bundle
 import androidx.transition.TransitionManager
-import androidx.fragment.app.Fragment
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
@@ -13,10 +13,11 @@ import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.main.MainScreen.*
 import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
 import com.gregmcgowan.fivesorganiser.matchlist.MatchListFragment
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     @Inject
@@ -28,8 +29,6 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setSupportActionBar(main_toolbar)
-
-        AndroidInjection.inject(this)
 
         mainViewModel = ViewModelProviders
                 .of(this, viewModelFactory)

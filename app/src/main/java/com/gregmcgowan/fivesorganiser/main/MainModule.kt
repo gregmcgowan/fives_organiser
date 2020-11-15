@@ -5,8 +5,11 @@ import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
 
+@InstallIn(ActivityComponent::class)
 @Module(includes = [ViewModelBuilder::class])
 abstract class MainModule {
 

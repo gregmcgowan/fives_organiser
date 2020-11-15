@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply from: "../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 androidExtensions {
     experimental = true
@@ -12,8 +13,12 @@ dependencies {
     implementation project(":core")
     implementation project(":data")
 
+    implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
+    kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
+    
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
+
 
     testImplementation project(":test_shared")
 

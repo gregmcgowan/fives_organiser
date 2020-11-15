@@ -1,23 +1,21 @@
 package com.gregmcgowan.fivesorganiser
 
 import com.google.firebase.FirebaseApp
-import com.gregmcgowan.fivesorganiser.core.di.AppComponent
-import com.gregmcgowan.fivesorganiser.core.di.DaggerAppComponent
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.AndroidInjector
-import dagger.android.support.DaggerApplication
+import dagger.android.DaggerApplication
+import dagger.hilt.EntryPoint
+import dagger.hilt.EntryPoints
+import dagger.hilt.InstallIn
+import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.components.ApplicationComponent
 import timber.log.Timber
 
+
+@HiltAndroidApp
 class FivesOrganiserApp : DaggerApplication() {
 
-    lateinit var appComponent: AppComponent
-
     override fun onCreate() {
-        appComponent = DaggerAppComponent
-                .builder()
-                .application(this)
-                .build()
-
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -27,7 +25,18 @@ class FivesOrganiserApp : DaggerApplication() {
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return appComponent
+        return EntryPoints.get(this, ApplicationInjector::class.java)
     }
+
+
 }
+
+
+@EntryPoint
+@InstallIn(ApplicationComponent::class)
+internal interface ApplicationInjector : AndroidInjector<FivesOrganiserApp>
+
+
+
+
 

@@ -26,8 +26,9 @@ buildscript {
             'firestore'           : '17.1.1',
             'crashlytics'         : '2.9.7',
             'fabric_gradle'       : '1.26.1',
-            'dagger'              : '2.16', // Pinning this due to https://issuetracker.google.com/115738511
             'google_services'     : '4.2.0',
+            'dagger'              : '2.29.1',
+            'dagger_hilt'         : '2.29-alpha',
             'threetenabp'         : '1.1.0',
             'timber'              : '4.7.1',
             'espresso'            : '3.1.0-alpha4',
@@ -55,10 +56,9 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$versions.android_gradle"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin_gradle_plugin"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
         classpath "com.google.gms:google-services:$versions.google_services"
         classpath "io.fabric.tools:gradle:$versions.fabric_gradle"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$versions.dagger_hilt"
     }
 }
 

@@ -1,42 +1,17 @@
 package com.gregmcgowan.fivesorganiser.core.di
 
-import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
-import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
-import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
-import com.gregmcgowan.fivesorganiser.core.Strings
-import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import dagger.BindsInstance
-import dagger.Component
-import dagger.android.AndroidInjector
+import dagger.Module
 import dagger.android.support.AndroidSupportInjectionModule
-import javax.inject.Singleton
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 
-@Component(
-        modules = [
-            AppModule::class,
-            ContributesModule::class,
-            AndroidSupportInjectionModule::class
-        ]
+// Will be removed once all the modules are moved over to hilt
+@InstallIn(ApplicationComponent::class)
+@Module(includes = [
+    ContributesModule::class,
+    AndroidSupportInjectionModule::class]
 )
-@Singleton
-interface AppComponent : AndroidInjector<FivesOrganiserApp> {
-
-    fun coroutineDispatchers(): CoroutineDisptachersAndContext
-
-    fun authentication(): Authentication
-
-    fun strings(): Strings
-
-    fun matchTypesInfo(): MatchTypesInfo
-
-    @Component.Builder
-    interface Builder {
-
-        @BindsInstance
-        fun application(application: FivesOrganiserApp): Builder
-
-        fun build(): AppComponent
-    }
-
+class AggregatorModule {
 
 }
+

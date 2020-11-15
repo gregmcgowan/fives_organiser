@@ -1,8 +1,8 @@
 package com.gregmcgowan.fivesorganiser.core.di
 
+import android.content.Context
 import android.content.res.Resources
 import com.google.firebase.auth.FirebaseAuth
-import com.gregmcgowan.fivesorganiser.FivesOrganiserApp
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.AndroidStrings
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
@@ -14,10 +14,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module(includes = [AppModule.Bindings::class])
 class AppModule {
 
@@ -31,7 +35,7 @@ class AppModule {
 
     @Provides
     @Reusable
-    fun resources(application: FivesOrganiserApp): Resources = application.resources
+    fun resources(@ApplicationContext application: Context): Resources = application.resources
 
     @Provides
     @Reusable

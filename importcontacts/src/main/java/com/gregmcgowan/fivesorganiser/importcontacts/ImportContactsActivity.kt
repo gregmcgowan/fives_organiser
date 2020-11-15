@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.import_contacts.*
 import javax.inject.Inject
 
@@ -19,10 +19,12 @@ fun Context.importContactsIntent(): Intent {
     return Intent(this, ImportContactsActivity::class.java)
 }
 
+@AndroidEntryPoint
 class ImportContactsActivity : BaseActivity(), PermissionResults, ViewModelActivity {
 
+    @Inject
     override lateinit var viewHolderFactory: ViewModelProvider.Factory
-        @Inject set
+
 
     lateinit var importImportContactsViewModel: ImportContactsViewModel
 
@@ -50,8 +52,6 @@ class ImportContactsActivity : BaseActivity(), PermissionResults, ViewModelActiv
                 importImportContactsViewModel.contactDeselected(contactId)
             }
         }
-
-        AndroidInjection.inject(this)
 
         importImportContactsViewModel = ViewModelProviders
                 .of(this, viewHolderFactory)

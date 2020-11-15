@@ -2,10 +2,6 @@ package com.gregmcgowan.fivesorganiser.core.di
 
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListModule
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsActivity
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsModule
-import com.gregmcgowan.fivesorganiser.main.MainActivity
-import com.gregmcgowan.fivesorganiser.main.MainModule
 import com.gregmcgowan.fivesorganiser.match.MatchActivity
 import com.gregmcgowan.fivesorganiser.match.MatchModule
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsFragment
@@ -19,20 +15,14 @@ import com.gregmcgowan.fivesorganiser.navigation.di.MatchNavigationModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
-@Module()
+@Module
 abstract class ContributesModule {
-
-    @ContributesAndroidInjector(modules = [MainModule::class])
-    abstract fun contributesMainActivity(): MainActivity
 
     @ContributesAndroidInjector(modules = [PlayerListModule::class, DataModule::class, InvitePlayersNavigationModule::class])
     abstract fun contributesPlayerListFragment(): PlayerListFragment
 
     @ContributesAndroidInjector(modules = [MatchListModule::class, DataModule::class, MatchNavigationModule::class])
     abstract fun contributesMatchListFragment(): MatchListFragment
-
-    @ContributesAndroidInjector(modules = [ImportContactsModule::class, DataModule::class])
-    abstract fun contributesImporContactsActivity(): ImportContactsActivity
 
     @ContributesAndroidInjector(modules = [MatchModule::class, DataModule::class])
     abstract fun contributesMatchActivity(): MatchActivity
