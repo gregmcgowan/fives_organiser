@@ -88,9 +88,9 @@ class MatchSquadFragment : MatchFragment, MatchSquadListInteractions, BaseFragme
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.clear()
-        inflater?.inflate(R.menu.add_edit_match, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.add_edit_match, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

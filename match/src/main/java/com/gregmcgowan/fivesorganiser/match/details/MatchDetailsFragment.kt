@@ -85,19 +85,16 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
                 .observeNonNull(this, this::handleNavEvent)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return item?.let {
-            when (item.itemId) {
-                android.R.id.home -> {
-                    matchDateTimeLocationViewModel.backPressed()
-                    true
-                }
-                else -> {
-                    return super.onOptionsItemSelected(item)
-                }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                matchDateTimeLocationViewModel.backPressed()
+                true
             }
-        } ?: return super.onOptionsItemSelected(item)
-
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     private fun setListeners() {
@@ -191,7 +188,7 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
         newFragment.dateListener = OnDateSetListener { _, updatedYear, updatedMonth, date ->
             matchDateTimeLocationViewModel.dateUpdated(updatedYear, updatedMonth, date)
         }
-        newFragment.show(fragmentManager, "datePicker")
+        newFragment.show(parentFragmentManager, "datePicker")
     }
 
     private fun showTimePicker(
@@ -201,7 +198,7 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
             onTimeSetListener: OnTimeSetListener) {
         val newFragment = TimePickerFragment.newInstance(hour, minute, is24Hr)
         newFragment.timePickerListener = onTimeSetListener
-        newFragment.show(fragmentManager, "timePicker")
+        newFragment.show(parentFragmentManager, "timePicker")
     }
 
     override fun consumeBackPress(): Boolean {
