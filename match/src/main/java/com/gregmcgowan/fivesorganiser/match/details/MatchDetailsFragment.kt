@@ -2,8 +2,6 @@ package com.gregmcgowan.fivesorganiser.match.details
 
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.TimePickerDialog.OnTimeSetListener
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -11,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
 import com.gregmcgowan.fivesorganiser.core.ui.EditTextDebounce
@@ -20,11 +20,12 @@ import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchFragment
 import com.gregmcgowan.fivesorganiser.match.R
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.match_details.*
 import timber.log.Timber
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MatchDetailsFragment : MatchFragment, BaseFragment() {
 
     companion object {
@@ -60,8 +61,6 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        AndroidSupportInjection.inject(this)
 
         getAppCompatActivity().setSupportActionBar(match_date_time_location_toolbar)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)

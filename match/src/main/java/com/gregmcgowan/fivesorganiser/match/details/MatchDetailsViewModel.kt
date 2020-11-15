@@ -13,12 +13,13 @@ import com.gregmcgowan.fivesorganiser.data.match.Squad
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
+import javax.inject.Named
 
 private const val DEFAULT_NO_OF_PLAYERS = 10L
 internal const val NEW_MATCH_ID = ""
 
 class MatchDetailsViewModel @Inject constructor(
-        private val matchId: String?,
+        @Named(MATCH_DETAILS_ID) private val matchId: String?,
         private val matchTypeHelper: MatchTypeHelper,
         private val mapper: MatchDetailsUiModelMapper,
         private val matchInteractor: MatchInteractor,

@@ -19,13 +19,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // TODO remove once migrated to hilt
-        javaCompileOptions.annotationProcessorOptions.arguments['dagger.hilt.disableModulesHaveInstallInCheck'] = 'true'
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-
     }
 }
 
@@ -49,15 +47,12 @@ dependencies {
     implementation "androidx.cardview:cardview:${versions.androidx.card_view}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
-    implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
-
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
     kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
 
+    implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
-
 }
 
 apply plugin: 'com.google.gms.google-services'

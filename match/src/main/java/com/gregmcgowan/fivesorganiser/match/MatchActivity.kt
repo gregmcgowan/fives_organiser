@@ -1,17 +1,17 @@
 package com.gregmcgowan.fivesorganiser.match
 
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsFragment
 import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadFragment
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 fun Context.createMatchIntent(matchEvent: MatchNavigationEvent): Intent {
@@ -24,6 +24,7 @@ fun Context.createMatchIntent(matchEvent: MatchNavigationEvent): Intent {
 const val MATCH_ID_INTENT_EXTRA = "match_id"
 const val MATCH_EVENT_EXTRA = "MATCH_EVENT_EXTRA"
 
+@AndroidEntryPoint
 class MatchActivity : BaseActivity() {
 
     @Inject
@@ -40,8 +41,6 @@ class MatchActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.match_container)
-
-        AndroidInjection.inject(this)
 
         matchActivityViewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(MatchActivityViewModel::class.java)

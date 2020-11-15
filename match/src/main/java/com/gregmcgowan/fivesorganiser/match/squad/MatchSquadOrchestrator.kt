@@ -5,9 +5,10 @@ import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
 import com.gregmcgowan.fivesorganiser.data.match.PlayerAndMatchStatus
 import com.gregmcgowan.fivesorganiser.data.match.PlayerMatchSquadStatus
 import javax.inject.Inject
+import javax.inject.Named
 
 class MatchSquadOrchestrator @Inject constructor(
-        private val matchId: String,
+        @Named(MATCH_SQUAD_ID) private val matchId: String,
         private val matchInteractor: MatchInteractor,
         private val playersRepo: PlayerRepo
 ) {

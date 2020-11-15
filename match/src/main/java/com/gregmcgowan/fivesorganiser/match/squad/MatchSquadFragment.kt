@@ -12,9 +12,11 @@ import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchFragment
 import com.gregmcgowan.fivesorganiser.match.R
 import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.match_squad_layout.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MatchSquadFragment : MatchFragment, MatchSquadListInteractions, BaseFragment() {
 
     companion object {
@@ -49,8 +51,6 @@ class MatchSquadFragment : MatchFragment, MatchSquadListInteractions, BaseFragme
 
         getAppCompatActivity().setSupportActionBar(match_squad_toolbar)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        AndroidSupportInjection.inject(this)
 
         match_squad_player_list.adapter = matchSquadListAdapter
 

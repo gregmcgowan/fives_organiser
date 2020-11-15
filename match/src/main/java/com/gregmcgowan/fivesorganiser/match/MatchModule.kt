@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser.match
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
 import com.gregmcgowan.fivesorganiser.core.di.ViewModelKey
@@ -7,8 +8,11 @@ import com.gregmcgowan.fivesorganiser.data.match.MatchRepoModule
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
 
+@InstallIn(ActivityComponent::class)
 @Module(
         includes = [
             ViewModelBuilder::class,
@@ -19,8 +23,9 @@ import dagger.multibindings.IntoMap
 class MatchModule {
 
     @Provides
-    fun matchId(matchActivity: MatchActivity) = matchActivity.matchEvent
+    fun matchId(matchActivity: Activity) = (matchActivity as MatchActivity).matchEvent
 
+    @InstallIn(ActivityComponent::class)
     @Module
     interface Bindings {
 

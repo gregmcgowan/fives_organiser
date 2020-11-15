@@ -46,6 +46,7 @@ class AppModule {
         )
     }
 
+    @InstallIn(ApplicationComponent::class)
     @Module
     interface Bindings {
 

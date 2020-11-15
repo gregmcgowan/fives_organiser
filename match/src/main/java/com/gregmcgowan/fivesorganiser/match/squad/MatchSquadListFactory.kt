@@ -5,7 +5,8 @@ import dagger.Binds
 import dagger.BindsInstance
 import dagger.Module
 import dagger.Subcomponent
-
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewComponent
 
 @Subcomponent(modules = [MatchSquadListFactory.Bindings::class])
 interface MatchSquadListFactory {
@@ -22,6 +23,7 @@ interface MatchSquadListFactory {
 
     }
 
+    @InstallIn(ViewComponent::class)
     @Module
     interface Bindings {
 
