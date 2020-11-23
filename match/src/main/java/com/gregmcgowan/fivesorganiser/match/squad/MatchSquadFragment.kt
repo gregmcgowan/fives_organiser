@@ -1,9 +1,9 @@
 package com.gregmcgowan.fivesorganiser.match.squad
 
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
@@ -11,7 +11,6 @@ import com.gregmcgowan.fivesorganiser.match.MATCH_ID_INTENT_EXTRA
 import com.gregmcgowan.fivesorganiser.match.MatchActivityViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchFragment
 import com.gregmcgowan.fivesorganiser.match.R
-import dagger.android.support.AndroidSupportInjection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.match_squad_layout.*
 import javax.inject.Inject
@@ -28,17 +27,12 @@ class MatchSquadFragment : MatchFragment, MatchSquadListInteractions, BaseFragme
                 }
     }
 
-    val matchId: String
-        get() = arguments?.getString(MATCH_ID_INTENT_EXTRA) ?: throw IllegalArgumentException()
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject
     lateinit var matchSquadListAdapter: MatchSquadListAdapter
 
-    private lateinit var matchSquadViewModel: MatchSquadViewModel
-    private lateinit var navigationViewModel: MatchActivityViewModel
+    private val matchSquadViewModel: MatchSquadViewModel by viewModels()
+    private val navigationViewModel: MatchActivityViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -54,14 +48,6 @@ class MatchSquadFragment : MatchFragment, MatchSquadListInteractions, BaseFragme
 
         match_squad_player_list.adapter = matchSquadListAdapter
 
-        matchSquadViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(MatchSquadViewModel::class.java)
-
-        navigationViewModel = ViewModelProviders
-                .of(requireActivity())
-                .get(MatchActivityViewModel::class.java)
-
         matchSquadViewModel
                 .matchSquadUiModelLiveData
                 .observeNonNull(this, this::render)
@@ -69,6 +55,9 @@ class MatchSquadFragment : MatchFragment, MatchSquadListInteractions, BaseFragme
         matchSquadViewModel
                 .matchSquadNavEventsLiveData
                 .observeNonNull(this, this::handleNavEvent)
+
+        val matchId = arguments?.getString(MATCH_ID_INTENT_EXTRA) ?: throw IllegalArgumentException()
+        matchSquadViewModel.start(matchId)
     }
 
     private fun render(uninvitedPlayersUiModel: MatchSquadUiModel) {

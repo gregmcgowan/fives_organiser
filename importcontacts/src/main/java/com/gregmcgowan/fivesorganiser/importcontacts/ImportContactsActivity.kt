@@ -2,31 +2,25 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 
 import android.Manifest
 import android.app.Activity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.import_contacts.*
-import javax.inject.Inject
 
 fun Context.importContactsIntent(): Intent {
     return Intent(this, ImportContactsActivity::class.java)
 }
 
 @AndroidEntryPoint
-class ImportContactsActivity : BaseActivity(), PermissionResults, ViewModelActivity {
+class ImportContactsActivity : BaseActivity(), PermissionResults {
 
-    @Inject
-    override lateinit var viewHolderFactory: ViewModelProvider.Factory
-
-
-    lateinit var importImportContactsViewModel: ImportContactsViewModel
+    private val importImportContactsViewModel: ImportContactsViewModel by viewModels()
 
     private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
 
@@ -52,10 +46,6 @@ class ImportContactsActivity : BaseActivity(), PermissionResults, ViewModelActiv
                 importImportContactsViewModel.contactDeselected(contactId)
             }
         }
-
-        importImportContactsViewModel = ViewModelProviders
-                .of(this, viewHolderFactory)
-                .get(ImportContactsViewModel::class.java)
 
         importImportContactsViewModel
                 .contactUiNavLiveData

@@ -1,14 +1,14 @@
 package com.gregmcgowan.fivesorganiser.match
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.ShowSquad
 import java.util.*
-import javax.inject.Inject
 
-class MatchActivityViewModel @Inject constructor(
+class MatchActivityViewModel @ViewModelInject constructor(
         coroutineDisptachersAndContext: CoroutineDisptachersAndContext,
         matchEvent : MatchNavigationEvent
 ) : CoroutinesViewModel(coroutineDisptachersAndContext) {

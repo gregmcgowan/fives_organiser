@@ -1,14 +1,14 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import timber.log.Timber
-import javax.inject.Inject
 
-class ImportContactsViewModel @Inject constructor(
+class ImportContactsViewModel @ViewModelInject constructor(
         private val mapper: ImportContactsUiModelMapper,
         private val savePlayersUseCase: SavePlayersUseCase,
         private val getContactsUseCase: GetContactsUseCase,

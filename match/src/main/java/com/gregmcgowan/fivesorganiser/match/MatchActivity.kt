@@ -3,16 +3,14 @@ package com.gregmcgowan.fivesorganiser.match
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsFragment
 import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadFragment
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 fun Context.createMatchIntent(matchEvent: MatchNavigationEvent): Intent {
     return Intent(this, MatchActivity::class.java)
@@ -27,10 +25,7 @@ const val MATCH_EVENT_EXTRA = "MATCH_EVENT_EXTRA"
 @AndroidEntryPoint
 class MatchActivity : BaseActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private lateinit var matchActivityViewModel: MatchActivityViewModel
+    private val matchActivityViewModel: MatchActivityViewModel by viewModels()
 
     val matchEvent: MatchNavigationEvent
         get() = intent.getParcelableExtra(MATCH_EVENT_EXTRA)
@@ -41,9 +36,6 @@ class MatchActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.match_container)
-
-        matchActivityViewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(MatchActivityViewModel::class.java)
 
         matchActivityViewModel
                 .matchNavEvents

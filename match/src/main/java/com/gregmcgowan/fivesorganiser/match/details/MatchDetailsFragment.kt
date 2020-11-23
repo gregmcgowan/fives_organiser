@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.ui.DatePickerFragment
 import com.gregmcgowan.fivesorganiser.core.ui.EditTextDebounce
@@ -23,7 +23,6 @@ import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.match_details.*
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MatchDetailsFragment : MatchFragment, BaseFragment() {
@@ -37,14 +36,8 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
                 }
     }
 
-    var matchId: String? = null
-        get() = arguments?.getString(MATCH_ID_INTENT_EXTRA)
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private lateinit var matchDateTimeLocationViewModel: MatchDetailsViewModel
-    private lateinit var matchActivityViewModel: MatchActivityViewModel
+    private val matchDateTimeLocationViewModel: MatchDetailsViewModel by viewModels()
+    private val matchActivityViewModel: MatchActivityViewModel by activityViewModels()
 
     private lateinit var matchTypeSpinnerAdapter: ArrayAdapter<String>
 
@@ -65,23 +58,17 @@ class MatchDetailsFragment : MatchFragment, BaseFragment() {
         getAppCompatActivity().setSupportActionBar(match_date_time_location_toolbar)
         getAppCompatActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        matchDateTimeLocationViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(MatchDetailsViewModel::class.java)
-
         setMatchTypeAdapter()
 
         setListeners()
-
-        matchActivityViewModel = ViewModelProviders
-                .of(requireActivity())
-                .get(MatchActivityViewModel::class.java)
 
         matchDateTimeLocationViewModel.uiModelLiveData
                 .observeNonNull(this, this::render)
 
         matchDateTimeLocationViewModel.navLiveData
                 .observeNonNull(this, this::handleNavEvent)
+
+        matchDateTimeLocationViewModel.start(arguments?.getString(MATCH_ID_INTENT_EXTRA))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

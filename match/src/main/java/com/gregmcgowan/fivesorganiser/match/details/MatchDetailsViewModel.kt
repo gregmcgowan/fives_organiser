@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser.match.details
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
@@ -12,20 +13,18 @@ import com.gregmcgowan.fivesorganiser.data.match.MatchTypeHelper
 import com.gregmcgowan.fivesorganiser.data.match.Squad
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsNavEvent.*
 import org.threeten.bp.ZonedDateTime
-import javax.inject.Inject
-import javax.inject.Named
 
 private const val DEFAULT_NO_OF_PLAYERS = 10L
 internal const val NEW_MATCH_ID = ""
 
-class MatchDetailsViewModel @Inject constructor(
-        @Named(MATCH_DETAILS_ID) private val matchId: String?,
+class MatchDetailsViewModel @ViewModelInject constructor(
         private val matchTypeHelper: MatchTypeHelper,
         private val mapper: MatchDetailsUiModelMapper,
         private val matchInteractor: MatchInteractor,
         coroutineDisptachersAndContext: CoroutineDisptachersAndContext
 ) : CoroutinesViewModel(coroutineDisptachersAndContext) {
 
+    private var matchId : String? = null
     private lateinit var match: Match
 
     private val _uiModelLiveData = MutableLiveData<MatchDetailsUiModel>()
@@ -53,11 +52,16 @@ class MatchDetailsViewModel @Inject constructor(
                 selectedMatchTypeIndex = -1
         )
 
+
+
+    }
+
+    fun start(matchId : String?) {
+        this.matchId = matchId
         launch({
             match = matchId?.let { matchInteractor.getMatch(it) } ?: createDefault()
             mapper.map(match)
         }, { _uiModelLiveData.value = it })
-
     }
 
     fun dateUpdated(year: Int,

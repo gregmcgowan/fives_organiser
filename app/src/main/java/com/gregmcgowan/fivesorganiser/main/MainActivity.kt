@@ -1,9 +1,8 @@
 package com.gregmcgowan.fivesorganiser.main
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.transition.TransitionManager
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.R
@@ -15,24 +14,16 @@ import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
 import com.gregmcgowan.fivesorganiser.matchlist.MatchListFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private lateinit var mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setSupportActionBar(main_toolbar)
-
-        mainViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(MainViewModel::class.java)
 
         mainViewModel
                 .uiModelLiveData

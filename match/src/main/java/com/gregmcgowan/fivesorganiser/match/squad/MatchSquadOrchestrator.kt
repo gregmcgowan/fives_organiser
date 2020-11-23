@@ -1,19 +1,17 @@
 package com.gregmcgowan.fivesorganiser.match.squad
 
-import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
 import com.gregmcgowan.fivesorganiser.data.match.PlayerAndMatchStatus
 import com.gregmcgowan.fivesorganiser.data.match.PlayerMatchSquadStatus
+import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import javax.inject.Inject
-import javax.inject.Named
 
 class MatchSquadOrchestrator @Inject constructor(
-        @Named(MATCH_SQUAD_ID) private val matchId: String,
         private val matchInteractor: MatchInteractor,
         private val playersRepo: PlayerRepo
 ) {
 
-    suspend fun getPlayerAndMatchStatus(): List<PlayerAndMatchStatus> {
+    suspend fun getPlayerAndMatchStatus(matchId: String): List<PlayerAndMatchStatus> {
         val playerAndMatchStatuses = matchInteractor.getMatch(matchId)
                 .squad
                 .playerAndStatuses
@@ -31,7 +29,10 @@ class MatchSquadOrchestrator @Inject constructor(
 
     }
 
-    suspend fun updatePlayerAndMatchStatus(playersAndMatchStatus: List<PlayerAndMatchStatus>) {
+    suspend fun updatePlayerAndMatchStatus(
+            matchId: String,
+            playersAndMatchStatus: List<PlayerAndMatchStatus>
+    ) {
         val match = matchInteractor.getMatch(matchId)
         matchInteractor.saveMatch(match.copy(squad = match.squad.copy(playerAndStatuses = playersAndMatchStatus)))
     }

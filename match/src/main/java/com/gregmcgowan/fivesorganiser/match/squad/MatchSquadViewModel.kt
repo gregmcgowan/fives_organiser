@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser.match.squad
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
@@ -10,7 +11,7 @@ import com.gregmcgowan.fivesorganiser.data.match.PlayerMatchSquadStatus
 import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadListPlayerStatus.*
 import javax.inject.Inject
 
-class MatchSquadViewModel @Inject constructor(
+class MatchSquadViewModel @ViewModelInject constructor(
         private val mapper: MatchSquadUiModelMapper,
         private val orchestrator: MatchSquadOrchestrator,
         coroutineDisptachersAndContext: CoroutineDisptachersAndContext
@@ -25,6 +26,7 @@ class MatchSquadViewModel @Inject constructor(
     private val _matchSquadNavEventsLiveData = MutableLiveData<MatchSquadListNavEvent>()
 
     private lateinit var allPlayers: MutableList<PlayerAndMatchStatus>
+    private lateinit var matchId: String
 
     init {
         _matchSquadUiModelLiveData.value = MatchSquadUiModel(
@@ -35,8 +37,14 @@ class MatchSquadViewModel @Inject constructor(
 
         _matchSquadNavEventsLiveData.value = MatchSquadListNavEvent.Idle
 
+
+    }
+
+    fun start(matchId: String) {
+        this.matchId = matchId
+
         launch({
-            allPlayers = orchestrator.getPlayerAndMatchStatus().toMutableList()
+            allPlayers = orchestrator.getPlayerAndMatchStatus(matchId).toMutableList()
             mapper.map(allPlayers)
         }, { _matchSquadUiModelLiveData.value = it })
     }
@@ -66,7 +74,7 @@ class MatchSquadViewModel @Inject constructor(
                 showContent = false, showLoading = true
         )
         launch(
-                backgroundBlock = { orchestrator.updatePlayerAndMatchStatus(allPlayers) },
+                backgroundBlock = { orchestrator.updatePlayerAndMatchStatus(matchId, allPlayers) },
                 uiBlock = { _matchSquadNavEventsLiveData.value = MatchSquadListNavEvent.CloseScreen }
         )
     }

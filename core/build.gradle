@@ -11,6 +11,10 @@ dependencies {
     api "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
     api "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
+    api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
+    api "androidx.fragment:fragment-ktx:${versions.androidx.fragment_ktx}"
+    api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"
+
     api "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}"
     api "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
 
