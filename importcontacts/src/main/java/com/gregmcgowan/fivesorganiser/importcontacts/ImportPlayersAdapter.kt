@@ -1,15 +1,16 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.import_contacts_list_item.*
+import javax.inject.Inject
 
-class ImportPlayersAdapter : RecyclerView.Adapter<ImportPlayersAdapter.ContactViewHolder>() {
+class ImportPlayersAdapter @Inject constructor() : RecyclerView.Adapter<ImportPlayersAdapter.ContactViewHolder>() {
 
     private var contactList: MutableList<ContactItemUiModel> = mutableListOf()
 

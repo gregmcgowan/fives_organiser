@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,9 +10,8 @@ import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
-import javax.inject.Inject
 
-class PlayerListViewModel @Inject constructor(
+class PlayerListViewModel @ViewModelInject constructor(
         private val uiModelMapper: PlayerListUiModelMapper,
         getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase,
         coroutineDisptachersAndContext: CoroutineDisptachersAndContext

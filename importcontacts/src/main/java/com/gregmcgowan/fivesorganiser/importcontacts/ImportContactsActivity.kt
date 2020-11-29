@@ -12,6 +12,7 @@ import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.import_contacts.*
+import javax.inject.Inject
 
 fun Context.importContactsIntent(): Intent {
     return Intent(this, ImportContactsActivity::class.java)
@@ -22,7 +23,8 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
 
     private val importImportContactsViewModel: ImportContactsViewModel by viewModels()
 
-    private val importPlayersAdapter: ImportPlayersAdapter = ImportPlayersAdapter()
+    @Inject
+    lateinit var importPlayersAdapter: ImportPlayersAdapter
 
     private val permission = Permission(this, Manifest.permission.READ_CONTACTS)
 

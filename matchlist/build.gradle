@@ -27,6 +27,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
 
     testImplementation project(":test_shared")
 

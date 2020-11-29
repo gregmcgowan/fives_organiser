@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
@@ -24,14 +23,12 @@ class MatchListFragment : BaseFragment() {
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
     lateinit var matchNavigator: MatchNavigator
 
-    private lateinit var matchListViewModel: MatchListViewModel
+    @Inject
+    lateinit var matchListAdapter: MatchListAdapter
 
-    private val matchListAdapter = MatchListAdapter()
+    private val matchListViewModel: MatchListViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -41,10 +38,6 @@ class MatchListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         match_list.adapter = matchListAdapter
-
-        matchListViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(MatchListViewModel::class.java)
 
         matchListViewModel
                 .matchListUiModelLiveData

@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.player_list_item.*
+import javax.inject.Inject
 
-class PlayerListAdapter : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
+class PlayerListAdapter @Inject constructor() : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
     private var playerList: MutableList<PlayerListItemUiModel> = mutableListOf()
 

@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setTextIfValidRes
@@ -22,13 +21,13 @@ class PlayerListFragment : BaseFragment() {
         const val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var navigator: ImportContactsNavigator
 
-    @Inject lateinit var navigator: ImportContactsNavigator
+    @Inject
+    lateinit var playerListAdapter : PlayerListAdapter
 
-    private lateinit var playerListViewModel: PlayerListViewModel
-
-    private val playerListAdapter = PlayerListAdapter()
+    private val playerListViewModel: PlayerListViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -39,10 +38,6 @@ class PlayerListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         player_list.adapter = playerListAdapter
-
-        playerListViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(PlayerListViewModel::class.java)
 
         playerListViewModel
                 .playerUiModelLiveData

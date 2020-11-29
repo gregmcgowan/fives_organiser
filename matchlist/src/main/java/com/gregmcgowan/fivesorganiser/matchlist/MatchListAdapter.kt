@@ -1,15 +1,16 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.match_list_item_content.*
+import javax.inject.Inject
 
-class MatchListAdapter : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>() {
+class MatchListAdapter @Inject constructor() : RecyclerView.Adapter<MatchListAdapter.MatchViewHolder>() {
 
     private val matches: MutableList<MatchListItemUiModel> = mutableListOf()
 
