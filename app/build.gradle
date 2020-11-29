@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply from: "../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'dagger.hilt.android.plugin'
 
 kapt {
@@ -44,7 +44,7 @@ dependencies {
     implementation project(':match-navigator')
 
     implementation "com.google.firebase:firebase-core:${versions.firebase_core}"
-    implementation "com.crashlytics.sdk.android:crashlytics:${versions.crashlytics}"
+    implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
 
     implementation "com.google.android.material:material:${versions.material}"
     implementation "androidx.cardview:cardview:${versions.androidx.card_view}"
