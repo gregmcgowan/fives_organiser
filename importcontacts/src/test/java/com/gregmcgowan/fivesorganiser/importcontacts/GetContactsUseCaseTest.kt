@@ -7,15 +7,19 @@ import com.google.common.truth.Truth.assertThat
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import runBlockingUnit
 import java.lang.RuntimeException
 
+@ExperimentalCoroutinesApi
 class GetContactsUseCaseTest {
 
     @Mock
@@ -44,7 +48,7 @@ class GetContactsUseCaseTest {
     }
 
     @Test
-    fun `get contacts when none are already added`() = runBlocking {
+    fun `get contacts when none are already added`() = runBlockingTest {
         whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
 
@@ -55,7 +59,7 @@ class GetContactsUseCaseTest {
     }
 
     @Test
-    fun `get contacts when player is added already`() = runBlocking {
+    fun `get contacts when player is added already`() = runBlockingTest {
         // TODO use set final
         val fixtPlayerAdded = Player(
                 playerId = fixture.create(String::class.java),
@@ -76,7 +80,6 @@ class GetContactsUseCaseTest {
                     )
                 }
         )
-
     }
 
     @Test(expected = RuntimeException::class)

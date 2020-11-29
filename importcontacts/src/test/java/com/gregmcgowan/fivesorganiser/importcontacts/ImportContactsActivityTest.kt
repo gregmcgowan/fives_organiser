@@ -39,6 +39,7 @@ class ImportContactsActivityTest {
         FixtureAnnotations.initFixtures(this)
     }
 
+    @Ignore
     @Test
     fun `on create sets listener`() {
         val uiModelMutableLiveData = MutableLiveData<ImportContactsUiModel>()
@@ -66,6 +67,7 @@ class ImportContactsActivityTest {
         }
     }
 
+    @Ignore
     @Test
     fun `shows loading`() {
         val uiModelMutableLiveData = MutableLiveData<ImportContactsUiModel>()
@@ -100,6 +102,7 @@ class ImportContactsActivityTest {
         onView(withId(R.id.import_contacts_list)).check(RecyclerViewItemCountAssertion(0))
     }
 
+    @Ignore
     @Test
     fun `shows content`() {
         val uiModelMutableLiveData = MutableLiveData<ImportContactsUiModel>()
@@ -173,6 +176,7 @@ class ImportContactsActivityTest {
         onView(withId(R.id.import_contacts_list)).check(RecyclerViewItemCountAssertion(0))
     }
 
+    @Ignore
     @Test
     fun `onPermissionGranted() forwards to viewModel`() {
         val uiModelMutableLiveData = MutableLiveData<ImportContactsUiModel>()
@@ -201,6 +205,7 @@ class ImportContactsActivityTest {
     }
 
 
+    @Ignore
     @Test
     fun `close screen event finishes activity`() {
         val uiModelMutableLiveData = MutableLiveData<ImportContactsUiModel>()
