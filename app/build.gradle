@@ -22,9 +22,10 @@ android {
 
     }
 
-    //TODO try and update firebase and androidx to fix this
+   // remove once https://github.com/Kotlin/kotlinx.coroutines/issues/2023 is fixed
     packagingOptions {
-        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
     }
 
     compileOptions {
