@@ -12,7 +12,7 @@ dependencies {
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-    testImplementation "android.arch.core:core-testing:${versions.androidx.core_testing}"
+    //testImplementation "android.arch.core:core-testing:${versions.androidx.core_testing}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
     testImplementation "org.mockito:mockito-core:${versions.mockito}"
 }

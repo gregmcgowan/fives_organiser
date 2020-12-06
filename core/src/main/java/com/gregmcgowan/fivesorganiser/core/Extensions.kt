@@ -26,7 +26,7 @@ fun <T : Any> ArrayAdapter<T>.getItems(): List<T> {
     if (this.count == 0) {
         return emptyList()
     }
-    return (0 until this.count).map { getItem(it) }
+    return (0 until this.count).map { getItem(it)!! }
 }
 
 fun <T : Any> ArrayAdapter<T>.updateIfChanged(newValues: List<T>) {

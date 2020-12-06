@@ -31,9 +31,9 @@ class EditTextDebounce constructor(
             }
 
             override fun afterTextChanged(s: Editable) {
-                debounceHandler.removeCallbacks(debounceWorker)
+                debounceHandler.removeCallbacks(debounceWorker!!)
                 debounceWorker = DebounceRunnable(s.toString(), debounceCallback)
-                debounceHandler.postDelayed(debounceWorker, delayMillis.toLong())
+                debounceHandler.postDelayed(debounceWorker!!, delayMillis.toLong())
             }
         }
         this.editTextWeakReference = WeakReference(editText)
@@ -50,7 +50,7 @@ class EditTextDebounce constructor(
             if (editText != null) {
                 editText.removeTextChangedListener(textWatcher)
                 editTextWeakReference.clear()
-                debounceHandler.removeCallbacks(debounceWorker)
+                debounceHandler.removeCallbacks(debounceWorker!!)
             }
         }
     }
