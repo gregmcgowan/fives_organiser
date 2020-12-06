@@ -5,13 +5,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
 import com.gregmcgowan.fivesorganiser.core.*
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.import_contacts.*
+
 import javax.inject.Inject
 
 fun Context.importContactsIntent(): Intent {
@@ -35,9 +39,9 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.import_contacts)
-        setSupportActionBar(import_contacts_toolbar)
+        setSupportActionBar(findViewById(R.id.import_contacts_toolbar))
 
-        import_contacts_list.adapter = importPlayersAdapter
+        findViewById<RecyclerView>(R.id.import_contacts_list).adapter = importPlayersAdapter
 
         importPlayersAdapter.contactListInteractions = object : ImportPlayersAdapter.ContactListInteraction {
             override fun contactSelected(contactId: Long) {
@@ -57,7 +61,8 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
                 .contactUiModelLiveData
                 .observeNonNull(this, this::render)
 
-        import_contacts_add_button.setOnClickListener { importImportContactsViewModel.onAddButtonPressed() }
+        findViewById<View>(R.id.import_contacts_add_button)
+                .setOnClickListener { importImportContactsViewModel.onAddButtonPressed() }
     }
 
     private fun handleNavEvents(navEvent: ImportContactsNavEvent) {
@@ -85,11 +90,11 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     }
 
     private fun render(uiModel: ImportContactsUiModel) {
-        import_contacts_progress_bar.setVisibleOrGone(uiModel.showLoading)
-        import_contacts_main_content.setVisibleOrGone(uiModel.showContent)
-        import_contacts_error_message.setVisibleOrGone(uiModel.errorMessage != NO_STRING_RES_ID)
-        import_contacts_error_message.setTextIfValidRes(uiModel.errorMessage)
-        import_contacts_add_button.isEnabled = uiModel.importContactsButtonEnabled
+        findViewById<View>(R.id.import_contacts_progress_bar).setVisibleOrGone(uiModel.showLoading)
+        findViewById<View>(R.id.import_contacts_main_content).setVisibleOrGone(uiModel.showContent)
+        findViewById<View>(R.id.import_contacts_error_message).setVisibleOrGone(uiModel.errorMessage != NO_STRING_RES_ID)
+        findViewById<TextView>(R.id.import_contacts_error_message).setTextIfValidRes(uiModel.errorMessage)
+        findViewById<View>(R.id.import_contacts_add_button).isEnabled = uiModel.importContactsButtonEnabled
         importPlayersAdapter.setContacts(uiModel.contacts)
     }
 

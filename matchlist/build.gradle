@@ -4,9 +4,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'dagger.hilt.android.plugin'
 
-androidExtensions {
-    experimental = true
-}
 android {
     kotlinOptions {
         jvmTarget = "1.8"

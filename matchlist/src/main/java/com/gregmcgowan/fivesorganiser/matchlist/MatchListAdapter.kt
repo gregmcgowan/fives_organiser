@@ -3,6 +3,7 @@ package com.gregmcgowan.fivesorganiser.matchlist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
@@ -34,16 +35,16 @@ class MatchListAdapter @Inject constructor() : RecyclerView.Adapter<MatchListAda
     override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
         //TODO presenter or databinding
         val matchUiModel = matches[position]
-        holder.match_list_item_match_type.text = matchUiModel.matchType
-        holder.match_list_item_match_location.text = matchUiModel.location
-        holder.match_list_item_date_and_time.text = matchUiModel.dateAndTime
-        holder.match_list_item_squad_text.text = matchUiModel.squadStatus
+        holder.itemView.findViewById<TextView>(R.id.match_list_item_match_type).text = matchUiModel.matchType
+        holder.itemView.findViewById<TextView>(R.id.match_list_item_match_location).text = matchUiModel.location
+        holder.itemView.findViewById<TextView>(R.id.match_list_item_date_and_time).text = matchUiModel.dateAndTime
+        holder.itemView.findViewById<TextView>(R.id.match_list_item_squad_text).text = matchUiModel.squadStatus
 
-        holder.match_list_item_date_time_location_background.setOnClickListener {
+        holder.itemView.findViewById<View>(R.id.match_list_item_date_time_location_background).setOnClickListener {
             matchListInteraction?.editMatchDetails(matchUiModel.matchId)
 
         }
-        holder.match_list_item_squad_background.setOnClickListener {
+        holder.itemView.findViewById<View>(R.id .match_list_item_squad_background).setOnClickListener {
             matchListInteraction?.editSquad(matchUiModel.matchId)
         }
     }

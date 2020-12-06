@@ -3,6 +3,8 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
@@ -28,8 +30,8 @@ class ImportPlayersAdapter @Inject constructor() : RecyclerView.Adapter<ImportPl
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
         val contact = contactList[position]
 
-        holder.import_contacts_list_item_name.text = contact.name
-        holder.import_contacts_checkbox.setOnCheckedChangeListener { _, selected ->
+        holder.itemView.findViewById<TextView>(R.id.import_contacts_list_item_name).text = contact.name
+        holder.itemView.findViewById<CheckBox>(R.id.import_contacts_checkbox).setOnCheckedChangeListener { _, selected ->
             contactListInteractions?.let {
                 if (selected) {
                     it.contactSelected(contact.contactId)
@@ -38,7 +40,7 @@ class ImportPlayersAdapter @Inject constructor() : RecyclerView.Adapter<ImportPl
                 }
             }
         }
-        holder.import_contacts_checkbox.isChecked = contact.isSelected
+        holder.itemView.findViewById<CheckBox>(R.id.import_contacts_checkbox).isChecked = contact.isSelected
     }
 
     override fun getItemCount(): Int = contactList.size

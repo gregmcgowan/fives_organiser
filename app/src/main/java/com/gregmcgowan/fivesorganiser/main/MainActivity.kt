@@ -1,9 +1,11 @@
 package com.gregmcgowan.fivesorganiser.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
@@ -13,7 +15,6 @@ import com.gregmcgowan.fivesorganiser.main.MainScreen.*
 import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
 import com.gregmcgowan.fivesorganiser.matchlist.MatchListFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.main.*
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
@@ -23,13 +24,13 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
-        setSupportActionBar(main_toolbar)
+        setSupportActionBar(findViewById(R.id.main_toolbar))
 
         mainViewModel
                 .uiModelLiveData
                 .observeNonNull(this) { render(it) }
 
-        main_bottom_navigation.setOnNavigationItemSelectedListener { menuItem ->
+        findViewById<BottomNavigationView>(R.id.main_bottom_navigation).setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.main_matches_menu_item -> mainViewModel.handleMenuSelection(MatchesScreen)
                 R.id.main_players_menu_item -> mainViewModel.handleMenuSelection(PlayersScreen)
@@ -41,8 +42,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun render(mainScreenUiModel: MainScreenUiModel) {
-        main_progress_bar.setVisibleOrGone(mainScreenUiModel.showLoading)
-        main_content_group.setVisibleOrGone(mainScreenUiModel.showContent)
+        findViewById<View>(R.id.main_progress_bar).setVisibleOrGone(mainScreenUiModel.showLoading)
+        findViewById<View>(R.id.main_content_group).setVisibleOrGone(mainScreenUiModel.showContent)
 
         if (mainScreenUiModel.showContent) {
             when (mainScreenUiModel.screenToShow) {
