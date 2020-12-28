@@ -95,15 +95,15 @@ class ImportContactsViewModel @ViewModelInject constructor(
         TODO("Log exception and show content again")
     }
 
-    fun contactSelected(contactId: Long) {
-        updateContactSelectedStatus(contactId, true)
-    }
+//    fun contactSelected(contactId: Long) {
+//        updateContactSelectedStatus(contactId, true)
+//    }
+//
+//    fun contactDeselected(contactId: Long) {
+//        updateContactSelectedStatus(contactId, false)
+//    }
 
-    fun contactDeselected(contactId: Long) {
-        updateContactSelectedStatus(contactId, false)
-    }
-
-    private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
+    fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
         val currentUiModel = _contactUiModelLiveData.requireValue()
         val currentContacts = currentUiModel.contacts
 
