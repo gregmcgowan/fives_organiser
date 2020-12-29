@@ -7,8 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.platform.setContent
+import com.gregmcgowan.fivesorganiser.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
@@ -31,15 +31,20 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.import_contacts)
 
         importImportContactsViewModel
                 .contactUiNavLiveData
                 .observeNonNull(this, this::handleNavEvents)
 
-        importImportContactsViewModel
-                .contactUiModelLiveData
-                .observeNonNull(this, this::render)
+        setContent {
+            AppTheme {
+                ImportContactsScreen(
+                        importContactsUiModel = importImportContactsViewModel.uiModel,
+                        onContactChanged = importImportContactsViewModel::updateContactSelectedStatus,
+                        onAddButton = importImportContactsViewModel::onAddButtonPressed
+                )
+            }
+        }
     }
 
     private fun handleNavEvents(navEvent: ImportContactsNavEvent) {
@@ -66,13 +71,6 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
                 Toast.LENGTH_LONG).show()
     }
 
-    private fun render(uiModel: ImportContactsUiModel) {
-        setContent {
-            MaterialTheme {
-                ImportContactsScreen(importContactsUiModel = uiModel, importImportContactsViewModel::updateContactSelectedStatus)
-            }
-        }
-    }
 
     private fun closeScreen() = finish()
 

@@ -1,45 +1,52 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumnFor
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gregmcgowan.fivesorganiser.compose.AppTheme
+
 
 @Preview
 @Composable
 fun Preview() {
-    ImportContactsScreen(
-            ImportContactsUiModel(
-                    listOf(
-                            ContactItemUiModel(name = "Greg", isSelected = true, contactId = 1),
-                            ContactItemUiModel(name = "Frances", isSelected = true, contactId = 2),
-                            ContactItemUiModel(name = "Joe Wicks", isSelected = true, contactId = 3)
-                    ),
-                    showContent = true, showLoading = false, importContactsButtonEnabled = true)
-    ) { contactId, selected -> print("contact $contactId selected = $selected") }
+    AppTheme {
+        ImportContactsScreen(
+                ImportContactsUiModel(
+                        listOf(
+                                ContactItemUiModel(name = "Greg", isSelected = true, contactId = 1),
+                                ContactItemUiModel(name = "Frances", isSelected = true, contactId = 2),
+                                ContactItemUiModel(name = "Joe Wicks", isSelected = true, contactId = 3)
+                        ),
+                        showContent = true, showLoading = false, importContactsButtonEnabled = true),
+                { _, _ -> }, {}
+        )
+    }
+
 }
 
 @Composable
 fun ImportContactsScreen(importContactsUiModel: ImportContactsUiModel,
-                         onContactChanged: (Long, Boolean) -> Unit) {
+                         onContactChanged: (Long, Boolean) -> Unit,
+                         onAddButton: () -> Unit) {
     Scaffold(
-            topBar = {
-                //val title = stringResource(id = R.string.import)
-                TopAppBar(title = { Text("Import contacts") })
-            },
+            topBar = { TopAppBar(title = { Text(stringResource(id = R.string.import_contacts_title)) }) },
             bodyContent = {
-                ContactList(importContactsUiModel.contacts, onContactChanged)
+                Column {
+                    ContactList(importContactsUiModel.contacts, onContactChanged)
+                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                        Button(
+                                content = { Text(stringResource(id = R.string.add)) },
+                                onClick = onAddButton,
+                                enabled = importContactsUiModel.importContactsButtonEnabled
+                        )
+                    }
+                }
             }
     )
 
