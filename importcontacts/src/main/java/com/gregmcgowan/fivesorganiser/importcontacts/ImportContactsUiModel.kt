@@ -3,10 +3,20 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import androidx.annotation.StringRes
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 
-sealed class ImportContactsNavEvent {
-    object Idle : ImportContactsNavEvent()
-    object RequestPermission : ImportContactsNavEvent()
-    object CloseScreen : ImportContactsNavEvent()
+
+sealed class ImportContactsUserEvent {
+
+    object ContactPermissionGrantedEvent : ImportContactsUserEvent()
+    object AddButtonPressedEvent : ImportContactsUserEvent()
+
+    class ContactSelectedEvent(val contactId: Long,
+                               val selected: Boolean) : ImportContactsUserEvent()
+}
+
+sealed class ImportContactsUiEvent {
+    object Idle : ImportContactsUiEvent()
+    object RequestPermission : ImportContactsUiEvent()
+    object CloseScreen : ImportContactsUiEvent()
 }
 
 data class ImportContactsUiModel(

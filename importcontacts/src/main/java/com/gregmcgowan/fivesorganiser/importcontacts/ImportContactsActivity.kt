@@ -8,12 +8,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.setContent
+import androidx.lifecycle.lifecycleScope
 import com.gregmcgowan.fivesorganiser.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.BaseActivity
-import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 fun Context.importContactsIntent(): Intent {
     return Intent(this, ImportContactsActivity::class.java)
@@ -32,51 +34,40 @@ class ImportContactsActivity : BaseActivity(), PermissionResults {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        importImportContactsViewModel
-                .contactUiNavLiveData
-                .observeNonNull(this, this::handleNavEvents)
-
+        lifecycleScope.launchWhenStarted {
+            importImportContactsViewModel.importContactsUiEvent.collect { event ->
+                when (event) {
+                    RequestPermission -> permission.requestPermission()
+                    CloseScreen -> returnToPlayersScreen()
+                    Idle -> {}
+                }
+            }
+        }
         setContent {
             AppTheme {
                 ImportContactsScreen(
                         importContactsUiModel = importImportContactsViewModel.uiModel,
-                        onContactChanged = importImportContactsViewModel::updateContactSelectedStatus,
-                        onAddButton = importImportContactsViewModel::onAddButtonPressed
+                        eventHandler = importImportContactsViewModel::handleEvent
                 )
             }
         }
     }
 
-    private fun handleNavEvents(navEvent: ImportContactsNavEvent) {
-        when (navEvent) {
-            ImportContactsNavEvent.Idle -> {
-                //Nothing
-            }
-            ImportContactsNavEvent.CloseScreen -> {
-                returnToPlayersScreen()
-            }
-            ImportContactsNavEvent.RequestPermission -> {
-                permission.requestPermission()
-            }
-        }
-    }
 
     override fun onPermissionGranted() {
-        importImportContactsViewModel.onContactsPermissionGranted()
+        importImportContactsViewModel.handleEvent(ImportContactsUserEvent.ContactPermissionGrantedEvent)
     }
 
     override fun onPermissionDenied(userSaidNever: Boolean) {
+        //TODO move to compose
         Toast.makeText(this,
                 getString(R.string.permissons_denied_text),
                 Toast.LENGTH_LONG).show()
     }
 
-
-    private fun closeScreen() = finish()
-
     private fun returnToPlayersScreen() {
         setResult(Activity.RESULT_OK)
-        closeScreen()
+        finish()
     }
 
 }

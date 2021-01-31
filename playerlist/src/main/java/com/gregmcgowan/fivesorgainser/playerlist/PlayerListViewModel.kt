@@ -4,7 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
+import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.requireValue
@@ -14,8 +14,8 @@ import com.gregmcgowan.fivesorganiser.data.player.Player
 class PlayerListViewModel @ViewModelInject constructor(
         private val uiModelMapper: PlayerListUiModelMapper,
         getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase,
-        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
-) : CoroutinesViewModel(coroutineDisptachersAndContext) {
+        coroutineDispatchers: CoroutineDispatchers
+) : CoroutinesViewModel(coroutineDispatchers) {
 
     val playerUiModelLiveData: LiveData<PlayerListUiModel>
         get() = _playerUiModelLiveData

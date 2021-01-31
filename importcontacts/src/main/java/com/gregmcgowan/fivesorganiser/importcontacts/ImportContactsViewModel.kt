@@ -4,19 +4,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
-import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.CloseScreen
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.RequestPermission
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ImportContactsViewModel @ViewModelInject constructor(
-        private val mapper: ImportContactsUiModelMapper,
+        private val uiModelMapper: ImportContactsUiModelMapper,
         private val savePlayersUseCase: SavePlayersUseCase,
         private val getContactsUseCase: GetContactsUseCase,
-        hasContactPermission: Boolean,
-        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
-) : CoroutinesViewModel(coroutineDisptachersAndContext) {
+        hasContactPermission: Boolean
+) : ViewModel() {
 
     var uiModel: ImportContactsUiModel by mutableStateOf(
             value = ImportContactsUiModel(
@@ -27,88 +31,96 @@ class ImportContactsViewModel @ViewModelInject constructor(
             ))
         private set
 
-    val contactUiNavLiveData: LiveData<ImportContactsNavEvent>
-        get() = _contactUiNavLiveData
-    private val _contactUiNavLiveData = MutableLiveData<ImportContactsNavEvent>()
+    val importContactsUiEvent: Flow<ImportContactsUiEvent>
+        get() = _importContactsUiEvent.asSharedFlow()
+
+    private val _importContactsUiEvent = MutableSharedFlow<ImportContactsUiEvent>()
 
     private val selectedContacts: Set<Long>
-        get() = uiModel
-                .contacts
+        get() = uiModel.contacts
                 .filter { it.isSelected }
                 .map { it.contactId }
                 .toSet()
 
     init {
-        start(hasContactPermission)
-    }
-
-    private fun start(hasContactPermission: Boolean) {
         if (hasContactPermission) {
-            _contactUiNavLiveData.value = ImportContactsNavEvent.Idle
             loadContacts()
         } else {
-            _contactUiNavLiveData.value = ImportContactsNavEvent.RequestPermission
+            emitEvent(RequestPermission)
         }
     }
 
-    fun onContactsPermissionGranted() {
-        loadContacts()
+    fun handleEvent(importContactsEvent: ImportContactsUserEvent) {
+        when (importContactsEvent) {
+            is AddButtonPressedEvent -> onAddButtonPressed()
+            is ContactSelectedEvent -> updateContactSelectedStatus(
+                    importContactsEvent.contactId,
+                    importContactsEvent.selected
+            )
+            is ContactPermissionGrantedEvent -> loadContacts()
+        }
+    }
+
+    private fun emitEvent(importContactsEvent: ImportContactsUiEvent) {
+        viewModelScope.launch {
+            _importContactsUiEvent.emit(importContactsEvent)
+        }
     }
 
     private fun loadContacts() {
-        launch(
-                backgroundBlock = {
-                    getContactsUseCase
-                            .execute()
-                            .either(
-                                    { handleException(it) },
-                                    { mapper.map(it, selectedContacts) }
-                            )
-
-                },
-                uiBlock = {
-                    Timber.d("Setting contact list UI model to $it")
-                    uiModel = it
-                }
-        )
+        viewModelScope.launch {
+            uiModel = getContactsUseCase
+                    .execute()
+                    .either(
+                            { handleException(it) },
+                            { uiModelMapper.map(it, selectedContacts) }
+                    )
+        }
     }
 
     private fun handleException(exception: Exception): ImportContactsUiModel {
-        TODO("Log exception and show retry button")
-    }
-
-    fun onAddButtonPressed() {
-        uiModel.copy(showLoading = true, showContent = false)
-
-        launch(
-                backgroundBlock = {
-                    savePlayersUseCase.execute(selectedContacts).either(
-                            { handleSavingException(it) },
-                            { ImportContactsNavEvent.CloseScreen }
-                    )
-                },
-                uiBlock = { _contactUiNavLiveData.value = it }
+        Timber.e(exception)
+        return uiModel.copy(
+                showLoading = false,
+                showContent = false,
+                errorMessage = R.string.generic_error_message
         )
     }
 
-    private fun handleSavingException(it: Exception): ImportContactsNavEvent {
-        TODO("Log exception and show content again")
+    private fun onAddButtonPressed() {
+        uiModel = uiModel.copy(showLoading = true, showContent = false)
+
+        viewModelScope.launch {
+            val event = savePlayersUseCase
+                    .execute(selectedContacts)
+                    .either(
+                            { handleSavingException(it) },
+                            { CloseScreen }
+                    )
+            emitEvent(event)
+        }
     }
 
-    fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
-        val indexOfFirst = uiModel.contacts.indexOfFirst { it.contactId == contactId }
-        if (indexOfFirst != -1) {
-            val updatedContactItemList = uiModel.contacts.toMutableList().apply {
-                this[indexOfFirst] = uiModel.contacts[indexOfFirst].copy(isSelected = selected)
-            }
-            val addButtonEnabled = updatedContactItemList.indexOfFirst { it.isSelected } != -1
+    private fun handleSavingException(exception: Exception): ImportContactsUiEvent {
+        Timber.e(exception)
+        uiModel = uiModel.copy(showLoading = false, showContent = true)
+        return ImportContactsUiEvent.Idle
+    }
 
+    private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
+        val index = uiModel.contacts.indexOfFirst { it.contactId == contactId }
+        if (index != -1) {
+            val updatedList = uiModel.contacts
+                    .toMutableList()
+                    .apply {
+                        this[index] = this[index].copy(isSelected = selected)
+                    }
             uiModel = uiModel.copy(
-                    contacts = updatedContactItemList,
-                    importContactsButtonEnabled = addButtonEnabled
+                    contacts = updatedList,
+                    importContactsButtonEnabled = updatedList.any { it.isSelected }
             )
         } else {
-            //TODO log that we cannot find the contact to udpate
+            Timber.e("Could not update contact [$contactId] to [$selected]")
         }
     }
 

@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
+import TEST_COROUTINE_DISPATCHERS
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
@@ -37,7 +38,8 @@ class SavePlayersUseCaseTest {
 
         sut = SavePlayersUseCase(
                 mockPlayerRepo,
-                mockContactsImporter
+                mockContactsImporter,
+                TEST_COROUTINE_DISPATCHERS
         )
     }
 

@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
-import TEST_COROUTINE_DISPTACHERS_AND_CONTEXT
+import TEST_COROUTINE_DISPATCHERS
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
 import org.junit.Assert.assertNotNull
@@ -31,7 +31,7 @@ class MatchListViewModelTest {
         sut = MatchListViewModel(
                 mockMatchInteractor,
                 mockMapper,
-                TEST_COROUTINE_DISPTACHERS_AND_CONTEXT
+                TEST_COROUTINE_DISPATCHERS
         )
     }
 

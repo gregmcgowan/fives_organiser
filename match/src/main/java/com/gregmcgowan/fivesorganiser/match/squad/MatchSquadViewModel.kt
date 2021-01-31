@@ -3,19 +3,18 @@ package com.gregmcgowan.fivesorganiser.match.squad
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
+import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.match.PlayerAndMatchStatus
 import com.gregmcgowan.fivesorganiser.data.match.PlayerMatchSquadStatus
 import com.gregmcgowan.fivesorganiser.match.squad.MatchSquadListPlayerStatus.*
-import javax.inject.Inject
 
 class MatchSquadViewModel @ViewModelInject constructor(
         private val mapper: MatchSquadUiModelMapper,
         private val orchestrator: MatchSquadOrchestrator,
-        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
-) : CoroutinesViewModel(coroutineDisptachersAndContext) {
+        coroutineDispatchers: CoroutineDispatchers
+) : CoroutinesViewModel(coroutineDispatchers) {
 
     val matchSquadUiModelLiveData: MutableLiveData<MatchSquadUiModel>
         get() = _matchSquadUiModelLiveData

@@ -3,7 +3,7 @@ package com.gregmcgowan.fivesorganiser.matchlist
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
+import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
@@ -14,8 +14,8 @@ import timber.log.Timber
 class MatchListViewModel @ViewModelInject constructor(
         private val matchInteractor: MatchInteractor,
         private val mapper: MatchListUiModelMappers,
-        coroutineDisptachersAndContext: CoroutineDisptachersAndContext
-) : CoroutinesViewModel(coroutineDisptachersAndContext) {
+        coroutineDispatchers: CoroutineDispatchers
+) : CoroutinesViewModel(coroutineDispatchers) {
 
     val matchListUiModelLiveData: LiveData<MatchListUiModel>
         get() = _matchListUiModelLiveData

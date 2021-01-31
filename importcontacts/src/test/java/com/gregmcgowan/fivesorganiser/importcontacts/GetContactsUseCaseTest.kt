@@ -4,35 +4,31 @@ import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
 import com.google.common.truth.Truth.assertThat
+import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.fail
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import runBlockingUnit
-import java.lang.RuntimeException
 
 @ExperimentalCoroutinesApi
 class GetContactsUseCaseTest {
 
-    @Mock
-    lateinit var mockPlayerRepo: PlayerRepo
+    @Mock lateinit var mockPlayerRepo: PlayerRepo
+    @Mock lateinit var mockContactsImporter: ContactImporter
 
-    @Mock
-    lateinit var mockContactsImporter: ContactImporter
+    @Fixture lateinit var fixtContacts: List<Contact>
 
-    @Fixture
-    lateinit var fixtContacts: List<Contact>
+    private val ioDispatcher = TestCoroutineDispatcher()
+    private val mainDispatcher = TestCoroutineDispatcher()
 
     private lateinit var fixture: JFixture
-
     private lateinit var sut: GetContactsUseCase
 
     @Before
@@ -43,12 +39,13 @@ class GetContactsUseCaseTest {
 
         sut = GetContactsUseCase(
                 mockPlayerRepo,
-                mockContactsImporter
+                mockContactsImporter,
+                CoroutineDispatchers(mainDispatcher, ioDispatcher)
         )
     }
 
     @Test
-    fun `get contacts when none are already added`() = runBlockingTest {
+    fun `get contacts when none are already added`() = ioDispatcher.runBlockingTest {
         whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
 
@@ -59,7 +56,7 @@ class GetContactsUseCaseTest {
     }
 
     @Test
-    fun `get contacts when player is added already`() = runBlockingTest {
+    fun `get contacts when player is added already`() = ioDispatcher.runBlockingTest {
         // TODO use set final
         val fixtPlayerAdded = Player(
                 playerId = fixture.create(String::class.java),
@@ -83,7 +80,7 @@ class GetContactsUseCaseTest {
     }
 
     @Test(expected = RuntimeException::class)
-    fun `get contacts throws when player repo throws`() = runBlockingUnit {
+    fun `get contacts throws when player repo throws`() = ioDispatcher.runBlockingTest {
         whenever(mockPlayerRepo.getPlayers())
                 .thenThrow(fixture.create(RuntimeException::class.java))
 
@@ -91,7 +88,7 @@ class GetContactsUseCaseTest {
     }
 
     @Test(expected = RuntimeException::class)
-    fun `get contacts when contact importer throws`() = runBlockingUnit {
+    fun `get contacts when contact importer throws`() = ioDispatcher.runBlockingTest {
         whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
         whenever(mockContactsImporter.getAllContacts())
                 .thenThrow(fixture.create(RuntimeException::class.java))

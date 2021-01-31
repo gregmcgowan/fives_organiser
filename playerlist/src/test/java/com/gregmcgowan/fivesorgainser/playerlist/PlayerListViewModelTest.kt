@@ -1,6 +1,6 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
-import TEST_COROUTINE_DISPTACHERS_AND_CONTEXT
+import TEST_COROUTINE_DISPATCHERS
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.flextrade.jfixture.FixtureAnnotations
@@ -18,7 +18,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
@@ -48,7 +47,7 @@ class PlayerListViewModelTest {
 
     private lateinit var sut: PlayerListViewModel
 
-    private val testDispatchers = TEST_COROUTINE_DISPTACHERS_AND_CONTEXT
+    private val testDispatchers = TEST_COROUTINE_DISPATCHERS
 
     @Before
     fun setUp() {

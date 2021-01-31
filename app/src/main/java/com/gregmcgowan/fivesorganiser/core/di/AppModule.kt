@@ -5,7 +5,7 @@ import android.content.res.Resources
 import com.google.firebase.auth.FirebaseAuth
 import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.AndroidStrings
-import com.gregmcgowan.fivesorganiser.core.CoroutineDisptachersAndContext
+import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
@@ -31,7 +31,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun disptchers(): CoroutineDisptachersAndContext = CoroutineDisptachersAndContext(Main, IO)
+    fun dispatchers(): CoroutineDispatchers = CoroutineDispatchers(Main, IO)
 
     @Provides
     @Reusable
