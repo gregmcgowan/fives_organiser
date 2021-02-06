@@ -28,6 +28,17 @@ dependencies {
     api "com.jakewharton.timber:timber:${versions.timber}"
     api "com.jakewharton.threetenabp:threetenabp:${versions.threetenabp}"
 
+    api "androidx.compose.runtime:runtime:${versions.compose}"
+    api "androidx.compose.ui:ui:${versions.compose}"
+    api "androidx.compose.foundation:foundation-layout:${versions.compose}"
+    api "androidx.compose.material:material:${versions.compose}"
+    api "androidx.compose.material:material-icons-extended:${versions.compose}"
+    api "androidx.compose.foundation:foundation:${versions.compose}"
+    api "androidx.compose.animation:animation:${versions.compose}"
+    api "androidx.compose.ui:ui-tooling:${versions.compose}"
+    api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
+    androidTestImplementation "androidx.ui:ui-test:${versions.compose}"
+
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
     testImplementation "androidx.test:core:${versions.androidx.test_core}"
