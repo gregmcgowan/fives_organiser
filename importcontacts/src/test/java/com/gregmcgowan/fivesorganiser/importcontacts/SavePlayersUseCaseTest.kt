@@ -1,21 +1,27 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import TEST_COROUTINE_DISPATCHERS
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
+import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
+import com.gregmgowan.fivesorganiser.test_shared.CoroutinesTestRule
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
 class SavePlayersUseCaseTest {
+
+    @get:Rule
+    var coroutinesTestRule = CoroutinesTestRule()
 
     @Mock
     lateinit var mockPlayerRepo: PlayerRepo
@@ -30,6 +36,11 @@ class SavePlayersUseCaseTest {
 
     private lateinit var sut: SavePlayersUseCase
 
+    private val mainDispatcher = TestCoroutineDispatcher()
+
+    private val ioDispatcher: TestCoroutineDispatcher
+        get() = coroutinesTestRule.testDispatcher
+
     @Before
     fun setUp() {
         fixture = JFixture()
@@ -39,12 +50,15 @@ class SavePlayersUseCaseTest {
         sut = SavePlayersUseCase(
                 mockPlayerRepo,
                 mockContactsImporter,
-                TEST_COROUTINE_DISPATCHERS
+                CoroutineDispatchers(
+                        mainDispatcher,
+                        ioDispatcher
+                )
         )
     }
 
     @Test
-    fun `save selected contacts`() = runBlocking {
+    fun `save selected contacts`() = ioDispatcher.runBlockingTest {
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
         val fixtContact = fixtContacts[1]
 
@@ -61,7 +75,7 @@ class SavePlayersUseCaseTest {
     }
 
     @Test
-    fun `do save when there is no selected contacts`() = runBlocking {
+    fun `do save when there is no selected contacts`() = ioDispatcher.runBlockingTest {
         whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
 
         val output = sut.execute(emptySet())

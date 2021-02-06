@@ -7,12 +7,14 @@ import com.google.common.truth.Truth.assertThat
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
+import com.gregmgowan.fivesorganiser.test_shared.CoroutinesTestRule
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -20,12 +22,14 @@ import org.mockito.MockitoAnnotations
 @ExperimentalCoroutinesApi
 class GetContactsUseCaseTest {
 
+    @get:Rule var coroutinesTestRule = CoroutinesTestRule()
+
     @Mock lateinit var mockPlayerRepo: PlayerRepo
     @Mock lateinit var mockContactsImporter: ContactImporter
 
     @Fixture lateinit var fixtContacts: List<Contact>
 
-    private val ioDispatcher = TestCoroutineDispatcher()
+    private val ioDispatcher = coroutinesTestRule.testDispatcher
     private val mainDispatcher = TestCoroutineDispatcher()
 
     private lateinit var fixture: JFixture

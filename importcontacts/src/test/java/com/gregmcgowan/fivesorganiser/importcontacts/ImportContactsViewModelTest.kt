@@ -21,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import java.lang.RuntimeException
 
 private val LOADING_UI_MODEL = ImportContactsUiModel(
         contacts = emptyList(),
@@ -118,6 +119,7 @@ class ImportContactsViewModelTest {
         val actualContentOutput = sut.uiModel
         assertThat(actualContentOutput, equalTo(fixtInitialUiModel))
     }
+
 
     @Test
     fun `onContactSelected() updates model when none are selected`() = runBlocking {
@@ -241,6 +243,41 @@ class ImportContactsViewModelTest {
                 contacts = expectedUiModelList,
                 showLoading = true,
                 showContent = false,
+                importContactsButtonEnabled = true
+        )))
+
+    }
+
+    @Test
+    fun `onAddButtonPressed() when there is an error`() = testCoroutineDispatcher.runBlockingTest {
+        val fixtInitialUiModel = createInitialUiModel()
+        setupMocks(fixtContacts, fixtInitialUiModel)
+        setupSut(true)
+        val initialUiModel = sut.uiModel
+
+        // add contact
+        val contactId = fixtInitialUiModel.contacts[0].contactId
+        sut.handleEvent(ContactSelectedEvent(contactId, true))
+
+        // run
+        val runTimeException : RuntimeException = fixture.create(RuntimeException::class.java)
+        whenever(mockSavePlayersUseCase.execute(setOf(contactId))).thenReturn(Either.Left(runTimeException))
+        testCoroutineDispatcher.pauseDispatcher()
+        sut.handleEvent(AddButtonPressedEvent)
+
+        // check close screen event
+        val actualContentOutput = sut.importContactsUiEvent.first()
+        testCoroutineDispatcher.resumeDispatcher()
+        assertThat(actualContentOutput as ImportContactsUiEvent.Idle,
+                equalTo(ImportContactsUiEvent.Idle))
+
+        // check models
+        val expectedUiModelList = updateContact(initialUiModel, selectedContacts = setOf(0))
+        val actualUpdatedModel = sut.uiModel
+        assertThat(actualUpdatedModel, equalTo(initialUiModel.copy(
+                contacts = expectedUiModelList,
+                showLoading = false,
+                showContent = true,
                 importContactsButtonEnabled = true
         )))
 
