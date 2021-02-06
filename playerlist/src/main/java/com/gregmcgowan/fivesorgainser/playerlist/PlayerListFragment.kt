@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setTextIfValidRes
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.players_list.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,7 +27,7 @@ class PlayerListFragment : BaseFragment() {
     lateinit var navigator: ImportContactsNavigator
 
     @Inject
-    lateinit var playerListAdapter : PlayerListAdapter
+    lateinit var playerListAdapter: PlayerListAdapter
 
     private val playerListViewModel: PlayerListViewModel by viewModels()
 
@@ -37,7 +39,7 @@ class PlayerListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        player_list.adapter = playerListAdapter
+        view.findViewById<RecyclerView>(R.id.player_list).adapter = playerListAdapter
 
         playerListViewModel
                 .playerUiModelLiveData
@@ -47,7 +49,7 @@ class PlayerListFragment : BaseFragment() {
                 .playerListNavigationLiveData
                 .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
 
-        player_list_fab.setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
+        view.findViewById<FloatingActionButton>(R.id.player_list_fab).setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
     }
 
     private fun handleNavEvent(navEvent: PlayerListNavigationEvents) {
@@ -62,10 +64,10 @@ class PlayerListFragment : BaseFragment() {
     }
 
     private fun render(uiModel: PlayerListUiModel) {
-        progress_bar.setVisibleOrGone(uiModel.showLoading)
-        player_list_empty_message.setTextIfValidRes(uiModel.errorMessage)
-        player_list_empty_view_group.setVisibleOrGone(uiModel.showErrorMessage)
-        player_list.setVisibleOrGone(uiModel.showPlayers)
+        requireView().findViewById<View>(R.id.progress_bar).setVisibleOrGone(uiModel.showLoading)
+        requireView().findViewById<TextView>(R.id.player_list_empty_message).setTextIfValidRes(uiModel.errorMessage)
+        requireView().findViewById<View>(R.id.player_list_empty_view_group).setVisibleOrGone(uiModel.showErrorMessage)
+        requireView().findViewById<View>(R.id.player_list).setVisibleOrGone(uiModel.showPlayers)
         playerListAdapter.setPlayers(uiModel.players.toMutableList())
     }
 

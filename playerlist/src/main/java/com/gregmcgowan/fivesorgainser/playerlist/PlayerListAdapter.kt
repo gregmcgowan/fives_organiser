@@ -1,13 +1,13 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
-import androidx.recyclerview.widget.DiffUtil.calculateDiff
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil.calculateDiff
+import androidx.recyclerview.widget.RecyclerView
 import com.gregmcgowan.fivesorganiser.core.ui.DiffUtilCallback
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.player_list_item.*
 import javax.inject.Inject
 
 class PlayerListAdapter @Inject constructor() : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
@@ -30,7 +30,7 @@ class PlayerListAdapter @Inject constructor() : RecyclerView.Adapter<PlayerListA
     override fun getItemCount(): Int = playerList.size
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.player_list_name.text = playerList[position].name
+        holder.itemView.findViewById<TextView>(R.id.player_list_name).text = playerList[position].name
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
