@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.compose
+package com.gregmcgowan.fivesorganiser.core.compose
 
 import androidx.compose.ui.graphics.Color
 
