@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setTextIfValidRes
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PlayerListFragment : BaseFragment() {
+class PlayerListFragment : Fragment() {
 
     companion object {
         const val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"
@@ -41,34 +41,32 @@ class PlayerListFragment : BaseFragment() {
 
         view.findViewById<RecyclerView>(R.id.player_list).adapter = playerListAdapter
 
-        playerListViewModel
-                .playerUiModelLiveData
-                .observeNonNull(this, this@PlayerListFragment::render)
+        render(playerListViewModel.uiModel)
 
         playerListViewModel
-                .playerListNavigationLiveData
+                .playerListUiLiveData
                 .observeNonNull(this, this@PlayerListFragment::handleNavEvent)
 
         view.findViewById<FloatingActionButton>(R.id.player_list_fab).setOnClickListener { playerListViewModel.addPlayerButtonPressed() }
     }
 
-    private fun handleNavEvent(navEvent: PlayerListNavigationEvents) {
+    private fun handleNavEvent(navEvent: PlayerListUiEvents) {
         when (navEvent) {
-            PlayerListNavigationEvents.AddPlayerEvent -> {
+            PlayerListUiEvents.ShowAddPlayerScreenEvent -> {
                 navigator.goToImportContacts()
             }
-            PlayerListNavigationEvents.Idle -> {
+            PlayerListUiEvents.Idle -> {
                 // Do nothing
             }
         }
     }
 
     private fun render(uiModel: PlayerListUiModel) {
-        requireView().findViewById<View>(R.id.progress_bar).setVisibleOrGone(uiModel.showLoading)
-        requireView().findViewById<TextView>(R.id.player_list_empty_message).setTextIfValidRes(uiModel.errorMessage)
-        requireView().findViewById<View>(R.id.player_list_empty_view_group).setVisibleOrGone(uiModel.showErrorMessage)
-        requireView().findViewById<View>(R.id.player_list).setVisibleOrGone(uiModel.showPlayers)
-        playerListAdapter.setPlayers(uiModel.players.toMutableList())
+//        requireView().findViewById<View>(R.id.progress_bar).setVisibleOrGone(uiModel.showLoading)
+//        requireView().findViewById<TextView>(R.id.player_list_empty_message).setTextIfValidRes(uiModel.errorMessage)
+//        requireView().findViewById<View>(R.id.player_list_empty_view_group).setVisibleOrGone(uiModel.showErrorMessage)
+//        requireView().findViewById<View>(R.id.player_list).setVisibleOrGone(uiModel.showPlayers)
+//        playerListAdapter.setPlayers(uiModel.players.toMutableList())
     }
 
 

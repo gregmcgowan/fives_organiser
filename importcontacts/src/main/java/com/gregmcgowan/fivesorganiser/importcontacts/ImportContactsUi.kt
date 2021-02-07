@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+import com.gregmcgowan.fivesorganiser.core.compose.Loading
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 
 @Composable
@@ -42,11 +43,7 @@ private fun ImportContactsBodyContent(importContactsUiModel: ImportContactsUiMod
                 }
             }
         }
-        importContactsUiModel.showLoading -> {
-            Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
-                CircularProgressIndicator()
-            }
-        }
+        importContactsUiModel.showLoading -> Loading()
         importContactsUiModel.errorMessage != NO_STRING_RES_ID -> {
             Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
                 Text(stringResource(id = importContactsUiModel.errorMessage))

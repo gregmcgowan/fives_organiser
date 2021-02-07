@@ -3,6 +3,7 @@ package com.gregmcgowan.fivesorganiser.data.player
 import androidx.lifecycle.LiveData
 import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
+import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepo {
 
@@ -14,4 +15,6 @@ interface PlayerRepo {
                           contactId: Long)
 
     fun playerUpdateLiveData(): LiveData<Either<Exception, DataUpdate<Player>>>
+
+    suspend fun playersUpdates() : Flow<DataUpdate<Player>>
 }

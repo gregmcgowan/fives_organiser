@@ -138,10 +138,10 @@ class PlayerListViewModelTest {
 
         sut.addPlayerButtonPressed()
 
-        val output = sut.playerListNavigationLiveData.getValueForTest()
+        val output = sut.playerListUiLiveData.getValueForTest()
 
-        assertThat(output as PlayerListNavigationEvents.AddPlayerEvent,
-                equalTo(PlayerListNavigationEvents.AddPlayerEvent))
+        assertThat(output as PlayerListUiEvents.ShowAddPlayerScreenEvent,
+                equalTo(PlayerListUiEvents.ShowAddPlayerScreenEvent))
     }
 
     private fun setupSut(playerUpdatesLiveData: MutableLiveData<Either<Exception, DataUpdate<Player>>>) {

@@ -1,76 +1,64 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
-import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.Either
-import com.gregmcgowan.fivesorganiser.core.requireValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class PlayerListViewModel @ViewModelInject constructor(
         private val uiModelMapper: PlayerListUiModelMapper,
-        getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase,
-        coroutineDispatchers: CoroutineDispatchers
-) : CoroutinesViewModel(coroutineDispatchers) {
+        getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase
+) : ViewModel() {
 
-    val playerUiModelLiveData: LiveData<PlayerListUiModel>
-        get() = _playerUiModelLiveData
+    var uiModel: UiModel<PlayerListUiModel> by mutableStateOf(
+            value = LoadingUiModel()
+    )
+        private set
 
-    private val _playerUiModelLiveData = MediatorLiveData<PlayerListUiModel>()
-
-    val playerListNavigationLiveData: LiveData<PlayerListNavigationEvents>
+    val playerListUiLiveData: LiveData<PlayerListUiEvents>
         get() = _playerListNavigationLiveData
 
-    private val _playerListNavigationLiveData = MutableLiveData<PlayerListNavigationEvents>()
-
-    private val playerUpdatesLiveData: LiveData<Either<Exception, DataUpdate<Player>>>
+    private val _playerListNavigationLiveData = MutableLiveData<PlayerListUiEvents>()
 
     init {
-        _playerUiModelLiveData.value = PlayerListUiModel(
-                players = emptyList(),
-                showLoading = true,
-                showErrorMessage = false,
-                showPlayers = false)
 
-        _playerListNavigationLiveData.value = PlayerListNavigationEvents.Idle
+        _playerListNavigationLiveData.value = PlayerListUiEvents.Idle
 
-        playerUpdatesLiveData = getPlayerListUpdatesUseCase.execute()
-
-        _playerUiModelLiveData.addSource(playerUpdatesLiveData) {
-            it.either(
-                    { exception -> handleError(exception) },
-                    { update -> handleUpdate(update) }
-            )
+        viewModelScope.launch {
+            getPlayerListUpdatesUseCase
+                    .execute()
+                    .collect {
+                        it.either(
+                                { exception -> handleError(exception) },
+                                { update -> handleUpdate(update) }
+                        )
+                    }
         }
+
     }
 
     private fun handleUpdate(update: DataUpdate<Player>) {
-        _playerUiModelLiveData.postValue(
-                uiModelMapper.map(_playerUiModelLiveData.requireValue(), update)
-        )
+        uiModel =  uiModelMapper.map(uiModel, update)
     }
 
-    private fun handleError(exception: Exception) {
-        // TODO log error
-        _playerUiModelLiveData.value = PlayerListUiModel(
-                players = emptyList(),
-                showLoading = true,
-                showErrorMessage = true,
-                showPlayers = false,
-                errorMessage = R.string.generic_error_message
-        )
+    private fun handleError(throwable: Throwable) {
+        Timber.e(throwable)
+        uiModel = UiModel.ErrorUiModel(string = R.string.generic_error_message)
     }
 
     fun addPlayerButtonPressed() {
-        _playerListNavigationLiveData.value = PlayerListNavigationEvents.AddPlayerEvent
+        _playerListNavigationLiveData.value = PlayerListUiEvents.ShowAddPlayerScreenEvent
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        _playerUiModelLiveData.removeSource(playerUpdatesLiveData)
-    }
 }

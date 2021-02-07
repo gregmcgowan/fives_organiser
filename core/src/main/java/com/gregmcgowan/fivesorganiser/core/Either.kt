@@ -27,3 +27,4 @@ sealed class Either<out L, out R> {
                 is Either.Right -> fnR(b)
             }
 }
+

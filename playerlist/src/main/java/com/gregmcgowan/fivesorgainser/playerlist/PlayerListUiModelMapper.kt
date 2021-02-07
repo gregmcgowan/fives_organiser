@@ -1,6 +1,8 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
 import com.gregmcgowan.fivesorganiser.data.DataChange
 import com.gregmcgowan.fivesorganiser.data.DataChangeType.*
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
@@ -9,23 +11,25 @@ import javax.inject.Inject
 
 class PlayerListUiModelMapper @Inject constructor() {
 
-    fun map(existingModel: PlayerListUiModel, update: DataUpdate<Player>): PlayerListUiModel {
+    fun map(existingModel: UiModel<PlayerListUiModel>, updates: DataUpdate<Player>) =
+            when (existingModel) {
+                is LoadingUiModel,
+                is ErrorUiModel -> ContentUiModel(PlayerListUiModel(mapPlayerList(updates.changes)))
+                is ContentUiModel -> mapExitingContent(existingModel.content, updates)
+            }
 
-        val updatedPlayerUiModels = updatePlayers(existingModel.players.toMutableList(), update.changes)
-        val playersExist = updatedPlayerUiModels.isNotEmpty()
 
-        return existingModel.copy(
-                showLoading = false,
-                showPlayers = playersExist,
-                showErrorMessage = !playersExist,
-                errorMessage = getErrorMessage(playersExist),
-                players = updatedPlayerUiModels
-        )
+    private fun mapExitingContent(existingModel: PlayerListUiModel, update: DataUpdate<Player>): UiModel<PlayerListUiModel> {
+        val updatedPlayerUiModels = mapPlayerList(update.changes, existingModel.players.toMutableList())
+
+        return ContentUiModel(existingModel.copy(players = updatedPlayerUiModels))
     }
 
 
-    private fun updatePlayers(existingPlayerUiModels: MutableList<PlayerListItemUiModel>,
-                              updates: List<DataChange<Player>>): List<PlayerListItemUiModel> {
+    private fun mapPlayerList(
+            updates: List<DataChange<Player>>,
+            existingPlayerUiModels: MutableList<PlayerListItemUiModel> = mutableListOf(),
+    ): List<PlayerListItemUiModel> {
         updates.forEach { update ->
             val player = update.data
             val findPlayerIndex = existingPlayerUiModels.indexOfFirst { it.id == player.playerId }

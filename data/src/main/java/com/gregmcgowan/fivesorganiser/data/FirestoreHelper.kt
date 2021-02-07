@@ -6,6 +6,9 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -19,6 +22,25 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
                 .document("User ${authentication.getUserId()}")
     }
 
+
+    fun <T> flowOfDataUpdates(collectionReference: CollectionReference,
+                              map: (Map<String, Any>) -> T): Flow<DataUpdate<T>> = callbackFlow {
+        val subscription = collectionReference.addSnapshotListener { snapshot, _ ->
+            if (snapshot == null) { return@addSnapshotListener }
+            // Sends events to the flow! Consumers will get the new events
+            try {
+                offer(getDataChangeList(snapshot,map))
+            } catch (e: Throwable) {
+                // Event couldn't be sent to the flow
+                // TODO log
+            }
+        }
+
+        // The callback inside awaitClose will be executed when the flow is
+        // either closed or cancelled.
+        // In this case, remove the callback from Firestore
+        awaitClose { subscription.remove() }
+    }
     fun <T> changesForCollection(collectionReference: CollectionReference,
                                  map: (Map<String, Any>) -> T)
             : LiveData<Either<Exception, DataUpdate<T>>> {

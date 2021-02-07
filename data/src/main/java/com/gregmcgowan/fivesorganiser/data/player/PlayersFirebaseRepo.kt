@@ -6,6 +6,7 @@ import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.data.ID_KEY
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -19,6 +20,11 @@ private const val TIMESTAMP_KEY = "timestamp"
 class PlayersFirebaseRepo @Inject constructor(
         private val firestoreHelper: FirestoreHelper
 ) : PlayerRepo {
+
+
+    override suspend fun playersUpdates(): Flow<DataUpdate<Player>> {
+        return firestoreHelper.flowOfDataUpdates(getPlayersRef(), ::mapToPlayer)
+    }
 
     override fun playerUpdateLiveData(): LiveData<Either<Exception, DataUpdate<Player>>> {
         return firestoreHelper.changesForCollection(getPlayersRef(), ::mapToPlayer)
