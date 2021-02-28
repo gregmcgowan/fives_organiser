@@ -50,10 +50,9 @@ class ImportContactsViewModelTest {
     @Fixture
     lateinit var fixtContactsUiModel: List<ContactItemUiModel>
 
-    private lateinit var sut: ImportContactsViewModel
-    private lateinit var fixture: JFixture
-
     private val testCoroutineDispatcher get() = coroutinesTestRule.testDispatcher
+    private lateinit var fixture: JFixture
+    private lateinit var sut: ImportContactsViewModel
 
 
     @Before

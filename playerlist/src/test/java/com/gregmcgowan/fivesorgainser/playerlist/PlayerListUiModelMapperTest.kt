@@ -1,13 +1,14 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.flextrade.jfixture.JFixture
-import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
 import com.gregmcgowan.fivesorganiser.data.DataChange
 import com.gregmcgowan.fivesorganiser.data.DataChangeType.*
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.junit.Before
 import org.junit.Test
@@ -33,18 +34,16 @@ class PlayerListUiModelMapperTest {
                         DataChange(Added, createPlayer("Andy", "3"))
                 )
         )
-        val existingModel = PlayerListUiModel(emptyList(), false, true, false, NO_STRING_RES_ID)
+        val existingModel = ContentUiModel(PlayerListUiModel(emptyList()))
 
         val output = sut.map(existingModel, dataUpdate)
 
-        assertThat(output.showPlayers, equalTo(true))
-        assertThat(output.showLoading, equalTo(false))
-        assertThat(output.showErrorMessage, equalTo(false))
-        assertThat(output.errorMessage, equalTo(NO_STRING_RES_ID))
-        assertThat(output.players, hasSize(3))
-        assertThat(output.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
-        assertThat(output.players[1], equalTo(PlayerListItemUiModel("1", "Davie")))
-        assertThat(output.players[2], equalTo(PlayerListItemUiModel("2", "Greg")))
+        assertThat(output, instanceOf(ContentUiModel::class.java))
+        output as ContentUiModel
+        assertThat(output.content.players, hasSize(3))
+        assertThat(output.content.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
+        assertThat(output.content.players[1], equalTo(PlayerListItemUiModel("1", "Davie")))
+        assertThat(output.content.players[2], equalTo(PlayerListItemUiModel("2", "Greg")))
     }
 
     @Test
@@ -57,17 +56,15 @@ class PlayerListUiModelMapperTest {
                 PlayerListItemUiModel("2", "Greg")
         )
 
-        val existingModel = PlayerListUiModel(existingPlayerModels, true, true, false, NO_STRING_RES_ID)
+        val existingModel = ContentUiModel(PlayerListUiModel(existingPlayerModels))
 
         val output = sut.map(existingModel, dataUpdate)
 
-        assertThat(output.showPlayers, equalTo(true))
-        assertThat(output.showLoading, equalTo(false))
-        assertThat(output.showErrorMessage, equalTo(false))
-        assertThat(output.errorMessage, equalTo(NO_STRING_RES_ID))
-        assertThat(output.players, hasSize(2))
-        assertThat(output.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
-        assertThat(output.players[1], equalTo(PlayerListItemUiModel("2", "Greg")))
+        assertThat(output, instanceOf(ContentUiModel::class.java))
+        output as ContentUiModel
+        assertThat(output.content.players, hasSize(2))
+        assertThat(output.content.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
+        assertThat(output.content.players[1], equalTo(PlayerListItemUiModel("2", "Greg")))
     }
 
     @Test
@@ -80,18 +77,16 @@ class PlayerListUiModelMapperTest {
                 PlayerListItemUiModel("2", "Greg")
         )
 
-        val existingModel = PlayerListUiModel(existingPlayerModels, true, true, false, NO_STRING_RES_ID)
+        val existingModel = ContentUiModel(PlayerListUiModel(existingPlayerModels))
 
         val output = sut.map(existingModel, dataUpdate)
 
-        assertThat(output.showPlayers, equalTo(true))
-        assertThat(output.showLoading, equalTo(false))
-        assertThat(output.showErrorMessage, equalTo(false))
-        assertThat(output.errorMessage, equalTo(NO_STRING_RES_ID))
-        assertThat(output.players, hasSize(3))
-        assertThat(output.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
-        assertThat(output.players[1], equalTo(PlayerListItemUiModel("1", "Davie M")))
-        assertThat(output.players[2], equalTo(PlayerListItemUiModel("2", "Greg")))
+        assertThat(output, instanceOf(ContentUiModel::class.java))
+        output as ContentUiModel
+        assertThat(output.content.players, hasSize(3))
+        assertThat(output.content.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
+        assertThat(output.content.players[1], equalTo(PlayerListItemUiModel("1", "Davie M")))
+        assertThat(output.content.players[2], equalTo(PlayerListItemUiModel("2", "Greg")))
     }
 
     @Test
@@ -109,32 +104,28 @@ class PlayerListUiModelMapperTest {
                 PlayerListItemUiModel("2", "Greg")
         )
 
-        val existingModel = PlayerListUiModel(existingPlayerModels, true, true, false, NO_STRING_RES_ID)
+        val existingModel = ContentUiModel(PlayerListUiModel(existingPlayerModels))
 
         val output = sut.map(existingModel, dataUpdate)
 
-        assertThat(output.showPlayers, equalTo(true))
-        assertThat(output.showLoading, equalTo(false))
-        assertThat(output.showErrorMessage, equalTo(false))
-        assertThat(output.errorMessage, equalTo(NO_STRING_RES_ID))
-        assertThat(output.players, hasSize(3))
-        assertThat(output.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
-        assertThat(output.players[1], equalTo(PlayerListItemUiModel("1", "Davie")))
-        assertThat(output.players[2], equalTo(PlayerListItemUiModel("2", "Greg")))
+        assertThat(output, instanceOf(ContentUiModel::class.java))
+        output as ContentUiModel
+        assertThat(output.content.players, hasSize(3))
+        assertThat(output.content.players[0], equalTo(PlayerListItemUiModel("3", "Andy")))
+        assertThat(output.content.players[1], equalTo(PlayerListItemUiModel("1", "Davie")))
+        assertThat(output.content.players[2], equalTo(PlayerListItemUiModel("2", "Greg")))
     }
 
     @Test
     fun `map() sets error message when there are no players`() {
         val emptyUpdate = DataUpdate<Player>(emptyList())
-        val existingModel = PlayerListUiModel(emptyList(), true, true, false, NO_STRING_RES_ID)
+        val existingModel = ContentUiModel(PlayerListUiModel(emptyList()))
 
         val output = sut.map(existingModel, emptyUpdate)
 
-        assertThat(output.showPlayers, equalTo(false))
-        assertThat(output.showLoading, equalTo(false))
-        assertThat(output.showErrorMessage, equalTo(true))
-        assertThat(output.errorMessage, equalTo(R.string.player_list_no_players_message))
-        assertThat(output.players, hasSize(0))
+        assertThat(output, instanceOf(ContentUiModel::class.java))
+        output as ContentUiModel
+        assertThat(output.content.players, hasSize(0))
     }
 
     private fun createPlayer(name: String, id: String): Player {

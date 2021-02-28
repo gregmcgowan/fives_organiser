@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
-import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
 import com.gregmcgowan.fivesorganiser.data.DataChange
@@ -15,11 +14,12 @@ class PlayerListUiModelMapper @Inject constructor() {
             when (existingModel) {
                 is LoadingUiModel,
                 is ErrorUiModel -> ContentUiModel(PlayerListUiModel(mapPlayerList(updates.changes)))
-                is ContentUiModel -> mapExitingContent(existingModel.content, updates)
+                is ContentUiModel -> mapFromExistingContent(existingModel.content, updates)
             }
 
-
-    private fun mapExitingContent(existingModel: PlayerListUiModel, update: DataUpdate<Player>): UiModel<PlayerListUiModel> {
+    private fun mapFromExistingContent(
+            existingModel: PlayerListUiModel,
+            update: DataUpdate<Player>): UiModel<PlayerListUiModel> {
         val updatedPlayerUiModels = mapPlayerList(update.changes, existingModel.players.toMutableList())
 
         return ContentUiModel(existingModel.copy(players = updatedPlayerUiModels))
@@ -56,9 +56,6 @@ class PlayerListUiModelMapper @Inject constructor() {
     }
 
     private fun map(player: Player) = PlayerListItemUiModel(player.playerId, player.name)
-
-    private fun getErrorMessage(playersExist: Boolean) =
-            if (playersExist) NO_STRING_RES_ID else R.string.player_list_no_players_message
 
 
 }
