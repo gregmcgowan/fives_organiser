@@ -31,7 +31,7 @@ class PlayerListFragment : BaseFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? = ComposeView(requireContext()).apply {
+    ): View = ComposeView(requireContext()).apply {
         setContent {
             AppTheme {
                 PlayerListScreen(
