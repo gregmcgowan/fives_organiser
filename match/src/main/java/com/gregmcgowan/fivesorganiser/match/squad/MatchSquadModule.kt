@@ -10,10 +10,7 @@ import dagger.hilt.android.components.FragmentComponent
 
 @InstallIn(FragmentComponent::class)
 @Module(
-        includes = [
-            MatchSquadModule.Bindings::class,
-            MatchRepoModule::class
-        ],
+        includes = [MatchSquadModule.Bindings::class],
         subcomponents = [MatchSquadListFactory::class]
 
 )

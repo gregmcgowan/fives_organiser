@@ -2,8 +2,6 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 
 import android.app.Activity
 import android.content.ContentResolver
-import com.gregmcgowan.fivesorganiser.core.di.ViewModelBuilder
-import com.gregmcgowan.fivesorganiser.data.player.PlayerRepoModule
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -11,13 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 
 @InstallIn(ActivityComponent::class)
-@Module(
-        includes = [
-            ImportContactsModule.Bindings::class,
-            PlayerRepoModule::class,
-            ViewModelBuilder::class
-        ]
-)
+@Module(includes = [ImportContactsModule.Bindings::class])
 class ImportContactsModule {
 
     @Provides

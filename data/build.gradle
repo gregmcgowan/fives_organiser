@@ -1,18 +1,24 @@
 apply plugin: 'com.android.library'
 apply from: "../base-android-library.gradle"
-
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(":core")
 
+    implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
+    kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
+
     api "com.google.firebase:firebase-database:${versions.firebase_database}"
     api "com.google.firebase:firebase-firestore:${versions.firestore}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-    //testImplementation "android.arch.core:core-testing:${versions.androidx.core_testing}"
+
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
     testImplementation "org.mockito:mockito-core:${versions.mockito}"
 }

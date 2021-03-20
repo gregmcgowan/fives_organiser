@@ -41,8 +41,8 @@ class AppModule {
     @Reusable
     fun matchTypesInfo(resources: Resources): MatchTypesInfo {
         return MatchTypesInfo(
-                resources.getInteger(R.integer.match_type_min_players),
-                resources.getInteger(R.integer.match_type_max_players)
+            resources.getInteger(R.integer.match_type_min_players),
+            resources.getInteger(R.integer.match_type_max_players)
         )
     }
 
@@ -53,7 +53,6 @@ class AppModule {
         @Binds
         @Singleton
         fun auth(firebaseAuth: FirebaseAuthentication): Authentication
-
 
         @Binds
         @Reusable
