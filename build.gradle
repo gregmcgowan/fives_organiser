@@ -1,6 +1,6 @@
 buildscript {
     ext.versions = [
-            'android_gradle'             : '7.0.0-alpha10',
+            'android_gradle'             : '7.0.3',
             'androidx'                   : [
                     'appcompat'               : '1.2.0',
                     'card_view'               : '1.0.0',
