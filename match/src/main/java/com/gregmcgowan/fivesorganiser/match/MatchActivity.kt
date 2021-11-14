@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
 import com.gregmcgowan.fivesorganiser.match.details.MatchDetailsFragment
@@ -23,7 +23,7 @@ const val MATCH_ID_INTENT_EXTRA = "match_id"
 const val MATCH_EVENT_EXTRA = "MATCH_EVENT_EXTRA"
 
 @AndroidEntryPoint
-class MatchActivity : BaseActivity() {
+class MatchActivity : AppCompatActivity() {
 
     private val matchActivityViewModel: MatchActivityViewModel by viewModels()
 

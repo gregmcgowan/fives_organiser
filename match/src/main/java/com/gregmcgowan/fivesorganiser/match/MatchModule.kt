@@ -10,8 +10,5 @@ import dagger.hilt.android.components.ActivityComponent
 @Module
 class MatchModule {
 
-    @Provides
-    fun matchId(matchActivity: Activity) = (matchActivity as MatchActivity).matchEvent
-
 
 }

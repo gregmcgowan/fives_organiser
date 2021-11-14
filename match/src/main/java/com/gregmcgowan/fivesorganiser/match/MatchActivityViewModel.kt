@@ -1,16 +1,17 @@
 package com.gregmcgowan.fivesorganiser.match
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.ShowSquad
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
+import javax.inject.Inject
 
-class MatchActivityViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MatchActivityViewModel @Inject constructor(
         coroutineDispatchers: CoroutineDispatchers,
-        matchEvent : MatchNavigationEvent
 ) : CoroutinesViewModel(coroutineDispatchers) {
 
     val matchNavEvents: LiveData<MatchNavigationEvent>
@@ -20,7 +21,7 @@ class MatchActivityViewModel @ViewModelInject constructor(
     private val stack = Stack<MatchNavigationEvent>()
 
     init {
-        handle(matchEvent)
+        //handle(matchEvent)
     }
 
     fun upButtonPressed() {

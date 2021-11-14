@@ -3,14 +3,15 @@ package com.gregmcgowan.fivesorgainser.playerlist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,8 +26,10 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
 
 
 @Composable
-fun PlayerListScreen(uiModel: UiModel<PlayerListUiModel>,
-                     eventHandler: (PlayerListUserEvent) -> Unit) {
+fun PlayerListScreen(
+        uiModel: UiModel<PlayerListUiModel>,
+        eventHandler: (PlayerListUserEvent) -> Unit
+) {
 
     when (uiModel) {
         is LoadingUiModel -> Loading()
@@ -37,13 +40,17 @@ fun PlayerListScreen(uiModel: UiModel<PlayerListUiModel>,
 
 
 @Composable
-fun PlayerListContent(uiModel: PlayerListUiModel,
-                      eventHandler: (PlayerListUserEvent) -> Unit) {
+fun PlayerListContent(
+        uiModel: PlayerListUiModel,
+        eventHandler: (PlayerListUserEvent) -> Unit
+) {
     Scaffold(
-            bodyContent = {
+            content = {
                 if (uiModel.players.isNotEmpty()) {
-                    LazyColumnFor(items = uiModel.players) { player ->
-                        PlayerListItem(player)
+                    LazyColumn {
+                        items(uiModel.players) { player ->
+                            PlayerListItem(player)
+                        }
                     }
                 } else {
                     Column(
@@ -53,7 +60,8 @@ fun PlayerListContent(uiModel: PlayerListUiModel,
                             content = {
                                 Image(
                                         modifier = Modifier.size(256.dp),
-                                        bitmap = imageResource(R.drawable.peter_beardsley)
+                                        painter = painterResource(id = R.drawable.peter_beardsley),
+                                        contentDescription = null
                                 )
                                 Text(
                                         stringResource(id = R.string.player_list_no_players_message),
@@ -66,7 +74,7 @@ fun PlayerListContent(uiModel: PlayerListUiModel,
             floatingActionButton = {
                 FloatingActionButton(
                         onClick = { eventHandler.invoke(PlayerListUserEvent.AddPlayerSelectedEvent) },
-                        content = { Icon(Icons.Filled.Add) }
+                        content = { Icon(Icons.Filled.Add, "") }
                 )
             }
     )
@@ -76,13 +84,21 @@ fun PlayerListContent(uiModel: PlayerListUiModel,
 fun PlayerListItem(player: PlayerListItemUiModel) {
     Column {
         Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 4.dp),
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 content = {
                     AndroidView(
-                            viewBlock = { context -> PlayerAvatar(context) },
-                            modifier = Modifier.size(48.dp).padding(start = 16.dp, top = 8.dp))
-                    Text(player.name, modifier = Modifier.fillMaxWidth().padding(start = 16.dp))
+                            factory = { context -> PlayerAvatar(context) },
+                            update = {},
+                            modifier = Modifier
+                                    .size(48.dp)
+                                    .padding(start = 16.dp, top = 8.dp)
+                    )
+                    Text(player.name, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp))
                 }
         )
         Divider(color = Grey_400, modifier = Modifier.padding(start = 8.dp))
@@ -94,27 +110,34 @@ fun PlayerListItem(player: PlayerListItemUiModel) {
 @Composable
 fun PlayerListPreviewContent() {
     PlayerListScreen(
-            ContentUiModel(content =
-            PlayerListUiModel(
-                    players =
-                    listOf(
-                            PlayerListItemUiModel("1", "reg"),
-                            PlayerListItemUiModel("1", "reg"),
-                            PlayerListItemUiModel("1", "reg"),
-                            PlayerListItemUiModel("1", "reg")
+            ContentUiModel(
+                    content =
+                    PlayerListUiModel(
+                            players =
+                            listOf(
+                                    PlayerListItemUiModel("1", "reg"),
+                                    PlayerListItemUiModel("1", "reg"),
+                                    PlayerListItemUiModel("1", "reg"),
+                                    PlayerListItemUiModel("1", "reg")
+                            )
                     )
             )
-            )
-    ) {}
+    ) {
+
+    }
 }
 
 @Preview
 @Composable
 fun PlayerListPreviewEmpty() {
     PlayerListScreen(
-            ContentUiModel(content =
-            PlayerListUiModel(players = emptyList()))
-    ) {}
+            ContentUiModel(
+                    content =
+                    PlayerListUiModel(players = emptyList())
+            )
+    ) {
+
+    }
 }
 
 

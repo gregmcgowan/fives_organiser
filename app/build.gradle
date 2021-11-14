@@ -51,7 +51,6 @@ dependencies {
     implementation project(":matchlist")
     implementation project(':match-navigator')
 
-    implementation "com.google.firebase:firebase-core:${versions.firebase_core}"
     implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
 
     implementation "com.google.android.material:material:${versions.material}"

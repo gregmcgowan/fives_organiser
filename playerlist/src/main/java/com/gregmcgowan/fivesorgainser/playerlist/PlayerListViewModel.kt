@@ -3,21 +3,23 @@ package com.gregmcgowan.fivesorgainser.playerlist
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class PlayerListViewModel @ViewModelInject constructor(
+@HiltViewModel
+class PlayerListViewModel @Inject constructor(
         private val uiModelMapper: PlayerListUiModelMapper,
         getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase
 ) : ViewModel() {

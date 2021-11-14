@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUiEvents.Idle
+import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUiEvents.ShowAddPlayerScreenEvent
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
 import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
@@ -28,29 +30,29 @@ class PlayerListFragment : BaseFragment() {
     private val playerListViewModel: PlayerListViewModel by viewModels()
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View = ComposeView(requireContext()).apply {
         setContent {
             AppTheme {
                 PlayerListScreen(
-                        uiModel = playerListViewModel.uiModel,
-                        eventHandler = { playerListUserEvent ->
-                            when (playerListUserEvent) {
-                                AddPlayerSelectedEvent -> playerListViewModel.addPlayerButtonPressed()
-                            }
+                    uiModel = playerListViewModel.uiModel,
+                    eventHandler = { playerListUserEvent ->
+                        when (playerListUserEvent) {
+                            AddPlayerSelectedEvent -> playerListViewModel.addPlayerButtonPressed()
                         }
+                    }
                 )
             }
         }
         lifecycleScope.launchWhenStarted {
             playerListViewModel.playerListUiEvents.collect { event ->
                 when (event) {
-                    PlayerListUiEvents.ShowAddPlayerScreenEvent -> {
+                    ShowAddPlayerScreenEvent -> {
                         navigator.goToImportContacts()
                     }
-                    PlayerListUiEvents.Idle -> {
+                    Idle -> {
                         // Do nothing
                     }
                 }

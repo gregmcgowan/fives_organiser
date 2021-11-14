@@ -39,7 +39,6 @@ dependencies {
     api "com.google.dagger:dagger-android:${versions.dagger}"
     api "com.google.dagger:dagger-android-support:${versions.dagger}"
 
-    api "com.google.firebase:firebase-core:${versions.firebase_core}"
     api "com.google.firebase:firebase-auth:${versions.firebase_auth}"
 
     api "com.jakewharton.timber:timber:${versions.timber}"
@@ -54,7 +53,7 @@ dependencies {
     api "androidx.compose.animation:animation:${versions.compose}"
     api "androidx.compose.ui:ui-tooling:${versions.compose}"
     api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
-    androidTestImplementation "androidx.ui:ui-test:${versions.compose}"
+    api "androidx.activity:activity-compose:1.4.0"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"

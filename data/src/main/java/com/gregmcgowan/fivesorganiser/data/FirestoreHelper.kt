@@ -29,7 +29,7 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
             if (snapshot == null) { return@addSnapshotListener }
             // Sends events to the flow! Consumers will get the new events
             try {
-                offer(getDataChangeList(snapshot,map))
+                this.trySend(getDataChangeList(snapshot, map)).isSuccess
             } catch (e: Throwable) {
                 // Event couldn't be sent to the flow
                 // TODO log

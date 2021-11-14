@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorganiser.matchlist
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
@@ -9,9 +8,12 @@ import com.gregmcgowan.fivesorganiser.core.requireValue
 import com.gregmcgowan.fivesorganiser.data.match.MatchInteractor
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent
 import com.gregmcgowan.fivesorganiser.match.MatchNavigationEvent.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
+import javax.inject.Inject
 
-class MatchListViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MatchListViewModel @Inject constructor(
         private val matchInteractor: MatchInteractor,
         private val mapper: MatchListUiModelMappers,
         coroutineDispatchers: CoroutineDispatchers

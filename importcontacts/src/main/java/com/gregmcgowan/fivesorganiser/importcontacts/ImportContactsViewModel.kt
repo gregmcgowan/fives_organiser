@@ -6,20 +6,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.CloseScreen
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.RequestPermission
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class ImportContactsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ImportContactsViewModel @Inject constructor(
         private val uiModelMapper: ImportContactsUiModelMapper,
         private val savePlayersUseCase: SavePlayersUseCase,
         private val getContactsUseCase: GetContactsUseCase,
-        hasContactPermission: Boolean
+        contactsPermission: Permission
 ) : ViewModel() {
 
     var uiModel: ImportContactsUiModel by mutableStateOf(
@@ -43,7 +47,7 @@ class ImportContactsViewModel @ViewModelInject constructor(
                 .toSet()
 
     init {
-        if (hasContactPermission) {
+        if (contactsPermission.hasPermission()) {
             loadContacts()
         } else {
             emitEvent(RequestPermission)

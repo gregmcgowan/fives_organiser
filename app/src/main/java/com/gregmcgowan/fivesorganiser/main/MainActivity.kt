@@ -3,12 +3,13 @@ package com.gregmcgowan.fivesorganiser.main
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.transition.TransitionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListFragment
 import com.gregmcgowan.fivesorganiser.R
-import com.gregmcgowan.fivesorganiser.core.BaseActivity
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.main.MainScreen.*
@@ -17,13 +18,14 @@ import com.gregmcgowan.fivesorganiser.matchlist.MatchListFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
+        ViewTreeLifecycleOwner.set(findViewById(R.id.main_root), this)
         setSupportActionBar(findViewById(R.id.main_toolbar))
 
         mainViewModel

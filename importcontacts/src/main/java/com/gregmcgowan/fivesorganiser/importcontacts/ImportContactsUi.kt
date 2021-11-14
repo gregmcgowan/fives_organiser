@@ -1,7 +1,8 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +20,7 @@ fun ImportContactsScreen(importContactsUiModel: ImportContactsUiModel,
                          eventHandler: (ImportContactsUserEvent) -> Unit) {
     Scaffold(
             topBar = { TopAppBar(title = { Text(stringResource(id = R.string.import_contacts_title)) }) },
-            bodyContent = { ImportContactsBodyContent(importContactsUiModel, eventHandler) }
+            content = { ImportContactsBodyContent(importContactsUiModel, eventHandler) }
     )
 }
 
@@ -34,7 +35,9 @@ private fun ImportContactsBodyContent(importContactsUiModel: ImportContactsUiMod
                     ContactList(importContactsUiModel.contacts, eventHandler)
                 }
                 Row(horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp)) {
+                        modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 8.dp)) {
                     Button(
                             content = { Text(stringResource(id = R.string.add)) },
                             onClick = { eventHandler.invoke(ImportContactsUserEvent.AddButtonPressedEvent) },
@@ -45,7 +48,9 @@ private fun ImportContactsBodyContent(importContactsUiModel: ImportContactsUiMod
         }
         importContactsUiModel.showLoading -> Loading()
         importContactsUiModel.errorMessage != NO_STRING_RES_ID -> {
-            Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
+            Box(modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)) {
                 Text(stringResource(id = importContactsUiModel.errorMessage))
             }
         }
@@ -56,7 +61,11 @@ private fun ImportContactsBodyContent(importContactsUiModel: ImportContactsUiMod
 @Composable
 fun ContactList(contacts: List<ContactItemUiModel>,
                 eventHandler: (ImportContactsUserEvent) -> Unit) {
-    LazyColumnFor(items = contacts) { contact -> ContactItem(contact, eventHandler) }
+    LazyColumn {
+        items(contacts) { contact ->
+            ContactItem(contact, eventHandler)
+        }
+    }
 }
 
 
@@ -64,7 +73,9 @@ fun ContactList(contacts: List<ContactItemUiModel>,
 fun ContactItem(contact: ContactItemUiModel,
                 eventHandler: (ImportContactsUserEvent) -> Unit) {
     Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 4.dp),
+            modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             content = {
                 Checkbox(
