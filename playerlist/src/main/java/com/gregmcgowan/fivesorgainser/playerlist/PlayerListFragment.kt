@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUiEvents.Idle
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUiEvents.ShowAddPlayerScreenEvent
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
-import com.gregmcgowan.fivesorganiser.core.BaseFragment
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +18,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class PlayerListFragment : BaseFragment() {
+class PlayerListFragment : Fragment() {
 
     companion object {
         const val PLAYER_LIST_FRAGMENT_TAG = "PlayerListFragment"

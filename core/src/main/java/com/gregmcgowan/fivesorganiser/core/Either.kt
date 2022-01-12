@@ -23,8 +23,8 @@ sealed class Either<out L, out R> {
 
     fun <O> either(fnL: (L) -> O, fnR: (R) -> O): O =
             when (this) {
-                is Either.Left -> fnL(a)
-                is Either.Right -> fnR(b)
+                is Left -> fnL(a)
+                is Right -> fnR(b)
             }
 }
 

@@ -6,7 +6,6 @@ import android.graphics.Paint.ANTI_ALIAS_FLAG
 import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
-import com.gregmcgowan.fivesorganiser.core.R
 
 
 class PlayerAvatar : View {
@@ -14,8 +13,8 @@ class PlayerAvatar : View {
     private val path = Path()
     private val paint: Paint = Paint(ANTI_ALIAS_FLAG)
     private val shadowPaint: Paint = Paint(ANTI_ALIAS_FLAG)
-    private val mainCircleBackgroundColour: Int
-    private val shadowColor: Int
+    private val mainCircleBackgroundColour: Int = ContextCompat.getColor(context, R.color.grey_300)
+    private val shadowColor: Int = ContextCompat.getColor(context, R.color.grey_400)
 
     private val radius = 2f
 
@@ -44,8 +43,6 @@ class PlayerAvatar : View {
     constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        mainCircleBackgroundColour = ContextCompat.getColor(context, R.color.grey_300)
-        shadowColor = ContextCompat.getColor(context, R.color.grey_400)
         shadowPaint.color = shadowColor
         shadowPaint.maskFilter = BlurMaskFilter(radius, BlurMaskFilter.Blur.OUTER)
         shadowPaint.style = Paint.Style.STROKE

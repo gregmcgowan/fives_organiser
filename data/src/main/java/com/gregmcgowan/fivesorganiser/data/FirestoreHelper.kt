@@ -1,10 +1,7 @@
 package com.gregmcgowan.fivesorganiser.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
-import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -41,24 +38,11 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
         // In this case, remove the callback from Firestore
         awaitClose { subscription.remove() }
     }
-    fun <T> changesForCollection(collectionReference: CollectionReference,
-                                 map: (Map<String, Any>) -> T)
-            : LiveData<Either<Exception, DataUpdate<T>>> {
-        val liveData = MutableLiveData<Either<Exception, DataUpdate<T>>>()
-        collectionReference.addSnapshotListener { querySnapshot, firebaseException ->
-            if (firebaseException != null) {
-                liveData.postValue(Either.Left(firebaseException))
-            } else {
-                querySnapshot?.let { liveData.postValue(Either.Right(getDataChangeList(it, map))) }
-            }
-        }
-        return liveData
-    }
 
     private fun <T> getDataChangeList(querySnapshot: QuerySnapshot,
                                       map: (Map<String, Any>) -> T): DataUpdate<T> {
-        val listOfChanges = querySnapshot.documentChanges.mapNotNull { it ->
-            it?.let { documentChange ->
+        val listOfChanges = querySnapshot.documentChanges.mapNotNull { changes ->
+            changes?.let { documentChange ->
                 val data = documentChange.document.data
                 data[ID_KEY] = documentChange.document.id
                 DataChange(mapToDataChange(documentChange.type), map(data))

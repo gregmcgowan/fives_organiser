@@ -1,8 +1,6 @@
 package com.gregmcgowan.fivesorganiser.data.player
 
-import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.CollectionReference
-import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
 import com.gregmcgowan.fivesorganiser.data.ID_KEY
@@ -24,10 +22,6 @@ class PlayersFirebaseRepo @Inject constructor(
 
     override suspend fun playersUpdates(): Flow<DataUpdate<Player>> {
         return firestoreHelper.flowOfDataUpdates(getPlayersRef(), ::mapToPlayer)
-    }
-
-    override fun playerUpdateLiveData(): LiveData<Either<Exception, DataUpdate<Player>>> {
-        return firestoreHelper.changesForCollection(getPlayersRef(), ::mapToPlayer)
     }
 
     override suspend fun getPlayers(): List<Player> {

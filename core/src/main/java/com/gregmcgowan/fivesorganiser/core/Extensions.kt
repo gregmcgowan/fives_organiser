@@ -1,16 +1,11 @@
 package com.gregmcgowan.fivesorganiser.core
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import androidx.core.content.ContextCompat
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 
 fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
@@ -28,7 +23,7 @@ inline fun <T> LiveData<T>.observeNonNull(
         owner: LifecycleOwner,
         crossinline observer: (T) -> Unit
 ) {
-    this.observe(owner, Observer { value ->
+    this.observe(owner, { value ->
         value?.let {
             observer(it)
         }

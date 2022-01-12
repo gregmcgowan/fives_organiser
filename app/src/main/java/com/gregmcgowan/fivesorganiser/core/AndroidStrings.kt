@@ -3,7 +3,7 @@ package com.gregmcgowan.fivesorganiser.core
 import android.content.res.Resources
 import javax.inject.Inject
 
-class AndroidStrings @Inject constructor(val resources: Resources) : Strings {
+class AndroidStrings @Inject constructor(private val resources: Resources) : Strings {
 
     override fun getString(stringResId: Int): String = resources.getString(stringResId)
 

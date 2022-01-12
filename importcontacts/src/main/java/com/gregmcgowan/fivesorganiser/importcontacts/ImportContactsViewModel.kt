@@ -1,9 +1,8 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.hilt.lifecycle.ViewModelInject
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission

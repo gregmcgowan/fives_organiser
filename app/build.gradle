@@ -31,10 +31,6 @@ android {
         compose true
     }
 
-    composeOptions {
-        kotlinCompilerVersion "${versions.kotlin}"
-        kotlinCompilerExtensionVersion "${versions.compose}"
-    }
 }
 
 dependencies {
@@ -47,20 +43,19 @@ dependencies {
     implementation project(":importcontacts")
     implementation project(':importcontacts-navigator')
 
-    implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
-
+    // TODO remove once fully moved over to compose
     implementation "com.google.android.material:material:${versions.material}"
-    implementation "androidx.cardview:cardview:${versions.androidx.card_view}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
+    implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
-    kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
-
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
 
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+
+    kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
 
 }
 

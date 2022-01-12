@@ -1,27 +1,19 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import android.widget.Button
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario.launch
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
-import com.gregmgowan.fivesorganiser.test_shared.RecyclerViewItemCountAssertion
-import com.gregmgowan.fivesorganiser.test_shared.TestApp
-import org.hamcrest.Matchers.not
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class ImportContactsActivityTest {

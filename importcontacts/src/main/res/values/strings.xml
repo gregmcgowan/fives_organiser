@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="import_contacts_title">Import Contacts</string>
-    <string name="permissons_denied_text">We need contact permission to import from your contacts</string>
+    <string name="permissions_denied_text">We need contact permission to import from your contacts</string>
     <string name="no_contacts_message">No contacts to add</string>
+    <string name="import_contacts_add">Add</string>
 </resources>

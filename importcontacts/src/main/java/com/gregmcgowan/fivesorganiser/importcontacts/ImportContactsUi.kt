@@ -39,7 +39,7 @@ private fun ImportContactsBodyContent(importContactsUiModel: ImportContactsUiMod
                                 .fillMaxWidth()
                                 .padding(top = 8.dp, bottom = 8.dp)) {
                     Button(
-                            content = { Text(stringResource(id = R.string.add)) },
+                            content = { Text(stringResource(id = R.string.import_contacts_add)) },
                             onClick = { eventHandler.invoke(ImportContactsUserEvent.AddButtonPressedEvent) },
                             enabled = importContactsUiModel.importContactsButtonEnabled
                     )
@@ -104,6 +104,6 @@ fun Preview() {
                         importContactsButtonEnabled = true,
                         errorMessage = R.string.generic_error_message
                 ),
-        ) { _ -> }
+        ) { }
     }
 }

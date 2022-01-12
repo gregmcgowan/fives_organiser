@@ -10,10 +10,10 @@ import javax.inject.Inject
 class SavePlayersUseCase @Inject constructor(
         private val playersRepo: PlayerRepo,
         private val contactsImporter: ContactImporter,
-        private val couroutineDispatchers: CoroutineDispatchers
+        private val coroutineDispatchers: CoroutineDispatchers
 ) {
 
-    suspend fun execute(selectedContacts: Set<Long>): Either<Exception, Unit> = withContext(couroutineDispatchers.io) {
+    suspend fun execute(selectedContacts: Set<Long>): Either<Exception, Unit> = withContext(coroutineDispatchers.io) {
         // TODO should this be surrounded by a try catch and return the exception as either?
         try {
             contactsImporter.getAllContacts()

@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.withTimeout
 import timber.log.Timber
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
@@ -16,20 +15,16 @@ import kotlin.coroutines.resumeWithException
 private const val TIMEOUT = 10L
 
 class FirebaseAuthentication @Inject constructor(
-        private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth
 ) : Authentication {
 
-    private val tag = "FirebaseAuthentication"
     private var addOnCompleteListenerTask: Task<AuthResult>? = null
 
-    private lateinit var currentUserId: String
+    private var currentUserId: String? = null
     private lateinit var currentUser: FirebaseUser
 
-    //TODO persist on start up for devices without internet connection
-    private val fakeUserId = UUID.randomUUID().toString()
-
     override fun getUserId(): String {
-        return currentUserId
+        return currentUserId!!
     }
 
     override fun isInitialised(): Boolean {
@@ -47,17 +42,17 @@ class FirebaseAuthentication @Inject constructor(
     private suspend fun signInAnonymously(): AuthResult {
         return suspendCoroutine { cont ->
             firebaseAuth
-                    .signInAnonymously()
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            cont.resume(task.result!!)
-                        } else {
-                            cont.resumeWithException(task.exception as Throwable)
-                        }
+                .signInAnonymously()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        cont.resume(task.result!!)
+                    } else {
+                        cont.resumeWithException(task.exception as Throwable)
                     }
-                    .addOnFailureListener { exception ->
-                        cont.resumeWithException(exception)
-                    }
+                }
+                .addOnFailureListener { exception ->
+                    cont.resumeWithException(exception)
+                }
         }
     }
 
@@ -69,7 +64,7 @@ class FirebaseAuthentication @Inject constructor(
     }
 
     private fun handleCompletedResult(authResult: AuthResult) {
-        firebaseAuth.currentUser?.let {
+        authResult.user?.let {
             this.currentUser = it
             this.currentUserId = it.uid
             //TODO move data stored under fake ID to real Id store

@@ -3,7 +3,5 @@ apply from: "../base-android-library.gradle"
 
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(":core")
 
 }

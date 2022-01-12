@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
-import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.core.permissions.PermissionResults
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,7 +66,7 @@ class ImportContactsActivity : AppCompatActivity(), PermissionResults {
     override fun onPermissionDenied(userSaidNever: Boolean) {
         //TODO move to compose
         Toast.makeText(this,
-                getString(R.string.permissons_denied_text),
+                getString(R.string.permissions_denied_text),
                 Toast.LENGTH_LONG).show()
     }
 

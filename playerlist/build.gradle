@@ -12,11 +12,6 @@ android {
     buildFeatures {
         compose true
     }
-
-    composeOptions {
-        kotlinCompilerVersion "${versions.kotlin}"
-        kotlinCompilerExtensionVersion "${versions.compose}"
-    }
 }
 
 dependencies {
@@ -26,10 +21,8 @@ dependencies {
     implementation project(":data")
     implementation project(':importcontacts-navigator')
 
-    implementation "com.google.android.material:material:${versions.material}"
-    implementation "androidx.cardview:cardview:${versions.androidx.card_view}"
-
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
+
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
