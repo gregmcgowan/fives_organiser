@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Fives Organiser</string>
-
-    <string name="players_title">Players</string>
-    <string name="matches_title">Matches</string>
-    <string name="results_title">Results</string>
-
-</resources>
