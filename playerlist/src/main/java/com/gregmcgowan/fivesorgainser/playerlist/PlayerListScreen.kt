@@ -20,7 +20,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.ui.PlayerAvatar
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
 

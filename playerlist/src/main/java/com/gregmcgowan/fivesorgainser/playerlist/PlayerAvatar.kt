@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.core.ui
+package com.gregmcgowan.fivesorgainser.playerlist
 
 import android.content.Context
 import android.graphics.*

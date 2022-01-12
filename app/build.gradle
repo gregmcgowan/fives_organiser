@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply from: "../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'dagger.hilt.android.plugin'
 
@@ -47,9 +46,6 @@ dependencies {
     implementation project(":playerlist")
     implementation project(":importcontacts")
     implementation project(':importcontacts-navigator')
-    implementation project(":match")
-    implementation project(":matchlist")
-    implementation project(':match-navigator')
 
     implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
 

@@ -3,10 +3,8 @@ package com.gregmcgowan.fivesorganiser.core.di
 import android.content.Context
 import android.content.res.Resources
 import com.google.firebase.auth.FirebaseAuth
-import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.AndroidStrings
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
-import com.gregmcgowan.fivesorganiser.core.MatchTypesInfo
 import com.gregmcgowan.fivesorganiser.core.Strings
 import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
 import com.gregmcgowan.fivesorganiser.core.authenication.FirebaseAuthentication
@@ -36,15 +34,6 @@ class AppModule {
     @Provides
     @Reusable
     fun resources(@ApplicationContext application: Context): Resources = application.resources
-
-    @Provides
-    @Reusable
-    fun matchTypesInfo(resources: Resources): MatchTypesInfo {
-        return MatchTypesInfo(
-            resources.getInteger(R.integer.match_type_min_players),
-            resources.getInteger(R.integer.match_type_max_players)
-        )
-    }
 
     @InstallIn(SingletonComponent::class)
     @Module

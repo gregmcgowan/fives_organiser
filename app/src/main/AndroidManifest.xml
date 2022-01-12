@@ -26,9 +26,6 @@
             android:name=".importcontacts.ImportContactsActivity"
             android:label="@string/import_contacts_title" />
 
-        <activity
-            android:name=".match.MatchActivity"
-            android:label="@string/match_title_new" />
     </application>
 
 </manifest>

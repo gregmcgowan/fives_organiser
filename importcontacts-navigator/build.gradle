@@ -2,13 +2,8 @@ apply plugin: 'com.android.library'
 apply from: "../base-android-library.gradle"
 
 
-androidExtensions {
-    experimental = true
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation project(":core")
 
 }

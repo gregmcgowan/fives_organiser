@@ -13,8 +13,6 @@ import com.gregmcgowan.fivesorganiser.R
 import com.gregmcgowan.fivesorganiser.core.observeNonNull
 import com.gregmcgowan.fivesorganiser.core.setVisibleOrGone
 import com.gregmcgowan.fivesorganiser.main.MainScreen.*
-import com.gregmcgowan.fivesorganiser.main.results.ResultsFragment
-import com.gregmcgowan.fivesorganiser.matchlist.MatchListFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,8 +48,8 @@ class MainActivity : AppCompatActivity() {
         if (mainScreenUiModel.showContent) {
             when (mainScreenUiModel.screenToShow) {
                 PlayersScreen -> showFragment(PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG)
-                MatchesScreen -> showFragment(MatchListFragment.MATCH_LIST_FRAGMENT_TAG)
-                ResultsScreen -> showFragment(ResultsFragment.RESULTS_FRAGMENT_TAG)
+                MatchesScreen,
+                ResultsScreen -> TODO()
             }
         }
     }
@@ -67,8 +65,6 @@ class MainActivity : AppCompatActivity() {
         return supportFragmentManager.findFragmentByTag(tag).let {
             it ?: when (tag) {
                 PlayerListFragment.PLAYER_LIST_FRAGMENT_TAG -> PlayerListFragment()
-                MatchListFragment.MATCH_LIST_FRAGMENT_TAG -> MatchListFragment()
-                ResultsFragment.RESULTS_FRAGMENT_TAG -> ResultsFragment()
                 else -> {
                     throw IllegalArgumentException("Unknown fragment $tag")
                 }
