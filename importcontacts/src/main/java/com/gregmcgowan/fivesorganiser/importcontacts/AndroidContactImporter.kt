@@ -45,7 +45,11 @@ class AndroidContactImporter @Inject constructor(
     }
 
     private fun createContact(cursor: Cursor): Contact? {
-        val contactId = cursor.getInt(cursor.getColumnIndex(Contacts._ID)).toString()
+        val columnIndex = cursor.getColumnIndex(Contacts._ID)
+        if (columnIndex < 0) {
+            return null
+        }
+        val contactId = cursor.getInt(columnIndex).toString()
 
         val select = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
                 ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
