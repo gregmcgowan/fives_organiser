@@ -7,6 +7,7 @@ android {
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
     }
+    
     buildTypes {
         release {
             minifyEnabled false
@@ -20,6 +21,10 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion "${versions.compose}"
     }
 
     testOptions {
