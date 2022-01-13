@@ -50,7 +50,6 @@ buildscript {
 
     repositories {
         google()
-        maven { url 'https://maven.google.com' }
     }
 
     dependencies {
@@ -71,7 +70,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-        maven { url 'https://maven.google.com' }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
