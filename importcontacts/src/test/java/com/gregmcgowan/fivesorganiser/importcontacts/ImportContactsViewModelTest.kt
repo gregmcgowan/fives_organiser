@@ -36,20 +36,25 @@ class ImportContactsViewModelTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
+
     @get:Rule
     var coroutinesTestRule = CoroutinesTestRule()
 
     @Mock
     lateinit var mockUiModelMaper: ImportContactsUiModelMapper
+
     @Mock
     lateinit var mockSavePlayersUseCase: SavePlayersUseCase
+
     @Mock
     lateinit var mockGetContactsUseCase: GetContactsUseCase
+
     @Mock
     lateinit var mockPermission: Permission
 
     @Fixture
     lateinit var fixtContacts: List<Contact>
+
     @Fixture
     lateinit var fixtContactsUiModel: List<ContactItemUiModel>
 
@@ -262,7 +267,7 @@ class ImportContactsViewModelTest {
         sut.handleEvent(ContactSelectedEvent(contactId, true))
 
         // run
-        val runTimeException : RuntimeException = fixture.create(RuntimeException::class.java)
+        val runTimeException: RuntimeException = fixture.create(RuntimeException::class.java)
         whenever(mockSavePlayersUseCase.execute(setOf(contactId))).thenReturn(Either.Left(runTimeException))
         testCoroutineDispatcher.pauseDispatcher()
         sut.handleEvent(AddButtonPressedEvent)
@@ -320,7 +325,7 @@ class ImportContactsViewModelTest {
     private suspend fun setupMocks(contacts: List<Contact>,
                                    uiModel: ImportContactsUiModel,
                                    selectedContacts: Set<Long> = emptySet(),
-                                   permission : Boolean) {
+                                   permission: Boolean) {
         whenever(mockGetContactsUseCase.execute()).thenReturn(Either.Right(contacts))
         whenever(mockUiModelMaper.map(contacts, selectedContacts)).thenReturn(uiModel)
         whenever(mockPermission.hasPermission()).thenReturn(permission)
