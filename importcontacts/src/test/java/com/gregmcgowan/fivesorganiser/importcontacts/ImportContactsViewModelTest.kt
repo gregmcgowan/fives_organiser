@@ -6,6 +6,7 @@ import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
 import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.RequestPermission
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
@@ -44,6 +45,8 @@ class ImportContactsViewModelTest {
     lateinit var mockSavePlayersUseCase: SavePlayersUseCase
     @Mock
     lateinit var mockGetContactsUseCase: GetContactsUseCase
+    @Mock
+    lateinit var mockPermission: Permission
 
     @Fixture
     lateinit var fixtContacts: List<Contact>
@@ -53,7 +56,6 @@ class ImportContactsViewModelTest {
     private val testCoroutineDispatcher get() = coroutinesTestRule.testDispatcher
     private lateinit var fixture: JFixture
     private lateinit var sut: ImportContactsViewModel
-
 
     @Before
     fun setUp() {
@@ -72,10 +74,10 @@ class ImportContactsViewModelTest {
     fun `init() when permission is granted shows loading then content`() = testCoroutineDispatcher.runBlockingTest {
         // setup
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
 
         testCoroutineDispatcher.pauseDispatcher()
-        setupSut(contactPermission = true)
+        setupSut()
 
         // verify loading UI
         val actualLoadingOutput = sut.uiModel
@@ -90,7 +92,8 @@ class ImportContactsViewModelTest {
     @Test
     fun `init() without permission sends request permission event`() = testCoroutineDispatcher.runBlockingTest {
         testCoroutineDispatcher.pauseDispatcher()
-        setupSut(contactPermission = false)
+        setupMocks(fixtContacts, createInitialUiModel(), permission = false)
+        setupSut()
 
         // run
         val output: ImportContactsUiEvent = sut.importContactsUiEvent.first()
@@ -104,8 +107,8 @@ class ImportContactsViewModelTest {
     fun `onContactsPermissionGranted() loads contacts`() = runBlocking {
         // setup
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(contactPermission = false)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = false)
+        setupSut()
 
         // verify loading
         val actualLoadingOutput = sut.uiModel
@@ -124,8 +127,8 @@ class ImportContactsViewModelTest {
     fun `onContactSelected() updates model when none are selected`() = runBlocking {
         // initial setup
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(contactPermission = true)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
+        setupSut()
 
         val initialUiModel = sut.uiModel
 
@@ -145,8 +148,8 @@ class ImportContactsViewModelTest {
     fun `onContactSelected() updates model when some are already are selected`() = runBlocking {
         // initial setup
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(contactPermission = true)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
+        setupSut()
 
         val initialUiModel = sut.uiModel
 
@@ -169,8 +172,8 @@ class ImportContactsViewModelTest {
     fun `onContactDeselected() when only 1 is already selected`() = runBlocking {
         // initial setup
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(contactPermission = true)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
+        setupSut()
         // testDispatchers.getTestCoroutineContext().triggerActions()
         val initialUiModel = sut.uiModel
 
@@ -190,8 +193,8 @@ class ImportContactsViewModelTest {
     fun `onContactDeselected() when there is more than 1 selected`() = runBlocking {
         // initial setup
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(contactPermission = true)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
+        setupSut()
 
         val initialUiModel = sut.uiModel
 
@@ -216,8 +219,8 @@ class ImportContactsViewModelTest {
     @Test
     fun `onAddButtonPressed() saves contacts and close screens`() = testCoroutineDispatcher.runBlockingTest {
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(true)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
+        setupSut()
         val initialUiModel = sut.uiModel
 
         // add contact
@@ -250,8 +253,8 @@ class ImportContactsViewModelTest {
     @Test
     fun `onAddButtonPressed() when there is an error`() = testCoroutineDispatcher.runBlockingTest {
         val fixtInitialUiModel = createInitialUiModel()
-        setupMocks(fixtContacts, fixtInitialUiModel)
-        setupSut(true)
+        setupMocks(fixtContacts, fixtInitialUiModel, permission = true)
+        setupSut()
         val initialUiModel = sut.uiModel
 
         // add contact
@@ -282,12 +285,12 @@ class ImportContactsViewModelTest {
 
     }
 
-    private fun setupSut(contactPermission: Boolean) {
+    private fun setupSut() {
         sut = ImportContactsViewModel(
                 mockUiModelMaper,
                 mockSavePlayersUseCase,
                 mockGetContactsUseCase,
-                contactPermission
+                mockPermission
         )
     }
 
@@ -316,9 +319,11 @@ class ImportContactsViewModelTest {
 
     private suspend fun setupMocks(contacts: List<Contact>,
                                    uiModel: ImportContactsUiModel,
-                                   selectedContacts: Set<Long> = emptySet()) {
+                                   selectedContacts: Set<Long> = emptySet(),
+                                   permission : Boolean) {
         whenever(mockGetContactsUseCase.execute()).thenReturn(Either.Right(contacts))
         whenever(mockUiModelMaper.map(contacts, selectedContacts)).thenReturn(uiModel)
+        whenever(mockPermission.hasPermission()).thenReturn(permission)
     }
 
 
