@@ -1,46 +1,47 @@
 package com.gregmcgowan.fivesorganiser.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
-import com.gregmcgowan.fivesorganiser.core.CoroutinesViewModel
-import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-        private val mapper: MainUiModelMapper,
-        private val authentication: Authentication,
-        coroutineDispatchers: CoroutineDispatchers
-) : CoroutinesViewModel(coroutineDispatchers) {
+        private val useCase: MainInitialiseUseCase
+) : ViewModel() {
 
-    val uiModelLiveData: LiveData<MainScreenUiModel>
-        get() = _uiModelLiveData
+    var uiModel: UiModel<MainScreenUiModel> by mutableStateOf(value = UiModel.LoadingUiModel())
+        private set
 
-    private val _uiModelLiveData: MutableLiveData<MainScreenUiModel> = MutableLiveData()
+    val mainUiEvents: Flow<MainScreenUiEvents>
+        get() = _mainUiEvents.asSharedFlow()
 
-    private var currentScreen: MainScreen = MainScreen.PlayersScreen
+    private val _mainUiEvents = MutableSharedFlow<MainScreenUiEvents>()
 
     init {
-        _uiModelLiveData.value = MainScreenUiModel(
-                screenToShow = currentScreen,
-                showContent = false,
-                showLoading = true
-        )
-
-        launch(
-                backgroundBlock = { authentication.initialise() },
-                uiBlock = { updateUiModel(currentScreen) }
-        )
+        viewModelScope.launch {
+            useCase.execute()
+            updateUiModel(MainScreen.PlayersScreen)
+        }
     }
 
     private fun updateUiModel(selectedScreen: MainScreen) {
-        _uiModelLiveData.value = mapper.map(selectedScreen)
+        uiModel = UiModel.ContentUiModel(MainScreenUiModel(selectedScreen))
     }
 
     fun handleMenuSelection(selectedScreen: MainScreen) {
-        currentScreen = selectedScreen
         updateUiModel(selectedScreen)
+        viewModelScope.launch {
+            _mainUiEvents.emit(MainScreenUiEvents.ShowMainTabScreen(selectedScreen.route))
+        }
     }
+
 }
