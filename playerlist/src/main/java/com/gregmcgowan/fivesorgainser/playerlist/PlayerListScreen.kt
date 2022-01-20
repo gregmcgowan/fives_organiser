@@ -17,11 +17,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
+
+
+@Composable
+fun PlayerList(openImportContacts: () -> Unit) {
+    PlayerListScreen(
+            uiModel = hiltViewModel<PlayerListViewModel>().uiModel,
+            eventHandler = { playerListUserEvent ->
+                when (playerListUserEvent) {
+                    AddPlayerSelectedEvent -> openImportContacts.invoke()
+                }
+            }
+    )
+}
 
 
 @Composable
@@ -72,7 +87,7 @@ fun PlayerListContent(
             },
             floatingActionButton = {
                 FloatingActionButton(
-                        onClick = { eventHandler.invoke(PlayerListUserEvent.AddPlayerSelectedEvent) },
+                        onClick = { eventHandler.invoke(AddPlayerSelectedEvent) },
                         content = { Icon(Icons.Filled.Add, "") }
                 )
             }

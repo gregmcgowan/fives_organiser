@@ -41,7 +41,6 @@ dependencies {
     implementation project(":data")
     implementation project(":playerlist")
     implementation project(":importcontacts")
-    implementation project(':importcontacts-navigator')
 
     // TODO remove once fully moved over to compose
     implementation "com.google.android.material:material:${versions.material}"

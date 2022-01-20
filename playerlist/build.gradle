@@ -19,7 +19,6 @@ dependencies {
 
     implementation project(":core")
     implementation project(":data")
-    implementation project(':importcontacts-navigator')
 
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
 

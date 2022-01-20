@@ -1,1 +1,1 @@
-include ':app', ':core', ':data', ':importcontacts',':playerlist', ':importcontacts-navigator', ':test_shared'
+include ':app', ':core', ':data', ':importcontacts',':playerlist', ':test_shared'

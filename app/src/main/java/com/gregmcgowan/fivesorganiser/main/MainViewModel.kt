@@ -7,9 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,27 +18,15 @@ class MainViewModel @Inject constructor(
     var uiModel: UiModel<MainScreenUiModel> by mutableStateOf(value = UiModel.LoadingUiModel())
         private set
 
-    val mainUiEvents: Flow<MainScreenUiEvents>
-        get() = _mainUiEvents.asSharedFlow()
-
-    private val _mainUiEvents = MutableSharedFlow<MainScreenUiEvents>()
-
     init {
         viewModelScope.launch {
             useCase.execute()
-            updateUiModel(MainScreen.PlayersScreen)
+            updateUiModel(MainScreen.PlayersListScreen)
         }
     }
 
     private fun updateUiModel(selectedScreen: MainScreen) {
         uiModel = UiModel.ContentUiModel(MainScreenUiModel(selectedScreen))
-    }
-
-    fun handleMenuSelection(selectedScreen: MainScreen) {
-        updateUiModel(selectedScreen)
-        viewModelScope.launch {
-            _mainUiEvents.emit(MainScreenUiEvents.ShowMainTabScreen(selectedScreen.route))
-        }
     }
 
 }

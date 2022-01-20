@@ -10,11 +10,6 @@ data class PlayerListItemUiModel(
         val name: String
 )
 
-sealed class PlayerListUiEvents {
-    object Idle : PlayerListUiEvents()
-    object ShowAddPlayerScreenEvent : PlayerListUiEvents()
-}
-
 sealed class PlayerListUserEvent {
 
     object AddPlayerSelectedEvent : PlayerListUserEvent()

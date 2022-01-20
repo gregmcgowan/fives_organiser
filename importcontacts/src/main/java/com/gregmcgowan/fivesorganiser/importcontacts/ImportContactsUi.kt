@@ -3,31 +3,64 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Checkbox
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 
 @Composable
-fun ImportContactsScreen(importContactsUiModel: ImportContactsUiModel,
-                         eventHandler: (ImportContactsUserEvent) -> Unit) {
-    Scaffold(
-            topBar = { TopAppBar(title = { Text(stringResource(id = R.string.import_contacts_title)) }) },
-            content = { ImportContactsBodyContent(importContactsUiModel, eventHandler) }
-    )
+fun ImportContactsScreen() {
+    val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
+//    lifecycleScope.launchWhenStarted {
+//        importImportContactsViewModel.importContactsUiEvent.collect { event ->
+//            when (event) {
+//                ImportContactsUiEvent.RequestPermission -> requestPermissionForContacts()
+//                ImportContactsUiEvent.CloseScreen -> returnToPlayersScreen()
+//                ImportContactsUiEvent.Idle -> {
+//                }
+//            }
+//        }
+//    }
+
+
+
+    ImportContactsScreen(importContactsViewModel.uiModel) { _ -> }
 }
+//
+//private fun requestPermissionForContacts() {
+//    ActivityCompat.requestPermissions(this,
+//            arrayOf(Manifest.permission.READ_CONTACTS), PERMISSION_REQUEST_CODE)
+//}
+//
+//override fun onPermissionGranted() {
+//    importImportContactsViewModel.handleEvent(ImportContactsUserEvent.ContactPermissionGrantedEvent)
+//}
+//
+//override fun onPermissionDenied(userSaidNever: Boolean) {
+//    //TODO move to compose
+//    Toast.makeText(this,
+//            getString(R.string.permissions_denied_text),
+//            Toast.LENGTH_LONG).show()
+//}
+//
+//private fun returnToPlayersScreen() {
+//    setResult(Activity.RESULT_OK)
+//    finish()
+//}
 
 @Composable
-private fun ImportContactsBodyContent(importContactsUiModel: ImportContactsUiModel,
-                                      eventHandler: (ImportContactsUserEvent) -> Unit) {
-
+private fun ImportContactsScreen(importContactsUiModel: ImportContactsUiModel,
+                                 eventHandler: (ImportContactsUserEvent) -> Unit) {
     when {
         importContactsUiModel.showContent -> {
             Column {
