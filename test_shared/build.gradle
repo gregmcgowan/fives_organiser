@@ -14,7 +14,6 @@ dependencies {
     api "androidx.test:core:${versions.androidx.test_core}"
     api "androidx.test:runner:${versions.androidx.test_runner}"
     api "androidx.test.ext:junit:${versions.androidx.test_junit}"
-    api "android.arch.core:core-testing:${versions.androidx.arch_core_testing}"
 
     api "androidx.test.espresso:espresso-core:${versions.espresso}"
 
