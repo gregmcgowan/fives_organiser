@@ -39,7 +39,7 @@ class NavigationActions(private val navController: NavHostController) {
         // TODO do we need anything else here
     }
 
-    val navigateBack: (Unit) -> Unit = {
+    val navigateBack: () -> Unit = {
         navController.popBackStack()
     }
 
@@ -58,7 +58,7 @@ fun NavigationGraph(modifier: Modifier = Modifier,
         composable(Destinations.PLAYER_LIST_ROUTE) {
             PlayerList(openImportContacts = { navigationActions.navigateToNestedScreen(Destinations.IMPORT_CONTACTS_ROUTE) })
         }
-        composable(Destinations.IMPORT_CONTACTS_ROUTE) { ImportContactsScreen() }
+        composable(Destinations.IMPORT_CONTACTS_ROUTE) { ImportContactsScreen (navigationActions.navigateBack) }
         composable(Destinations.MATCHES_LIST_ROUTE) { Matches() }
         composable(Destinations.RESULTS_LIST_ROUTE) { Results() }
     }
