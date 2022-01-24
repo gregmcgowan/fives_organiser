@@ -23,10 +23,7 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
     api "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
-    api "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
-    api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
-    api "androidx.fragment:fragment-ktx:${versions.androidx.fragment_ktx}"
     api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"
     api "androidx.hilt:hilt-navigation-compose:${versions.androidx.hilt_navigation_compose}"
 
@@ -42,16 +39,23 @@ dependencies {
     api "com.jakewharton.threetenabp:threetenabp:${versions.threetenabp}"
 
     api "androidx.compose.runtime:runtime:${versions.compose}"
-    api "androidx.compose.ui:ui:${versions.compose}"
+    api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
+
     api "androidx.compose.foundation:foundation-layout:${versions.compose}"
+    api "androidx.compose.foundation:foundation:${versions.compose}"
+
+    api "androidx.compose.ui:ui:${versions.compose}"
+    api "androidx.compose.ui:ui-tooling:${versions.compose}"
+
+    api "androidx.compose.animation:animation:${versions.compose}"
+
     api "androidx.compose.material:material:${versions.compose}"
     api "androidx.compose.material:material-icons-extended:${versions.compose}"
-    api "androidx.compose.foundation:foundation:${versions.compose}"
-    api "androidx.compose.animation:animation:${versions.compose}"
-    api "androidx.compose.ui:ui-tooling:${versions.compose}"
-    api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
+
     api "androidx.navigation:navigation-compose:${versions.androidx.navigation_compose}"
     api "androidx.activity:activity-compose:${versions.androidx.activity_compose}"
+
+    api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
