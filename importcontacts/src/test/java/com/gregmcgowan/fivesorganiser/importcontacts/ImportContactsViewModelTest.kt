@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.flextrade.jfixture.annotations.Fixture
@@ -34,8 +33,6 @@ private val LOADING_UI_MODEL = ImportContactsUiModel(
 
 class ImportContactsViewModelTest {
 
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
     var coroutinesTestRule = CoroutinesTestRule()
