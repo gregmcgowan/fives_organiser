@@ -33,8 +33,6 @@ dependencies {
     api "com.google.dagger:dagger-android:${versions.dagger}"
     api "com.google.dagger:dagger-android-support:${versions.dagger}"
 
-    api "com.google.firebase:firebase-auth:${versions.firebase_auth}"
-
     api "com.jakewharton.timber:timber:${versions.timber}"
     api "com.jakewharton.threetenabp:threetenabp:${versions.threetenabp}"
 

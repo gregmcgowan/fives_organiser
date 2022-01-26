@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.core.authenication
+package com.gregmcgowan.fivesorganiser.authentication
 
 interface Authentication {
 

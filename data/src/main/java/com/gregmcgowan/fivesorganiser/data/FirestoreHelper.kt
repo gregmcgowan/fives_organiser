@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorganiser.data
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
-import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
+import com.gregmcgowan.fivesorganiser.authentication.Authentication
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -23,7 +23,9 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
     fun <T> flowOfDataUpdates(collectionReference: CollectionReference,
                               map: (Map<String, Any>) -> T): Flow<DataUpdate<T>> = callbackFlow {
         val subscription = collectionReference.addSnapshotListener { snapshot, _ ->
-            if (snapshot == null) { return@addSnapshotListener }
+            if (snapshot == null) {
+                return@addSnapshotListener
+            }
             // Sends events to the flow! Consumers will get the new events
             try {
                 this.trySend(getDataChangeList(snapshot, map)).isSuccess

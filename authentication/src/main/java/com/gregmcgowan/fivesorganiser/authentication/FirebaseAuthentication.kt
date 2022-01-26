@@ -1,4 +1,4 @@
-package com.gregmcgowan.fivesorganiser.core.authenication
+package com.gregmcgowan.fivesorganiser.authentication
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult

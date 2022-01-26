@@ -2,12 +2,9 @@ package com.gregmcgowan.fivesorganiser.core.di
 
 import android.content.Context
 import android.content.res.Resources
-import com.google.firebase.auth.FirebaseAuth
 import com.gregmcgowan.fivesorganiser.core.AndroidStrings
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.core.Strings
-import com.gregmcgowan.fivesorganiser.core.authenication.Authentication
-import com.gregmcgowan.fivesorganiser.core.authenication.FirebaseAuthentication
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -25,10 +22,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
-    @Provides
-    @Singleton
     fun dispatchers(): CoroutineDispatchers = CoroutineDispatchers(Main, IO)
 
     @Provides
@@ -38,10 +31,6 @@ class AppModule {
     @InstallIn(SingletonComponent::class)
     @Module
     interface Bindings {
-
-        @Binds
-        @Singleton
-        fun auth(firebaseAuth: FirebaseAuthentication): Authentication
 
         @Binds
         @Reusable

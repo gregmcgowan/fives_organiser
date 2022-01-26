@@ -1,1 +1,10 @@
-include ':app', ':core', ':data', ':importcontacts',':playerlist', ':test_shared'
+include ':app'
+include ':core'
+include ':authentication'
+include ':authentication-contract'
+include ':data'
+include ':importcontacts'
+include ':playerlist'
+include ':test_shared'
+
+
