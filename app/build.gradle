@@ -35,8 +35,6 @@ android {
 
 dependencies {
 
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     implementation project(":core")
     implementation project(":data")
     implementation project(":authentication")
@@ -46,7 +44,6 @@ dependencies {
 
     // TODO remove once fully moved over to compose
     implementation "com.google.android.material:material:${versions.material}"
-    implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
     implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
