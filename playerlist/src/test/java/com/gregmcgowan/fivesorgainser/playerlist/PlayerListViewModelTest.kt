@@ -2,7 +2,6 @@ package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
-import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
 import com.gregmcgowan.fivesorganiser.data.DataChange
 import com.gregmcgowan.fivesorganiser.data.DataChangeType
@@ -12,7 +11,10 @@ import com.gregmcgowan.fivesorganiser.test_shared.CoroutinesTestRule
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.instanceOf
@@ -24,11 +26,14 @@ import org.mockito.MockitoAnnotations
 
 class PlayerListViewModelTest {
 
-    @get:Rule var coroutinesTestRule = CoroutinesTestRule()
+    private val testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
 
-    @Mock lateinit var mockUiModelMapper: PlayerListUiModelMapper
+    @get:Rule
+    var coroutinesTestRule = CoroutinesTestRule(testDispatcher)
 
-    private val testCoroutineDispatcher get() = coroutinesTestRule.testDispatcher
+    @Mock
+    lateinit var mockUiModelMapper: PlayerListUiModelMapper
+
     private lateinit var fixture: JFixture
     private lateinit var sut: PlayerListViewModel
 
@@ -44,62 +49,65 @@ class PlayerListViewModelTest {
 
 
     @Test
-    fun `init() loads player list when there are players to load`() = testCoroutineDispatcher.runBlockingTest {
+    fun `init() loads player list when there are players to load`() = runTest {
         val fixtPlayerDataUpdate: DataUpdate<Player> = fixDataUpdate()
         val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
         sut = PlayerListViewModel(mockUiModelMapper, fakeGetPlayersUseCase)
+        runCurrent()
 
         assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
 
         // setup first ui model
         val expected = ContentUiModel(fixture.create(PlayerListUiModel::class.java))
         pauseAndDispatch(fakeGetPlayersUseCase, fixtPlayerDataUpdate, expected)
+        runCurrent()
 
         assertThat(sut.uiModel, equalTo(expected))
     }
 
 
     @Test
-    fun `ui model updates data after initial load`() = testCoroutineDispatcher.runBlockingTest {
+    fun `ui model updates data after initial load`() = runTest {
         val fixtPlayerDataUpdate: DataUpdate<Player> = fixDataUpdate()
         val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
         sut = PlayerListViewModel(mockUiModelMapper, fakeGetPlayersUseCase)
+        runCurrent()
 
         assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
 
         // set up first ui model
         val expected = ContentUiModel(fixture.create(PlayerListUiModel::class.java))
         pauseAndDispatch(fakeGetPlayersUseCase, fixtPlayerDataUpdate, expected)
+        runCurrent()
 
         assertThat(sut.uiModel, equalTo(expected))
-
 
         // setup new ui model
         val fixtNewUpdate: DataUpdate<Player> = fixDataUpdate()
         val fixtNewUiModel = ContentUiModel(fixture.create(PlayerListUiModel::class.java))
         pauseAndDispatch(fakeGetPlayersUseCase, fixtNewUpdate, fixtNewUiModel)
+        runCurrent()
 
         assertThat(sut.uiModel, equalTo(fixtNewUiModel))
     }
 
 
     @Test
-    fun `init() displays error message when initial loading fails`() = testCoroutineDispatcher.runBlockingTest {
+    fun `init() displays error message when initial loading fails`() = runTest {
         val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
         sut = PlayerListViewModel(mockUiModelMapper, fakeGetPlayersUseCase)
-
+        runCurrent()
         assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
 
         // setup and verifying error
-        testCoroutineDispatcher.pauseDispatcher()
-        fakeGetPlayersUseCase.emit(Either.Left(RuntimeException()))
-        testCoroutineDispatcher.resumeDispatcher()
+        //fakeGetPlayersUseCase.emit(RuntimeException()))
+        runCurrent()
 
         assertThat(sut.uiModel, instanceOf(ErrorUiModel::class.java))
     }
 
     @Test
-    fun `add player sends add player nav event`() = testCoroutineDispatcher.runBlockingTest {
+    fun `add player sends add player nav event`() = runTest {
 //        val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
 //        sut = PlayerListViewModel(mockUiModelMapper, fakeGetPlayersUseCase)
 //
@@ -123,21 +131,19 @@ class PlayerListViewModelTest {
     private suspend fun pauseAndDispatch(useCase: FakeGetPlayersUseCase,
                                          dataUpdate: DataUpdate<Player>,
                                          expected: ContentUiModel<PlayerListUiModel>) {
-        testCoroutineDispatcher.pauseDispatcher()
         whenever(mockUiModelMapper.map(sut.uiModel, dataUpdate)).thenReturn(expected)
-        useCase.emit(Either.Right(dataUpdate))
-        testCoroutineDispatcher.resumeDispatcher()
+        useCase.emit(dataUpdate)
     }
 
     private class FakeGetPlayersUseCase : GetPlayerListUpdatesUseCase {
 
-        private val flow = MutableSharedFlow<Either<Throwable, DataUpdate<Player>>>()
+        private val flow = MutableSharedFlow<DataUpdate<Player>>()
 
-        suspend fun emit(either: Either<Throwable, DataUpdate<Player>>) {
+        suspend fun emit(either: DataUpdate<Player>) {
             flow.emit(either)
         }
 
-        override suspend fun execute(): Flow<Either<Throwable, DataUpdate<Player>>> {
+        override suspend fun execute(): Flow<DataUpdate<Player>> {
             return flow
         }
 

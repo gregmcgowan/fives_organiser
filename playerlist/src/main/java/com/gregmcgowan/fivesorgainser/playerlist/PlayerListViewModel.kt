@@ -7,12 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
-import com.gregmcgowan.fivesorganiser.data.DataUpdate
-import com.gregmcgowan.fivesorganiser.data.player.Player
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,19 +24,16 @@ class PlayerListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getPlayerListUpdatesUseCase
-                    .execute()
-                    .collect {
-                        it.either(
-                                { exception -> handleError(exception) },
-                                { update -> handleUpdate(update) }
-                        )
-                    }
+            try {
+                getPlayerListUpdatesUseCase
+                        .execute()
+                        .collect {
+                            uiModel = uiModelMapper.map(uiModel, it)
+                        }
+            } catch (exception: Exception) {
+                handleError(exception)
+            }
         }
-    }
-
-    private fun handleUpdate(update: DataUpdate<Player>) {
-        uiModel = uiModelMapper.map(uiModel, update)
     }
 
     private fun handleError(throwable: Throwable) {

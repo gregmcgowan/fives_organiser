@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
