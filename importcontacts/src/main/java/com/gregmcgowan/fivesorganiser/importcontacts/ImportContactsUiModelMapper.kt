@@ -3,9 +3,13 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 import javax.inject.Inject
 
-class ImportContactsUiModelMapper @Inject constructor() {
+interface ImportContactsUiModelMapper {
+    fun map(contacts: List<Contact>, selectedContacts: Set<Long>): ImportContactsUiModel
+}
 
-    fun map(contacts: List<Contact>, selectedContacts: Set<Long>) =
+class ImportContactsUiModelMapperImpl @Inject constructor() : ImportContactsUiModelMapper {
+
+    override fun map(contacts: List<Contact>, selectedContacts: Set<Long>) =
             ImportContactsUiModel(
                     showLoading = false,
                     showContent = contacts.isNotEmpty(),

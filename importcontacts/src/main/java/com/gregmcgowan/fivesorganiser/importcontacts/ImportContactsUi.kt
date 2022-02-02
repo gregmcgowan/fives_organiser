@@ -39,11 +39,7 @@ fun ImportContactsScreen(returnToPlayersScreen: () -> Unit) {
         importContactsViewModel.importContactsUiEvent.collect {
             when (it) {
                 ImportContactsUiEvent.CloseScreen -> returnToPlayersScreen.invoke()
-                ImportContactsUiEvent.RequestPermission -> {
-                    launcher.launch(Manifest.permission.READ_CONTACTS)
-                }
-                ImportContactsUiEvent.Idle -> {
-                }
+                ImportContactsUiEvent.RequestPermission -> { launcher.launch(Manifest.permission.READ_CONTACTS) }
 
             }
         }

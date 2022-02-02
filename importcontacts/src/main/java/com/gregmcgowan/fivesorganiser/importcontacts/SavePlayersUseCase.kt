@@ -1,34 +1,30 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
-import com.gregmcgowan.fivesorganiser.core.Either
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 import javax.inject.Inject
 
-class SavePlayersUseCase @Inject constructor(
+interface SavePlayersUseCase {
+    suspend fun execute(selectedContacts: Set<Long>)
+}
+
+class SavePlayersUseCaseImpl @Inject constructor(
         private val playersRepo: PlayerRepo,
         private val contactsImporter: ContactImporter,
         private val coroutineDispatchers: CoroutineDispatchers
-) {
+) : SavePlayersUseCase {
 
-    suspend fun execute(selectedContacts: Set<Long>): Either<Exception, Unit> = withContext(coroutineDispatchers.io) {
-        // TODO should this be surrounded by a try catch and return the exception as either?
-        try {
-            contactsImporter.getAllContacts()
-                    .filter { contact -> selectedContacts.contains(contact.contactId) }
-                    .map { contact ->
-                        playersRepo.addPlayer(
-                                contact.name,
-                                contact.emailAddress,
-                                contact.phoneNumber,
-                                contact.contactId
-                        )
-                    }
-        } catch (exception : Exception ){
-            Either.Left(exception)
-        }
-        Either.Right(Unit)
+    override suspend fun execute(selectedContacts: Set<Long>) = withContext(coroutineDispatchers.io) {
+        contactsImporter.getAllContacts()
+                .filter { contact -> selectedContacts.contains(contact.contactId) }
+                .forEach { contact ->
+                    playersRepo.addPlayer(
+                            contact.name,
+                            contact.emailAddress,
+                            contact.phoneNumber,
+                            contact.contactId
+                    )
+                }
     }
 }

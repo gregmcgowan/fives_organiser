@@ -3,7 +3,6 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import androidx.annotation.StringRes
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 
-
 sealed class ImportContactsUserEvent {
 
     object ContactPermissionGrantedEvent : ImportContactsUserEvent()
@@ -14,7 +13,6 @@ sealed class ImportContactsUserEvent {
 }
 
 sealed class ImportContactsUiEvent {
-    object Idle : ImportContactsUiEvent()
     object RequestPermission : ImportContactsUiEvent()
     object CloseScreen : ImportContactsUiEvent()
 }

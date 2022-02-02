@@ -1,87 +1,70 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
-import com.flextrade.jfixture.annotations.Fixture
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
-import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
-import com.gregmgowan.fivesorganiser.test_shared.CoroutinesTestRule
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import com.gregmcgowan.fivesorganiser.data.player.Player
+import com.gregmcgowan.fivesorganiser.test_shared.CoroutinesTestRule
+import com.gregmcgowan.fivesorganiser.test_shared.createList
+import kotlinx.coroutines.test.runTest
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 
 class SavePlayersUseCaseTest {
 
-    @get:Rule
-    var coroutinesTestRule = CoroutinesTestRule()
-
-    @Mock
-    lateinit var mockPlayerRepo: PlayerRepo
-
-    @Mock
-    lateinit var mockContactsImporter: ContactImporter
-
-    @Fixture
-    lateinit var fixtContacts: List<Contact>
+    @get:Rule var coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var fixture: JFixture
+    private lateinit var fakePlayerRepo: FakePlayerRepo
+    private lateinit var fakeContactImporter: FakeContactsImporter
 
-    private lateinit var sut: SavePlayersUseCase
-
-    private val mainDispatcher = TestCoroutineDispatcher()
-
-    private val ioDispatcher: TestCoroutineDispatcher
-        get() = coroutinesTestRule.testDispatcher
+    private lateinit var sut: SavePlayersUseCaseImpl
 
     @Before
     fun setUp() {
         fixture = JFixture()
-        MockitoAnnotations.initMocks(this)
-        FixtureAnnotations.initFixtures(this, fixture)
+        fakePlayerRepo = FakePlayerRepo()
+        fakeContactImporter = FakeContactsImporter()
 
-        sut = SavePlayersUseCase(
-                mockPlayerRepo,
-                mockContactsImporter,
+        sut = SavePlayersUseCaseImpl(
+                fakePlayerRepo,
+                fakeContactImporter,
                 CoroutineDispatchers(
-                        mainDispatcher,
-                        ioDispatcher
+                        coroutinesTestRule.testDispatcher,
+                        coroutinesTestRule.testDispatcher
                 )
         )
     }
 
     @Test
-    fun `save selected contacts`() = ioDispatcher.runBlockingTest {
-        whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
+    fun `save selected contacts`() = runTest {
+        val fixtContacts: List<Contact> = fixture.createList()
+        fakeContactImporter.contacts = fixtContacts
         val fixtContact = fixtContacts[1]
 
-        val output = sut.execute(setOf(fixtContact.contactId))
+        sut.execute(setOf(fixtContact.contactId))
 
-        assert(output.isRight)
-        verify(mockPlayerRepo).addPlayer(
-                fixtContact.name,
-                fixtContact.emailAddress,
-                fixtContact.phoneNumber,
-                fixtContact.contactId
+        assertThat(fakePlayerRepo.players[0],
+                equalTo(Player(
+                        playerId = "0",
+                        name = fixtContact.name,
+                        phoneNumber = fixtContact.phoneNumber,
+                        email = fixtContact.emailAddress,
+                        contactId = fixtContact.contactId))
         )
-        verifyNoMoreInteractions(mockPlayerRepo)
     }
 
     @Test
-    fun `do save when there is no selected contacts`() = ioDispatcher.runBlockingTest {
-        whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
+    fun `do save when there is no selected contacts`() = runTest {
+        val fixtContacts: List<Contact> = fixture.createList()
+        fakeContactImporter.contacts = fixtContacts
 
-        val output = sut.execute(emptySet())
+        sut.execute(emptySet())
 
-        assert(output.isRight)
-        verifyZeroInteractions(mockPlayerRepo)
+        assertThat(fakePlayerRepo.players, hasSize(0))
     }
 }
 

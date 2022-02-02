@@ -1,102 +1,88 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
-import com.flextrade.jfixture.annotations.Fixture
 import com.google.common.truth.Truth.assertThat
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.data.player.Player
-import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
-import com.gregmgowan.fivesorganiser.test_shared.CoroutinesTestRule
-import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.fail
+import com.gregmcgowan.fivesorganiser.test_shared.CoroutinesTestRule
+import com.gregmcgowan.fivesorganiser.test_shared.build
+import com.gregmcgowan.fivesorganiser.test_shared.createList
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 
-@ExperimentalCoroutinesApi
 class GetContactsUseCaseTest {
 
-    @get:Rule var coroutinesTestRule = CoroutinesTestRule()
+    @get:Rule
+    var coroutinesTestRule = CoroutinesTestRule()
 
-    @Mock lateinit var mockPlayerRepo: PlayerRepo
-    @Mock lateinit var mockContactsImporter: ContactImporter
-
-    @Fixture lateinit var fixtContacts: List<Contact>
-
-    private val ioDispatcher = coroutinesTestRule.testDispatcher
-    private val mainDispatcher = TestCoroutineDispatcher()
+    private lateinit var fakePlayerRepo: FakePlayerRepo
+    private lateinit var fakeContactImporter: FakeContactsImporter
 
     private lateinit var fixture: JFixture
-    private lateinit var sut: GetContactsUseCase
+
+    private lateinit var sut: GetContactsUseCaseImpl
 
     @Before
     fun setUp() {
         fixture = JFixture()
-        MockitoAnnotations.initMocks(this)
-        FixtureAnnotations.initFixtures(this, fixture)
+        fakePlayerRepo = FakePlayerRepo()
+        fakeContactImporter = FakeContactsImporter()
 
-        sut = GetContactsUseCase(
-                mockPlayerRepo,
-                mockContactsImporter,
-                CoroutineDispatchers(mainDispatcher, ioDispatcher)
+        sut = GetContactsUseCaseImpl(
+                fakePlayerRepo,
+                fakeContactImporter,
+                CoroutineDispatchers(
+                        coroutinesTestRule.testDispatcher,
+                        coroutinesTestRule.testDispatcher
+                )
         )
     }
 
     @Test
-    fun `get contacts when none are already added`() = ioDispatcher.runBlockingTest {
-        whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
-        whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
+    fun `get contacts when none are already added`() = runTest {
+        val fixtContacts: List<Contact> = fixture.createList()
+        fakePlayerRepo.players = mutableListOf()
+        fakeContactImporter.contacts = fixtContacts
 
-        sut.execute().either(
-                { fail() },
-                { contacts -> assertThat(contacts).containsAllIn(fixtContacts) }
-        )
+        val output = sut.execute()
+        assertThat(output).containsAllIn(fixtContacts)
     }
 
     @Test
-    fun `get contacts when player is added already`() = ioDispatcher.runBlockingTest {
-        // TODO use set final
+    fun `get contacts when player is added already`() = runTest {
+        val fixtContacts: List<Contact> = fixture.createList()
+
         val fixtPlayerAdded = Player(
-                playerId = fixture.create(String::class.java),
+                playerId = fixture.build(),
                 contactId = fixtContacts[1].contactId,
-                name = fixture.create(String::class.java),
-                phoneNumber = fixture.create(String::class.java),
-                email = fixture.create(String::class.java)
+                name = fixture.build(),
+                phoneNumber = fixture.build(),
+                email = fixture.build()
         )
 
-        whenever(mockPlayerRepo.getPlayers()).thenReturn(listOf(fixtPlayerAdded))
-        whenever(mockContactsImporter.getAllContacts()).thenReturn(fixtContacts)
+        fakePlayerRepo.players = mutableListOf(fixtPlayerAdded)
+        fakeContactImporter.contacts = fixtContacts
 
-        sut.execute().either(
-                { fail() },
-                { contacts ->
-                    assertThat(contacts).containsAllIn(
-                            arrayOf(fixtContacts[0], fixtContacts[2])
-                    )
-                }
-        )
+        val output = sut.execute()
+        assertThat(output).containsAllIn(arrayOf(fixtContacts[0], fixtContacts[2]))
     }
 
     @Test(expected = RuntimeException::class)
-    fun `get contacts throws when player repo throws`() = ioDispatcher.runBlockingTest {
-        whenever(mockPlayerRepo.getPlayers())
-                .thenThrow(fixture.create(RuntimeException::class.java))
+    fun `get contacts throws when player repo throws`() = runTest {
+        fakePlayerRepo.exception = fixture.create(RuntimeException::class.java)
 
         sut.execute()
     }
 
     @Test(expected = RuntimeException::class)
-    fun `get contacts when contact importer throws`() = ioDispatcher.runBlockingTest {
-        whenever(mockPlayerRepo.getPlayers()).thenReturn(emptyList())
-        whenever(mockContactsImporter.getAllContacts())
-                .thenThrow(fixture.create(RuntimeException::class.java))
+    fun `get contacts when contact importer throws`() = runTest {
+        fakePlayerRepo.players = mutableListOf()
+        fakeContactImporter.exception = fixture.create(RuntimeException::class.java)
 
         sut.execute()
     }
+
+
 }

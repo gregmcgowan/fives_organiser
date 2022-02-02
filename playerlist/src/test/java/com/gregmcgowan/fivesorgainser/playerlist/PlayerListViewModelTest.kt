@@ -8,7 +8,7 @@ import com.gregmcgowan.fivesorganiser.data.DataChange
 import com.gregmcgowan.fivesorganiser.data.DataChangeType
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
-import com.gregmgowan.fivesorganiser.test_shared.CoroutinesTestRule
+import com.gregmcgowan.fivesorganiser.test_shared.CoroutinesTestRule
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

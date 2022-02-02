@@ -72,12 +72,11 @@ class ImportContactsViewModel @Inject constructor(
 
     private fun loadContacts() {
         viewModelScope.launch {
-            uiModel = getContactsUseCase
-                    .execute()
-                    .either(
-                            { handleException(it) },
-                            { uiModelMapper.map(it, selectedContacts) }
-                    )
+            uiModel = try {
+                uiModelMapper.map(getContactsUseCase.execute(), selectedContacts)
+            } catch (exception: Exception) {
+                handleException(exception)
+            }
         }
     }
 
@@ -94,21 +93,16 @@ class ImportContactsViewModel @Inject constructor(
         uiModel = uiModel.copy(showLoading = true, showContent = false)
 
         viewModelScope.launch {
-            val event = savePlayersUseCase
-                    .execute(selectedContacts)
-                    .either(
-                            { handleSavingException(it) },
-                            { CloseScreen }
-                    )
-            emitEvent(event)
+            try {
+                savePlayersUseCase.execute(selectedContacts)
+                emitEvent(CloseScreen)
+            } catch (exception: Exception) {
+                Timber.e(exception)
+                uiModel = uiModel.copy(showLoading = false, showContent = true)
+            }
         }
     }
 
-    private fun handleSavingException(exception: Exception): ImportContactsUiEvent {
-        Timber.e(exception)
-        uiModel = uiModel.copy(showLoading = false, showContent = true)
-        return ImportContactsUiEvent.Idle
-    }
 
     private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
         val index = uiModel.contacts.indexOfFirst { it.contactId == contactId }

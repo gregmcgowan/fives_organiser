@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
+import com.gregmcgowan.fivesorganiser.core.permissions.AndroidPermission
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import dagger.Binds
 import dagger.Module
@@ -23,7 +24,7 @@ class ImportContactsModule {
 
     @Provides
     fun hasContactPermission(@ApplicationContext context: Context): Permission {
-        return Permission(context, Manifest.permission.READ_CONTACTS)
+        return AndroidPermission(context, Manifest.permission.READ_CONTACTS)
     }
 
     @InstallIn(ViewModelComponent::class)
@@ -31,8 +32,16 @@ class ImportContactsModule {
     interface Bindings {
 
         @Binds
-        fun bindContactImporter(androidContactImporter: AndroidContactImporter): ContactImporter
+        fun bindContactImporter(impl: AndroidContactImporter): ContactImporter
 
+        @Binds
+        fun bindGetContactsUseCase(impl: GetContactsUseCaseImpl): GetContactsUseCase
+
+        @Binds
+        fun bindSavePlayersUseCase(impl : SavePlayersUseCaseImpl) : SavePlayersUseCase
+
+        @Binds
+        fun bindUiMapper(impl : ImportContactsUiModelMapperImpl) : ImportContactsUiModelMapper
     }
 
 

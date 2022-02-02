@@ -2,33 +2,30 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
-import com.flextrade.jfixture.annotations.Fixture
 import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
+import com.gregmcgowan.fivesorganiser.test_shared.createList
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Test
 
-class ImportContactsUiModelMapperTest {
-
-    //TODO use build list
-    @Fixture
-    lateinit var fixtContacts: List<Contact>
+class ImportContactsUiModelMapperImplTest {
 
     private lateinit var fixture: JFixture
-    private lateinit var sut: ImportContactsUiModelMapper
+
+    private lateinit var sut: ImportContactsUiModelMapperImpl
 
     @Before
     fun setUp() {
         fixture = JFixture()
-        FixtureAnnotations.initFixtures(this, fixture)
-        sut = ImportContactsUiModelMapper()
+        sut = ImportContactsUiModelMapperImpl()
     }
 
 
     @Test
     fun `map() when there are contacts and no selected contacts`() {
+        val fixtContacts: List<Contact> = fixture.createList()
         val output = sut.map(fixtContacts, emptySet())
 
         assertThat(output.showLoading, equalTo(false))
@@ -44,6 +41,7 @@ class ImportContactsUiModelMapperTest {
 
     @Test
     fun `map() when there are contacts and selected contacts`() {
+        val fixtContacts: List<Contact> = fixture.createList()
         val output = sut.map(fixtContacts, setOf(fixtContacts[1].contactId))
 
         assertThat(output.showLoading, equalTo(false))
