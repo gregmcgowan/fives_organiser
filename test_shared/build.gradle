@@ -19,9 +19,6 @@ dependencies {
 
     api "org.robolectric:robolectric:${versions.robolectric}"
 
-    api "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
-    api "org.mockito:mockito-core:${versions.mockito}"
-
     api 'com.google.truth:truth:0.42'
 
     api 'com.flextrade.jfixture:jfixture:2.7.2'

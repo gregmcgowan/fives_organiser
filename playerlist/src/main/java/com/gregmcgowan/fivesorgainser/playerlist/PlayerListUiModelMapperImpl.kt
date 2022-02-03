@@ -8,9 +8,13 @@ import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import javax.inject.Inject
 
-class PlayerListUiModelMapper @Inject constructor() {
+interface PlayerListUiModelMapper {
+    fun map(existingModel: UiModel<PlayerListUiModel>, updates: DataUpdate<Player>): UiModel<PlayerListUiModel>
+}
 
-    fun map(existingModel: UiModel<PlayerListUiModel>, updates: DataUpdate<Player>) =
+class PlayerListUiModelMapperImpl @Inject constructor() : PlayerListUiModelMapper {
+
+    override fun map(existingModel: UiModel<PlayerListUiModel>, updates: DataUpdate<Player>) =
             when (existingModel) {
                 is LoadingUiModel,
                 is ErrorUiModel -> ContentUiModel(PlayerListUiModel(mapPlayerList(updates.changes)))

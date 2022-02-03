@@ -14,7 +14,6 @@ class GetPlayerListUpdatesUseCaseImpl @Inject constructor(
         private val playerRepo: PlayerRepo
 ) : GetPlayerListUpdatesUseCase {
 
-    override suspend fun execute(): Flow<DataUpdate<Player>> =
-            playerRepo.playersUpdates()
+    override suspend fun execute(): Flow<DataUpdate<Player>> = playerRepo.playersUpdates()
 
 }

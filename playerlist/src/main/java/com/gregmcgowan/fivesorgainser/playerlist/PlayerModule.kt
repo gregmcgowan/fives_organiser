@@ -12,4 +12,7 @@ interface PlayerModule {
     @Binds
     fun bindGetPlayersUseCase(impl: GetPlayerListUpdatesUseCaseImpl): GetPlayerListUpdatesUseCase
 
+    @Binds
+    fun bindPLayerListUiModelMapper(impl : PlayerListUiModelMapperImpl) : PlayerListUiModelMapper
+
 }

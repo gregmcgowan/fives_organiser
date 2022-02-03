@@ -13,16 +13,16 @@ import org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.junit.Before
 import org.junit.Test
 
-class PlayerListUiModelMapperTest {
+class PlayerListUiModelMapperImplTest {
 
     private lateinit var fixture: JFixture
 
-    private lateinit var sut: PlayerListUiModelMapper
+    private lateinit var sut: PlayerListUiModelMapperImpl
 
     @Before
     fun setUp() {
         fixture = JFixture()
-        sut = PlayerListUiModelMapper()
+        sut = PlayerListUiModelMapperImpl()
     }
 
     @Test
