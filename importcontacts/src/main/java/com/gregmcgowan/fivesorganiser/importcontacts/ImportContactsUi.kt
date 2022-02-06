@@ -3,7 +3,14 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -22,7 +29,7 @@ import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
-import kotlinx.coroutines.flow.collect
+
 
 @Composable
 fun ImportContactsScreen(returnToPlayersScreen: () -> Unit) {
@@ -39,7 +46,9 @@ fun ImportContactsScreen(returnToPlayersScreen: () -> Unit) {
         importContactsViewModel.importContactsUiEvent.collect {
             when (it) {
                 ImportContactsUiEvent.CloseScreen -> returnToPlayersScreen.invoke()
-                ImportContactsUiEvent.RequestPermission -> { launcher.launch(Manifest.permission.READ_CONTACTS) }
+                ImportContactsUiEvent.RequestPermission -> {
+                    launcher.launch(Manifest.permission.READ_CONTACTS)
+                }
 
             }
         }
@@ -108,7 +117,9 @@ fun ContactItem(contact: ContactItemUiModel,
                 Checkbox(
                         checked = contact.isSelected,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                        onCheckedChange = { selected -> eventHandler.invoke(ContactSelectedEvent(contact.contactId, selected)) }
+                        onCheckedChange = { selected ->
+                            eventHandler.invoke(ContactSelectedEvent(contact.contactId, selected))
+                        }
                 )
                 Text(contact.name, modifier = Modifier.fillMaxWidth())
             }

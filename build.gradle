@@ -40,7 +40,7 @@ buildscript {
             'junit'                      : '4.12',
             'hamcrest'                   : '1.3',
             'robolectric'                : '4.0.1',
-            'detek'                      : '1.0.0.RC6-4'
+            'detek'                      : '1.19.0'
 
     ]
     ext.buildConfig = [
@@ -63,7 +63,7 @@ buildscript {
 }
 
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC6-4"
+    id "io.gitlab.arturbosch.detekt" version "1.19.0"
 }
 
 allprojects {
@@ -75,15 +75,6 @@ allprojects {
     }
 }
 
-detekt {
-    version = "${versions.detek}"
-    profile("main") {
-        input = "$projectDir/app"
-        config = "$projectDir/quality/detekt-config.yml"
-        filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
-        output = "$projectDir/quality/reports"
-    }
-}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -111,4 +102,10 @@ subprojects {
             }
         }
     }
+    apply plugin: "io.gitlab.arturbosch.detekt"
+    detekt {
+        version = "${versions.detek}"
+        config = files("$projectDir/../quality/detekt-config.yml")
+    }
+
 }

@@ -1,12 +1,15 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.BlurMaskFilter
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.graphics.Path
 import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
-
 
 class PlayerAvatar : View {
 

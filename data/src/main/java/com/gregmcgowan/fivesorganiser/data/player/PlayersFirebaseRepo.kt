@@ -62,6 +62,5 @@ class PlayersFirebaseRepo @Inject constructor(
             email = map[EMAIL_KEY] as String,
             contactId = map[CONTACT_ID] as Long
     )
-
-
 }
+

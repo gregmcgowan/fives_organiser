@@ -8,3 +8,4 @@ interface Authentication {
 
     fun getUserId(): String
 }
+

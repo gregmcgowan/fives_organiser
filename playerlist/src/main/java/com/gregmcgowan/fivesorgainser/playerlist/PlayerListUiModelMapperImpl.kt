@@ -1,9 +1,13 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ErrorUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
 import com.gregmcgowan.fivesorganiser.data.DataChange
-import com.gregmcgowan.fivesorganiser.data.DataChangeType.*
+import com.gregmcgowan.fivesorganiser.data.DataChangeType.Added
+import com.gregmcgowan.fivesorganiser.data.DataChangeType.Modified
+import com.gregmcgowan.fivesorganiser.data.DataChangeType.Removed
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import javax.inject.Inject
@@ -60,6 +64,4 @@ class PlayerListUiModelMapperImpl @Inject constructor() : PlayerListUiModelMappe
     }
 
     private fun map(player: Player) = PlayerListItemUiModel(player.playerId, player.name)
-
-
 }

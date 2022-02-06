@@ -56,9 +56,13 @@ fun NavigationGraph(modifier: Modifier = Modifier,
             modifier = modifier
     ) {
         composable(Destinations.PLAYER_LIST_ROUTE) {
-            PlayerList(openImportContacts = { navigationActions.navigateToNestedScreen(Destinations.IMPORT_CONTACTS_ROUTE) })
+            PlayerList(openImportContacts = {
+                navigationActions.navigateToNestedScreen(Destinations.IMPORT_CONTACTS_ROUTE)
+            })
         }
-        composable(Destinations.IMPORT_CONTACTS_ROUTE) { ImportContactsScreen (navigationActions.navigateBack) }
+        composable(Destinations.IMPORT_CONTACTS_ROUTE) {
+            ImportContactsScreen(navigationActions.navigateBack)
+        }
         composable(Destinations.MATCHES_LIST_ROUTE) { Matches() }
         composable(Destinations.RESULTS_LIST_ROUTE) { Results() }
     }

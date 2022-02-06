@@ -1,6 +1,5 @@
 package com.gregmcgowan.fivesorganiser.authentication
 
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -15,10 +14,8 @@ import kotlin.coroutines.resumeWithException
 private const val TIMEOUT = 10L
 
 class FirebaseAuthentication @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+        private val firebaseAuth: FirebaseAuth
 ) : Authentication {
-
-    private var addOnCompleteListenerTask: Task<AuthResult>? = null
 
     private var currentUserId: String? = null
     private lateinit var currentUser: FirebaseUser
@@ -42,25 +39,18 @@ class FirebaseAuthentication @Inject constructor(
     private suspend fun signInAnonymously(): AuthResult {
         return suspendCoroutine { cont ->
             firebaseAuth
-                .signInAnonymously()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        cont.resume(task.result!!)
-                    } else {
-                        cont.resumeWithException(task.exception as Throwable)
+                    .signInAnonymously()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            cont.resume(task.result!!)
+                        } else {
+                            cont.resumeWithException(task.exception as Throwable)
+                        }
                     }
-                }
-                .addOnFailureListener { exception ->
-                    cont.resumeWithException(exception)
-                }
+                    .addOnFailureListener { exception ->
+                        cont.resumeWithException(exception)
+                    }
         }
-    }
-
-    private fun taskCompletedAndFailed(): Boolean {
-        addOnCompleteListenerTask?.let {
-            return it.isComplete && !it.isSuccessful
-        }
-        return false
     }
 
     private fun handleCompletedResult(authResult: AuthResult) {

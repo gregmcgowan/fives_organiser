@@ -1,7 +1,11 @@
 package com.gregmcgowan.fivesorganiser.main
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -14,9 +18,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
-import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ErrorUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
 import com.gregmcgowan.fivesorganiser.navigation.NavigationActions
+import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
 
 @Composable
 fun MainScreen() {
@@ -43,7 +49,10 @@ fun MainContent(mainScreenUiModel: MainScreenUiModel,
                     val currentDestination = navBackStackEntry?.destination
                     mainScreenUiModel.mainTabScreens.forEach { screen ->
                         BottomNavigationItem(
-                                icon = { Icon(painter = painterResource(id = screen.iconRes), contentDescription = null) },
+                                icon = {
+                                    Icon(painter = painterResource(id = screen.iconRes),
+                                            contentDescription = null)
+                                },
                                 label = { Text(stringResource(screen.resourceId)) },
                                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                                 onClick = {

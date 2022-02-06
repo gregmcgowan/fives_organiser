@@ -1,7 +1,13 @@
 package com.gregmcgowan.fivesorganiser.data
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import com.gregmcgowan.fivesorganiser.authentication.Authentication
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow

@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.CloseScreen
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.RequestPermission
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.*
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -120,6 +122,4 @@ class ImportContactsViewModel @Inject constructor(
             Timber.e("Could not update contact [$contactId] to [$selected]")
         }
     }
-
-
 }
