@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 
+// TODO fix when moving to compose
+@Suppress("MagicNumber")
 class PlayerAvatar : View {
 
     private val path = Path()
