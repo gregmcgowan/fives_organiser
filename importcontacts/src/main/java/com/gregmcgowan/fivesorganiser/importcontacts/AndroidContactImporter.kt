@@ -33,7 +33,7 @@ class AndroidContactImporter @Inject constructor(
     private fun createContactList(cursor: Cursor): ArrayList<Contact> {
         cursor.moveToFirst()
         val contactList = ArrayList<Contact>()
-        for (index in 0 until cursor.count) {
+        (0 until cursor.count).forEach { _ ->
             val contact = createContact(cursor)
             if (contact != null) {
                 contactList.add(contact)
@@ -45,24 +45,22 @@ class AndroidContactImporter @Inject constructor(
     }
 
     private fun createContact(cursor: Cursor): Contact? {
-        val columnIndex = cursor.getColumnIndex(Contacts._ID)
-        if (columnIndex < 0) {
-            return null
-        }
-        val contactId = cursor.getInt(columnIndex).toString()
-
+        val contactId = safeGetString(cursor, Contacts._ID)
         val select = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
                 ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
                 ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
 
-        val phonesCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                select, arrayOf(contactId), null)
+        val phonesCursor = contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null, select, arrayOf(contactId), null
+        )
 
         if (phonesCursor != null && phonesCursor.count > 0) {
             phonesCursor.moveToFirst()
 
             val phoneNumber = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.NUMBER)
             val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+
             phonesCursor.close()
             //TODO actually add email address
             return Contact(name, phoneNumber, "", contactId.toLong())
