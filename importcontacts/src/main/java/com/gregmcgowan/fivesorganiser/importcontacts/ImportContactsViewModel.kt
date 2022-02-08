@@ -74,15 +74,14 @@ class ImportContactsViewModel @Inject constructor(
 
     private fun loadContacts() {
         viewModelScope.launch {
-            uiModel = try {
-                uiModelMapper.map(getContactsUseCase.execute(), selectedContacts)
-            } catch (exception: Exception) {
-                handleException(exception)
-            }
+            runCatching { uiModelMapper.map(getContactsUseCase.execute(), selectedContacts) }
+                    .onFailure { uiModel = handleException(it) }
+                    .onSuccess { uiModel = it }
+
         }
     }
 
-    private fun handleException(exception: Exception): ImportContactsUiModel {
+    private fun handleException(exception: Throwable): ImportContactsUiModel {
         Timber.e(exception)
         return uiModel.copy(
                 showLoading = false,
@@ -95,13 +94,12 @@ class ImportContactsViewModel @Inject constructor(
         uiModel = uiModel.copy(showLoading = true, showContent = false)
 
         viewModelScope.launch {
-            try {
-                savePlayersUseCase.execute(selectedContacts)
-                emitEvent(CloseScreen)
-            } catch (exception: Exception) {
-                Timber.e(exception)
-                uiModel = uiModel.copy(showLoading = false, showContent = true)
-            }
+            runCatching { savePlayersUseCase.execute(selectedContacts) }
+                    .onFailure {
+                        Timber.e(it)
+                        uiModel = uiModel.copy(showLoading = false, showContent = true)
+                    }
+                    .onSuccess { emitEvent(CloseScreen) }
         }
     }
 

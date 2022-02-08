@@ -12,6 +12,7 @@ import com.gregmcgowan.fivesorganiser.test_shared.CoroutinesTestRule
 import com.gregmcgowan.fivesorganiser.test_shared.build
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runCurrent
@@ -100,6 +101,7 @@ class PlayerListViewModelTest {
         val fakePlayerListUiModelMapper = FakePlayerListUiModelMapperImpl()
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
         assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
+        runCurrent()
 
         // setup and verifying error
         fakeGetPlayersUseCase.exception = RuntimeException()
@@ -129,7 +131,7 @@ class PlayerListViewModelTest {
 
         lateinit var exception: RuntimeException
 
-        override suspend fun execute(): Flow<DataUpdate<Player>> {
+        override suspend fun execute(): Flow<DataUpdate<Player>> = flow {
             throw exception
         }
 
