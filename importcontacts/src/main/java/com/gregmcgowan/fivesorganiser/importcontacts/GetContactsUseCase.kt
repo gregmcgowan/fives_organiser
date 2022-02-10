@@ -1,7 +1,6 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
-import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,12 +17,12 @@ class GetContactsUseCaseImpl @Inject constructor(
 
     override suspend fun execute(): List<Contact> =
             withContext(coroutineDispatchers.io) {
-                filterContacts(playersRepo.getPlayers(), contactsImporter.getAllContacts())
-            }
+                val alreadyAddedContacts = playersRepo.getPlayers()
+                        .map { it.contactId }
+                        .toSet()
 
-    private fun filterContacts(players: List<Player>, contacts: List<Contact>): List<Contact> {
-        val alreadyAddedContacts = players.map { it.contactId }.toSet()
-        return contacts.filter { !alreadyAddedContacts.contains(it.contactId) }
-    }
+                contactsImporter.getAllContacts()
+                        .filter { !alreadyAddedContacts.contains(it.contactId) }
+            }
 
 }

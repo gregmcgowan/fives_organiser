@@ -47,13 +47,10 @@ class ImportContactsViewModel @Inject constructor(
         }
     }
 
-    fun handleEvent(importContactsEvent: ImportContactsUserEvent) {
-        when (importContactsEvent) {
+    fun handleEvent(event: ImportContactsUserEvent) {
+        when (event) {
             is AddButtonPressedEvent -> onAddButtonPressed()
-            is ContactSelectedEvent -> updateContactSelectedStatus(
-                    importContactsEvent.contactId,
-                    importContactsEvent.selected
-            )
+            is ContactSelectedEvent -> updateContactSelectedStatus(event.contactId, event.selected)
             is ContactPermissionGrantedEvent -> loadContacts()
         }
     }
