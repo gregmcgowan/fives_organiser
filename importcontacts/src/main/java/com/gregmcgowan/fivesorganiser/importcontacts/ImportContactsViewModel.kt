@@ -6,52 +6,44 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.CloseScreen
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiEvent.RequestPermission
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ErrorUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ImportContactsViewModel @Inject constructor(
-        private val uiModelMapper: ImportContactsUiModelMapper,
+        private val uiStateMapper: ImportContactsUiStateMapper,
         private val savePlayersUseCase: SavePlayersUseCase,
         private val getContactsUseCase: GetContactsUseCase,
         contactsPermission: Permission
 ) : ViewModel() {
 
-    var uiModel: ImportContactsUiModel by mutableStateOf(
-            value = ImportContactsUiModel(
-                    contacts = emptyList(),
-                    showLoading = true,
-                    showContent = false,
-                    importContactsButtonEnabled = false
-            ))
+    var uiState: ImportContactsUiState by mutableStateOf(value = LoadingUiState)
         private set
 
-    val importContactsUiEvent: Flow<ImportContactsUiEvent>
-        get() = _importContactsUiEvent.asSharedFlow()
-
-    private val _importContactsUiEvent = MutableSharedFlow<ImportContactsUiEvent>()
-
     private val selectedContacts: Set<Long>
-        get() = uiModel.contacts
-                .filter { it.isSelected }
-                .map { it.contactId }
-                .toSet()
+        get() {
+            return uiState.safeContacts
+                    .filter { it.isSelected }
+                    .map { it.contactId }
+                    .toSet()
+
+        }
 
     init {
         if (contactsPermission.hasPermission()) {
             loadContacts()
         } else {
-            emitEvent(RequestPermission)
+            uiState = ShowRequestPermissionDialogUiState
         }
     }
 
@@ -66,53 +58,40 @@ class ImportContactsViewModel @Inject constructor(
         }
     }
 
-    private fun emitEvent(importContactsEvent: ImportContactsUiEvent) {
-        viewModelScope.launch {
-            _importContactsUiEvent.emit(importContactsEvent)
-        }
-    }
-
     private fun loadContacts() {
         viewModelScope.launch {
-            runCatching { uiModelMapper.map(getContactsUseCase.execute(), selectedContacts) }
-                    .onFailure { uiModel = handleException(it) }
-                    .onSuccess { uiModel = it }
+            runCatching { uiStateMapper.map(getContactsUseCase.execute(), selectedContacts) }
+                    .onFailure { uiState = handleException(it) }
+                    .onSuccess { uiState = it }
 
         }
     }
 
-    private fun handleException(exception: Throwable): ImportContactsUiModel {
+    private fun handleException(exception: Throwable): ImportContactsUiState {
         Timber.e(exception)
-        return uiModel.copy(
-                showLoading = false,
-                showContent = false,
-                errorMessage = R.string.generic_error_message
-        )
+        return ErrorUiState(errorMessage = R.string.generic_error_message)
     }
 
     private fun onAddButtonPressed() {
-        uiModel = uiModel.copy(showLoading = true, showContent = false)
+        uiState = LoadingUiState
 
         viewModelScope.launch {
             runCatching { savePlayersUseCase.execute(selectedContacts) }
-                    .onFailure {
-                        Timber.e(it)
-                        uiModel = uiModel.copy(showLoading = false, showContent = true)
-                    }
-                    .onSuccess { emitEvent(CloseScreen) }
+                    .onFailure { uiState = handleException(it) }
+                    .onSuccess { uiState = TerminalUiState }
         }
     }
 
 
     private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
-        val index = uiModel.contacts.indexOfFirst { it.contactId == contactId }
+        val contacts: MutableList<ContactItemUiState> = uiState.safeContacts.toMutableList()
+        val index = contacts.indexOfFirst { it.contactId == contactId }
         if (index != -1) {
-            val updatedList = uiModel.contacts
-                    .toMutableList()
+            val updatedList = contacts
                     .apply {
                         this[index] = this[index].copy(isSelected = selected)
                     }
-            uiModel = uiModel.copy(
+            uiState = ContactsListUiState(
                     contacts = updatedList,
                     importContactsButtonEnabled = updatedList.any { it.isSelected }
             )
@@ -120,4 +99,6 @@ class ImportContactsViewModel @Inject constructor(
             Timber.e("Could not update contact [$contactId] to [$selected]")
         }
     }
+
+
 }

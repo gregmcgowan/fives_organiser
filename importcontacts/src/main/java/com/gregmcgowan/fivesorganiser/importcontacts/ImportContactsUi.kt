@@ -17,16 +17,21 @@ import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ErrorUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 
@@ -34,41 +39,38 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Con
 @Composable
 fun ImportContactsScreen(returnToPlayersScreen: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
-    val launcher = rememberLauncherForActivityResult(RequestPermission()) { result ->
-        if (result) {
-            importContactsViewModel.handleEvent(ContactPermissionGrantedEvent)
-        } else {
-            TODO("show some error UI")
-        }
-    }
-    // Not sure about using view model as the key here
-    LaunchedEffect(key1 = importContactsViewModel) {
-        importContactsViewModel.importContactsUiEvent.collect {
-            when (it) {
-                ImportContactsUiEvent.CloseScreen -> returnToPlayersScreen.invoke()
-                ImportContactsUiEvent.RequestPermission -> {
-                    launcher.launch(Manifest.permission.READ_CONTACTS)
-                }
-
-            }
-        }
-    }
-
-    ImportContactsScreen(importContactsViewModel.uiModel) { event ->
-        importContactsViewModel.handleEvent(event)
-
-    }
+    ImportContactsScreen(
+            importContactsViewModel.uiState,
+            userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
+            returnToPlayersScreen = returnToPlayersScreen
+    )
 }
 
 
 @Composable
-private fun ImportContactsScreen(importContactsUiModel: ImportContactsUiModel,
-                                 eventHandler: (ImportContactsUserEvent) -> Unit) {
-    when {
-        importContactsUiModel.showContent -> {
+private fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
+                                 userEventHandler: (ImportContactsUserEvent) -> Unit,
+                                 returnToPlayersScreen: () -> Unit) {
+    val launcher = rememberLauncherForActivityResult(RequestPermission()) { result ->
+        if (result) {
+            userEventHandler.invoke(ContactPermissionGrantedEvent)
+        } else {
+            TODO("show some error UI")
+        }
+    }
+    when (importContactsUiState) {
+        is LoadingUiState -> Loading()
+        is ShowRequestPermissionDialogUiState -> {
+            SideEffect { launcher.launch(Manifest.permission.READ_CONTACTS) }
+        }
+        is ContactsListUiState -> {
             Column {
                 Row(modifier = Modifier.weight(1.0f)) {
-                    ContactList(importContactsUiModel.contacts, eventHandler)
+                    LazyColumn {
+                        items(importContactsUiState.contacts) { contact ->
+                            ContactItem(contact, userEventHandler)
+                        }
+                    }
                 }
                 Row(horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
@@ -76,37 +78,28 @@ private fun ImportContactsScreen(importContactsUiModel: ImportContactsUiModel,
                                 .padding(top = 8.dp, bottom = 8.dp)) {
                     Button(
                             content = { Text(stringResource(id = R.string.import_contacts_add)) },
-                            onClick = { eventHandler.invoke(ImportContactsUserEvent.AddButtonPressedEvent) },
-                            enabled = importContactsUiModel.importContactsButtonEnabled
+                            onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
+                            enabled = importContactsUiState.importContactsButtonEnabled
                     )
                 }
             }
         }
-        importContactsUiModel.showLoading -> Loading()
-        importContactsUiModel.errorMessage != NO_STRING_RES_ID -> {
+        is ErrorUiState -> {
             Box(modifier = Modifier
                     .fillMaxSize()
                     .wrapContentSize(Alignment.Center)) {
-                Text(stringResource(id = importContactsUiModel.errorMessage))
+                Text(stringResource(id = importContactsUiState.errorMessage))
             }
         }
-    }
-}
-
-
-@Composable
-fun ContactList(contacts: List<ContactItemUiModel>,
-                eventHandler: (ImportContactsUserEvent) -> Unit) {
-    LazyColumn {
-        items(contacts) { contact ->
-            ContactItem(contact, eventHandler)
+        TerminalUiState -> {
+            returnToPlayersScreen.invoke()
         }
     }
 }
 
 
 @Composable
-fun ContactItem(contact: ContactItemUiModel,
+fun ContactItem(contact: ContactItemUiState,
                 eventHandler: (ImportContactsUserEvent) -> Unit) {
     Row(
             modifier = Modifier
@@ -131,17 +124,15 @@ fun ContactItem(contact: ContactItemUiModel,
 fun Preview() {
     AppTheme {
         ImportContactsScreen(
-                ImportContactsUiModel(
+                ContactsListUiState(
                         listOf(
-                                ContactItemUiModel(name = "Greg", isSelected = true, contactId = 1),
-                                ContactItemUiModel(name = "Frances", isSelected = true, contactId = 2),
-                                ContactItemUiModel(name = "Joe Wicks", isSelected = true, contactId = 3)
+                                ContactItemUiState(name = "Greg", isSelected = true, contactId = 1),
+                                ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
+                                ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3)
                         ),
-                        showContent = true,
-                        showLoading = false,
                         importContactsButtonEnabled = true,
-                        errorMessage = R.string.generic_error_message
                 ),
-        ) { }
+                { }, { }
+        )
     }
 }

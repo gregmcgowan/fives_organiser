@@ -12,21 +12,24 @@ sealed class ImportContactsUserEvent {
                                val selected: Boolean) : ImportContactsUserEvent()
 }
 
-sealed class ImportContactsUiEvent {
-    object RequestPermission : ImportContactsUiEvent()
-    object CloseScreen : ImportContactsUiEvent()
+
+sealed class ImportContactsUiState {
+
+    object ShowRequestPermissionDialogUiState : ImportContactsUiState()
+
+    object LoadingUiState : ImportContactsUiState()
+
+    class ErrorUiState(@StringRes val errorMessage: Int = NO_STRING_RES_ID) : ImportContactsUiState()
+
+    class ContactsListUiState(val contacts: List<ContactItemUiState>,
+                              val importContactsButtonEnabled: Boolean) : ImportContactsUiState()
+
+    object TerminalUiState : ImportContactsUiState()
 }
 
-data class ImportContactsUiModel(
-        val contacts: List<ContactItemUiModel>,
-        val showLoading: Boolean,
-        val showContent: Boolean,
-        val importContactsButtonEnabled: Boolean,
-        @StringRes val errorMessage: Int = NO_STRING_RES_ID
-)
-
-data class ContactItemUiModel(
+data class ContactItemUiState(
         val name: String,
         val isSelected: Boolean,
         val contactId: Long
 )
+
