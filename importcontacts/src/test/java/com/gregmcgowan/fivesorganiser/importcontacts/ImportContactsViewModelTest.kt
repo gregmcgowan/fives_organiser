@@ -68,16 +68,11 @@ class ImportContactsViewModelTest {
         setupFakes(uiState = fixtInitialUiModel, permission = true)
         setupSut()
 
-        // verify loading UI
-        val actualLoadingOutput = sut.uiState
-        assertThat(actualLoadingOutput, equalTo(LoadingUiState))
+        assertThat(sut.uiState, equalTo(LoadingUiState))
 
-        // run
         runCurrent()
 
-        // verify content
-        val actualContentOutput = sut.uiState
-        assertThat(actualContentOutput, equalTo(fixtInitialUiModel))
+        assertThat(sut.uiState, equalTo(fixtInitialUiModel))
     }
 
     @Test
@@ -258,7 +253,7 @@ class ImportContactsViewModelTest {
         sut.handleEvent(AddButtonPressedEvent)
         assertThat(sut.uiState, equalTo(LoadingUiState))
 
-        // run cour
+        // run
         runCurrent()
         assertThat(sut.uiState, samePropertyValuesAs(ErrorUiState(R.string.generic_error_message)))
     }
