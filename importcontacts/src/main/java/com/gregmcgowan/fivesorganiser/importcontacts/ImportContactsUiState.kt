@@ -22,7 +22,7 @@ sealed class ImportContactsUiState {
     class ErrorUiState(@StringRes val errorMessage: Int = NO_STRING_RES_ID) : ImportContactsUiState()
 
     class ContactsListUiState(val contacts: List<ContactItemUiState>,
-                              val importContactsButtonEnabled: Boolean) : ImportContactsUiState()
+                              val addContactsButtonEnabled: Boolean) : ImportContactsUiState()
 
     object TerminalUiState : ImportContactsUiState()
 }

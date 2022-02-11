@@ -278,7 +278,7 @@ class ImportContactsViewModelTest {
     private fun createInitialUiModel(): ContactsListUiState =
             ContactsListUiState(
                     contacts = fixture.createList(),
-                    importContactsButtonEnabled = false
+                    addContactsButtonEnabled = false
             )
 
     private fun createSelectedContacts(initialUiModel: ImportContactsUiState,

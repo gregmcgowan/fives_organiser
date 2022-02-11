@@ -79,7 +79,7 @@ private fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
                     Button(
                             content = { Text(stringResource(id = R.string.import_contacts_add)) },
                             onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
-                            enabled = importContactsUiState.importContactsButtonEnabled
+                            enabled = importContactsUiState.addContactsButtonEnabled
                     )
                 }
             }
@@ -130,7 +130,7 @@ fun Preview() {
                                 ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
                                 ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3)
                         ),
-                        importContactsButtonEnabled = true,
+                        addContactsButtonEnabled = true,
                 ),
                 { }, { }
         )

@@ -37,7 +37,6 @@ class ImportContactsViewModel @Inject constructor(
                     .filter { it.isSelected }
                     .map { it.contactId }
                     .toSet()
-
         }
 
     init {
@@ -92,12 +91,10 @@ class ImportContactsViewModel @Inject constructor(
         val index = contacts.indexOfFirst { it.contactId == contactId }
         if (index != -1) {
             val updatedList = contacts
-                    .apply {
-                        this[index] = this[index].copy(isSelected = selected)
-                    }
+                    .apply { this[index] = this[index].copy(isSelected = selected) }
             uiState = ContactsListUiState(
                     contacts = updatedList,
-                    importContactsButtonEnabled = updatedList.any { it.isSelected }
+                    addContactsButtonEnabled = updatedList.any { it.isSelected }
             )
         } else {
             Timber.e("Could not update contact [$contactId] to [$selected]")

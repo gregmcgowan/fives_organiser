@@ -26,7 +26,7 @@ class ImportContactsUiStateMapperImplTest {
         val fixtContacts: List<Contact> = fixture.createList()
         val output = sut.map(fixtContacts, emptySet())
 
-        assertThat(output.importContactsButtonEnabled, equalTo(false))
+        assertThat(output.addContactsButtonEnabled, equalTo(false))
         assertThat(output.contacts, hasSize(3))
         assertContact(fixtContacts[0], false, output.contacts[0])
         assertContact(fixtContacts[1], false, output.contacts[1])
@@ -39,7 +39,7 @@ class ImportContactsUiStateMapperImplTest {
         val fixtContacts: List<Contact> = fixture.createList()
         val output = sut.map(fixtContacts, setOf(fixtContacts[1].contactId))
 
-        assertThat(output.importContactsButtonEnabled, equalTo(true))
+        assertThat(output.addContactsButtonEnabled, equalTo(true))
         assertThat(output.contacts, hasSize(3))
         assertContact(fixtContacts[0], false, output.contacts[0])
         assertContact(fixtContacts[1], true, output.contacts[1])
@@ -50,7 +50,7 @@ class ImportContactsUiStateMapperImplTest {
     fun `map() when there are no contacts`() {
         val output = sut.map(emptyList(), emptySet())
 
-        assertThat(output.importContactsButtonEnabled, equalTo(false))
+        assertThat(output.addContactsButtonEnabled, equalTo(false))
         assertThat(output.contacts, hasSize(0))
 
     }
