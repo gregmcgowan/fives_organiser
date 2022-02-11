@@ -17,6 +17,7 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Con
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.IllegalStateException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,7 +58,7 @@ class ImportContactsViewModel @Inject constructor(
 
     private fun loadContacts() {
         viewModelScope.launch {
-            runCatching { uiStateMapper.map(getContactsUseCase.execute(), selectedContacts) }
+            runCatching { uiStateMapper.map(getContactsUseCase.execute(), emptySet()) }
                     .onFailure { uiState = handleException(it) }
                     .onSuccess { uiState = it }
 
@@ -70,10 +71,16 @@ class ImportContactsViewModel @Inject constructor(
     }
 
     private fun onAddButtonPressed() {
-        uiState = LoadingUiState
-
         viewModelScope.launch {
-            runCatching { savePlayersUseCase.execute(selectedContacts) }
+            runCatching {
+                val contactsToAdd: Set<Long> = selectedContacts
+                uiState = LoadingUiState
+
+                if (contactsToAdd.isEmpty()) {
+                    throw IllegalStateException("Attempting to save with no contacts selected")
+                }
+                savePlayersUseCase.execute(contactsToAdd)
+            }
                     .onFailure { uiState = handleException(it) }
                     .onSuccess { uiState = TerminalUiState }
         }
