@@ -70,11 +70,10 @@ class ImportContactsViewModel @Inject constructor(
     }
 
     private fun onAddButtonPressed() {
+        val contactsToAdd: Set<Long> = selectedContacts
+        uiState = LoadingUiState
         viewModelScope.launch {
             runCatching {
-                val contactsToAdd: Set<Long> = selectedContacts
-                uiState = LoadingUiState
-
                 if (contactsToAdd.isEmpty()) {
                     throw IllegalStateException("Attempting to save with no contacts selected")
                 }
