@@ -15,6 +15,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
+import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
@@ -70,6 +72,13 @@ fun PlayerListContent(
         eventHandler: (PlayerListUserEvent) -> Unit
 ) {
     Scaffold(
+            topBar = {
+                TopAppBar(
+                        title = {
+                            Text(text = stringResource(id = R.string.player_list_title))
+                        }
+                )
+            },
             content = {
                 if (uiModel.players.isNotEmpty()) {
                     LazyColumn {
@@ -134,34 +143,36 @@ fun PlayerListItem(player: PlayerListItemUiModel) {
 @Preview
 @Composable
 fun PlayerListPreviewContent() {
-    PlayerListScreen(
-            ContentUiModel(
-                    content =
-                    PlayerListUiModel(
-                            players =
-                            listOf(
-                                    PlayerListItemUiModel("1", "reg"),
-                                    PlayerListItemUiModel("1", "reg"),
-                                    PlayerListItemUiModel("1", "reg"),
-                                    PlayerListItemUiModel("1", "reg")
-                            )
-                    )
-            )
-    ) {
-
+    AppTheme {
+        PlayerListScreen(
+                ContentUiModel(
+                        content =
+                        PlayerListUiModel(
+                                players =
+                                listOf(
+                                        PlayerListItemUiModel("1", "reg"),
+                                        PlayerListItemUiModel("1", "reg"),
+                                        PlayerListItemUiModel("1", "reg"),
+                                        PlayerListItemUiModel("1", "reg")
+                                )
+                        )
+                )
+        ) {}
     }
 }
 
 @Preview
 @Composable
 fun PlayerListPreviewEmpty() {
-    PlayerListScreen(
-            ContentUiModel(
-                    content =
-                    PlayerListUiModel(players = emptyList())
-            )
-    ) {
+    AppTheme {
+        PlayerListScreen(
+                ContentUiModel(
+                        content =
+                        PlayerListUiModel(players = emptyList())
+                )
+        ) {
 
+        }
     }
 }
 

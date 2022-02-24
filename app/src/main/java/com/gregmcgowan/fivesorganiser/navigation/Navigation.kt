@@ -21,11 +21,13 @@ object Destinations {
     const val IMPORT_CONTACTS_ROUTE = "import_contacts"
 }
 
-class NavigationActions(private val navController: NavHostController) {
+class NavigationActions(private val navController: NavHostController,
+                        private val nestedScreenShown : (Boolean) -> Unit) {
 
 
     val navigateToMainScreenTab: (String) -> Unit = { route ->
         navController.navigate(route) {
+            nestedScreenShown(false)
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
@@ -36,10 +38,13 @@ class NavigationActions(private val navController: NavHostController) {
 
     val navigateToNestedScreen: (String) -> Unit = { route ->
         navController.navigate(route)
+        nestedScreenShown(true)
         // TODO do we need anything else here
     }
 
     val navigateBack: () -> Unit = {
+        // TODO fix
+        nestedScreenShown(false)
         navController.popBackStack()
     }
 

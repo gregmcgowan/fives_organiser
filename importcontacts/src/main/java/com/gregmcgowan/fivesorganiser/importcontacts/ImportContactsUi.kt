@@ -1,48 +1,65 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
 import android.Manifest
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 
 
 @Composable
-fun ImportContactsScreen(returnToPlayersScreen: () -> Unit) {
+fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
     ImportContactsScreen(
             importContactsViewModel.uiState,
             userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
-            returnToPlayersScreen = returnToPlayersScreen
+            exitScreenHandler = exitScreenHandler
     )
 }
 
@@ -50,7 +67,7 @@ fun ImportContactsScreen(returnToPlayersScreen: () -> Unit) {
 @Composable
 private fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
                                  userEventHandler: (ImportContactsUserEvent) -> Unit,
-                                 returnToPlayersScreen: () -> Unit) {
+                                 exitScreenHandler: () -> Unit) {
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { result ->
         if (result) {
             userEventHandler.invoke(ContactPermissionGrantedEvent)
@@ -58,43 +75,75 @@ private fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
             TODO("show some error UI")
         }
     }
+    BackHandler(onBack = exitScreenHandler)
     when (importContactsUiState) {
         is LoadingUiState -> Loading()
         is ShowRequestPermissionDialogUiState -> {
             SideEffect { launcher.launch(Manifest.permission.READ_CONTACTS) }
         }
         is ContactsListUiState -> {
-            Column {
-                Row(modifier = Modifier.weight(1.0f)) {
-                    LazyColumn {
-                        items(importContactsUiState.contacts) { contact ->
-                            ContactItem(contact, userEventHandler)
-                        }
-                    }
-                }
-                Row(horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 8.dp)) {
-                    Button(
-                            content = { Text(stringResource(id = R.string.import_contacts_add)) },
-                            onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
-                            enabled = importContactsUiState.addContactsButtonEnabled
-                    )
-                }
-            }
+            ContactListUi(exitScreenHandler, importContactsUiState, userEventHandler)
+
         }
         is ErrorUiState -> {
             Box(modifier = Modifier
                     .fillMaxSize()
+                    .padding(start = 8.dp, end = 8.dp)
                     .wrapContentSize(Alignment.Center)) {
                 Text(stringResource(id = importContactsUiState.errorMessage))
             }
         }
-        TerminalUiState -> {
-            returnToPlayersScreen.invoke()
+        is TerminalUiState -> {
+            SideEffect { exitScreenHandler.invoke() }
         }
     }
+}
+
+@Composable
+private fun ContactListUi(exitScreenHandler: () -> Unit, importContactsUiState: ContactsListUiState,
+                          userEventHandler: (ImportContactsUserEvent) -> Unit) {
+    Scaffold(
+            topBar = {
+                TopAppBar(
+                        title = {
+                            Text(text = stringResource(id = R.string.import_contacts_title))
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = exitScreenHandler) {
+                                Icon(
+                                        imageVector = Icons.Default.ArrowBack,
+                                        contentDescription =
+                                        stringResource(R.string.navigate_up_content_description),
+                                )
+                            }
+                        }
+                )
+            },
+            content = {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(modifier = Modifier.weight(1.0f)) {
+                        LazyColumn {
+                            items(importContactsUiState.contacts) { contact ->
+                                ContactItem(contact, userEventHandler)
+                            }
+                        }
+                    }
+                    Row(horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                    .padding(start = 48.dp, end = 48.dp, bottom = 16.dp)
+                                    .fillMaxWidth()
+                    ) {
+                        AnimatedVisibility(importContactsUiState.addContactsButtonEnabled) {
+                            Button(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    content = { Text(stringResource(id = R.string.import_contacts_add)) },
+                                    onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
+                            )
+                        }
+
+                    }
+                }
+            })
 }
 
 
@@ -104,19 +153,54 @@ fun ContactItem(contact: ContactItemUiState,
     Row(
             modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp, bottom = 4.dp),
+                    .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             content = {
+                BiggerBadge(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        content = {
+                            Text(
+                                    text = contact.name.substring(0, 1).uppercase(),
+                                    fontSize = 20.sp,
+                                    color = Color.White
+                            )
+                        },
+                )
+                Text(
+                        text = contact.name,
+                        modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp))
                 Checkbox(
                         checked = contact.isSelected,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                        modifier = Modifier.padding(start = 16.dp),
                         onCheckedChange = { selected ->
                             eventHandler.invoke(ContactSelectedEvent(contact.contactId, selected))
                         }
                 )
-                Text(contact.name, modifier = Modifier.fillMaxWidth())
             }
     )
+}
+
+@Composable
+fun BiggerBadge(modifier: Modifier = Modifier,
+                backgroundColor: Color,
+                radius: Dp = 18.dp,
+                content: @Composable (RowScope.() -> Unit)? = null) {
+    val shape = RoundedCornerShape(radius)
+    Row(
+            modifier = modifier
+                    .defaultMinSize(minWidth = radius * 2, minHeight = radius * 2)
+                    .background(color = backgroundColor, shape = shape)
+                    .clip(shape)
+                    .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+    ) {
+        if (content != null) {
+            content()
+        }
+    }
 }
 
 @Preview

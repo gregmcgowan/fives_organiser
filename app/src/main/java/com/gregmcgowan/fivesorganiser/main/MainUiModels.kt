@@ -10,6 +10,7 @@ import com.gregmcgowan.fivesorganiser.navigation.Destinations
 
 data class MainScreenUiModel(
         val screenToShow: MainScreen,
+        val showBottomNavigation : Boolean = true,
         val mainTabScreens: List<MainScreen> = listOf(PlayersListScreen, MatchesListScreen, ResultsListScreen)
 )
 

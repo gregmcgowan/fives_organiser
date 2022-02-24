@@ -1,5 +1,8 @@
 package com.gregmcgowan.fivesorganiser.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -27,8 +30,8 @@ import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
 @Composable
 fun MainScreen() {
     val navController: NavHostController = rememberNavController()
-    val navigationActions = NavigationActions(navController)
     val mainViewModel: MainViewModel = hiltViewModel()
+    val navigationActions = NavigationActions(navController, mainViewModel::nestedScreenShown)
 
     when (val uiModel = mainViewModel.uiModel) {
         is LoadingUiModel -> Loading()
@@ -44,23 +47,27 @@ fun MainContent(mainScreenUiModel: MainScreenUiModel,
 
     Scaffold(
             bottomBar = {
-                BottomNavigation {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-                    mainScreenUiModel.mainTabScreens.forEach { screen ->
-                        BottomNavigationItem(
-                                icon = {
-                                    Icon(painter = painterResource(id = screen.iconRes),
-                                            contentDescription = null)
-                                },
-                                label = { Text(stringResource(screen.resourceId)) },
-                                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                onClick = {
-                                    navigationActions.navigateToMainScreenTab(screen.route)
-                                }
-                        )
+                AnimatedVisibility(visible = mainScreenUiModel.showBottomNavigation,
+                        enter = fadeIn(), exit = fadeOut()) {
+                    BottomNavigation {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
+                        mainScreenUiModel.mainTabScreens.forEach { screen ->
+                            BottomNavigationItem(
+                                    icon = {
+                                        Icon(painter = painterResource(id = screen.iconRes),
+                                                contentDescription = null)
+                                    },
+                                    label = { Text(stringResource(screen.resourceId)) },
+                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                    onClick = {
+                                        navigationActions.navigateToMainScreenTab(screen.route)
+                                    }
+                            )
+                        }
                     }
                 }
+
             }
     ) { innerPadding ->
         NavigationGraph(
@@ -71,7 +78,6 @@ fun MainContent(mainScreenUiModel: MainScreenUiModel,
         )
     }
 }
-
 
 
 

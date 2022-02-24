@@ -6,9 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -25,8 +27,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun nestedScreenShown(nestedScreenShown: Boolean) {
+        if (uiModel is ContentUiModel) {
+            uiModel = ContentUiModel((uiModel as ContentUiModel<MainScreenUiModel>)
+                    .content.copy(showBottomNavigation = !nestedScreenShown))
+        }
+
+    }
+
     private fun updateUiModel(selectedScreen: MainScreen) {
-        uiModel = UiModel.ContentUiModel(MainScreenUiModel(selectedScreen))
+        uiModel = ContentUiModel(MainScreenUiModel(selectedScreen))
     }
 
 }
