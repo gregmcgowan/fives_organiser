@@ -58,7 +58,7 @@ class ImportContactsUiStateMapperImplTest {
     private fun assertContact(contact: Contact,
                               isSelected: Boolean,
                               actual: ContactItemUiState) {
-        val expectedUiModel = ContactItemUiState(contact.name, isSelected, contact.contactId)
-        assertThat(actual, equalTo(expectedUiModel))
+        val expectedUiState = ContactItemUiState(contact.name, isSelected, contact.contactId)
+        assertThat(actual, equalTo(expectedUiState))
     }
 }

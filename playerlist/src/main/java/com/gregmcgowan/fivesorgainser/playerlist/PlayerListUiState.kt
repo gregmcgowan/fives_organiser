@@ -1,11 +1,11 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
 
-data class PlayerListUiModel(
-        val players: List<PlayerListItemUiModel>
+data class PlayerListUiState(
+        val players: List<PlayerListItemUiState>
 )
 
-data class PlayerListItemUiModel(
+data class PlayerListItemUiState(
         val id: String,
         val name: String
 )

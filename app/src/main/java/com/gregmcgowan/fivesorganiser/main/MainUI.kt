@@ -21,9 +21,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ErrorUiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.navigation.NavigationActions
 import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
 
@@ -33,26 +33,26 @@ fun MainScreen() {
     val mainViewModel: MainViewModel = hiltViewModel()
     val navigationActions = NavigationActions(navController, mainViewModel::nestedScreenShown)
 
-    when (val uiModel = mainViewModel.uiModel) {
-        is LoadingUiModel -> Loading()
-        is ErrorUiModel -> ErrorMessage(uiModel)
-        is ContentUiModel -> MainContent(uiModel.content, navController, navigationActions)
+    when (val uiModel = mainViewModel.uiState) {
+        is LoadingUiState -> Loading()
+        is ErrorUiState -> ErrorMessage(uiModel)
+        is ContentUiState -> MainContent(uiModel.content, navController, navigationActions)
     }
 }
 
 @Composable
-fun MainContent(mainScreenUiModel: MainScreenUiModel,
+fun MainContent(mainScreenUiState: MainScreenUiState,
                 navController: NavHostController,
                 navigationActions: NavigationActions) {
 
     Scaffold(
             bottomBar = {
-                AnimatedVisibility(visible = mainScreenUiModel.showBottomNavigation,
+                AnimatedVisibility(visible = mainScreenUiState.showBottomNavigation,
                         enter = fadeIn(), exit = fadeOut()) {
                     BottomNavigation {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination
-                        mainScreenUiModel.mainTabScreens.forEach { screen ->
+                        mainScreenUiState.mainTabScreens.forEach { screen ->
                             BottomNavigationItem(
                                     icon = {
                                         Icon(painter = painterResource(id = screen.iconRes),
@@ -71,7 +71,7 @@ fun MainContent(mainScreenUiModel: MainScreenUiModel,
             }
     ) { innerPadding ->
         NavigationGraph(
-                startDestination = mainScreenUiModel.screenToShow.route,
+                startDestination = mainScreenUiState.screenToShow.route,
                 modifier = Modifier.padding(innerPadding),
                 navController = navController,
                 navigationActions = navigationActions

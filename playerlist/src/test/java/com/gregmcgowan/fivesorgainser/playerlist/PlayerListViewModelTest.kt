@@ -2,8 +2,8 @@ package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.flextrade.jfixture.FixtureAnnotations
 import com.flextrade.jfixture.JFixture
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.*
+import com.gregmcgowan.fivesorganiser.core.ui.UiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.*
 import com.gregmcgowan.fivesorganiser.data.DataChange
 import com.gregmcgowan.fivesorganiser.data.DataChangeType
 import com.gregmcgowan.fivesorganiser.data.DataUpdate
@@ -47,67 +47,67 @@ class PlayerListViewModelTest {
     @Test
     fun `init() loads player list when there are players to load`() = runTest {
         val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
-        val fakePlayerListUiModelMapper = FakePlayerListUiModelMapperImpl()
+        val fakePlayerListUiModelMapper = FakePlayerListUiStateMapperImpl()
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
         runCurrent()
 
-        assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
+        assertThat(sut.uiState, instanceOf(LoadingUiState::class.java))
 
-        // setup first ui model
-        val expected = ContentUiModel(fixture.build<PlayerListUiModel>())
-        fakePlayerListUiModelMapper.model = expected
+        // setup first ui state
+        val expected = ContentUiState(fixture.build<PlayerListUiState>())
+        fakePlayerListUiModelMapper.state = expected
         val fixtPlayerDataUpdate: DataUpdate<Player> = fixDataUpdate()
         fakeGetPlayersUseCase.emit(fixtPlayerDataUpdate)
 
         runCurrent()
 
-        assertThat(sut.uiModel, equalTo(expected))
+        assertThat(sut.uiState, equalTo(expected))
     }
 
 
     @Test
     fun `ui model updates data after initial load`() = runTest {
         val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
-        val fakePlayerListUiModelMapper = FakePlayerListUiModelMapperImpl()
+        val fakePlayerListUiModelMapper = FakePlayerListUiStateMapperImpl()
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
-        assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
+        assertThat(sut.uiState, instanceOf(LoadingUiState::class.java))
         runCurrent()
 
-        // set up first ui model
-        val expected = ContentUiModel(fixture.build<PlayerListUiModel>())
-        fakePlayerListUiModelMapper.model = expected
+        // set up first ui state
+        val expected = ContentUiState(fixture.build<PlayerListUiState>())
+        fakePlayerListUiModelMapper.state = expected
         val fixtPlayerDataUpdate: DataUpdate<Player> = fixDataUpdate()
         fakeGetPlayersUseCase.emit(fixtPlayerDataUpdate)
 
         runCurrent()
 
-        assertThat(sut.uiModel, equalTo(expected))
+        assertThat(sut.uiState, equalTo(expected))
 
-        // setup new ui model
+        // setup new ui state
         val fixtNewUpdate: DataUpdate<Player> = fixDataUpdate()
-        val fixtNewUiModel = ContentUiModel(fixture.build<PlayerListUiModel>())
-        fakePlayerListUiModelMapper.model = fixtNewUiModel
+        val fixtNewUiModel = ContentUiState(fixture.build<PlayerListUiState>())
+        fakePlayerListUiModelMapper.state = fixtNewUiModel
         fakeGetPlayersUseCase.emit(fixtNewUpdate)
 
         runCurrent()
 
-        assertThat(sut.uiModel, equalTo(fixtNewUiModel))
+        assertThat(sut.uiState, equalTo(fixtNewUiModel))
     }
 
 
     @Test
     fun `init() displays error message when initial loading fails`() = runTest {
         val fakeGetPlayersUseCase = FakeGetPlayersUseCaseWithException()
-        val fakePlayerListUiModelMapper = FakePlayerListUiModelMapperImpl()
+        val fakePlayerListUiModelMapper = FakePlayerListUiStateMapperImpl()
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
-        assertThat(sut.uiModel, instanceOf(LoadingUiModel::class.java))
+        assertThat(sut.uiState, instanceOf(LoadingUiState::class.java))
         runCurrent()
 
         // setup and verifying error
         fakeGetPlayersUseCase.exception = RuntimeException()
         runCurrent()
 
-        assertThat(sut.uiModel, instanceOf(ErrorUiModel::class.java))
+        assertThat(sut.uiState, instanceOf(ErrorUiState::class.java))
     }
 
     private fun fixDataUpdate() =
@@ -137,13 +137,13 @@ class PlayerListViewModelTest {
 
     }
 
-    private class FakePlayerListUiModelMapperImpl : PlayerListUiModelMapper {
+    private class FakePlayerListUiStateMapperImpl : PlayerListUiStateMapper {
 
-        lateinit var model: UiModel<PlayerListUiModel>
+        lateinit var state: UiState<PlayerListUiState>
 
-        override fun map(existingModel: UiModel<PlayerListUiModel>,
-                         updates: DataUpdate<Player>): UiModel<PlayerListUiModel> {
-            return model
+        override fun map(existingState: UiState<PlayerListUiState>,
+                         updates: DataUpdate<Player>): UiState<PlayerListUiState> {
+            return state
         }
 
     }

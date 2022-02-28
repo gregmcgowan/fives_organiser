@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,26 +17,26 @@ class MainViewModel @Inject constructor(
         private val useCase: MainInitialiseUseCase
 ) : ViewModel() {
 
-    var uiModel: UiModel<MainScreenUiModel> by mutableStateOf(value = UiModel.LoadingUiModel())
+    var uiState: UiState<MainScreenUiState> by mutableStateOf(value = UiState.LoadingUiState())
         private set
 
     init {
         viewModelScope.launch {
             useCase.execute()
-            updateUiModel(MainScreen.PlayersListScreen)
+            updateUiState(MainScreen.PlayersListScreen)
         }
     }
 
     fun nestedScreenShown(nestedScreenShown: Boolean) {
-        if (uiModel is ContentUiModel) {
-            uiModel = ContentUiModel((uiModel as ContentUiModel<MainScreenUiModel>)
+        if (uiState is ContentUiState) {
+            uiState = ContentUiState((uiState as ContentUiState<MainScreenUiState>)
                     .content.copy(showBottomNavigation = !nestedScreenShown))
         }
 
     }
 
-    private fun updateUiModel(selectedScreen: MainScreen) {
-        uiModel = ContentUiModel(MainScreenUiModel(selectedScreen))
+    private fun updateUiState(selectedScreen: MainScreen) {
+        uiState = ContentUiState(MainScreenUiState(selectedScreen))
     }
 
 }

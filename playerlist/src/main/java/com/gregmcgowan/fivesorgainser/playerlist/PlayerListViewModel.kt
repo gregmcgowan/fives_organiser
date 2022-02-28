@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -15,11 +15,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerListViewModel @Inject constructor(
-        private val uiModelMapper: PlayerListUiModelMapper,
+        private val uiStateMapper: PlayerListUiStateMapper,
         getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase
 ) : ViewModel() {
 
-    var uiModel: UiModel<PlayerListUiModel> by mutableStateOf(value = LoadingUiModel())
+    var uiState: UiState<PlayerListUiState> by mutableStateOf(value = LoadingUiState())
         private set
 
     init {
@@ -27,13 +27,13 @@ class PlayerListViewModel @Inject constructor(
             getPlayerListUpdatesUseCase
                     .execute()
                     .catch { exception -> handleError(exception) }
-                    .collect { uiModel = uiModelMapper.map(uiModel, it) }
+                    .collect { uiState = uiStateMapper.map(uiState, it) }
         }
     }
 
     private fun handleError(throwable: Throwable) {
         Timber.e(throwable)
-        uiModel = UiModel.ErrorUiModel(string = R.string.generic_error_message)
+        uiState = UiState.ErrorUiState(string = R.string.generic_error_message)
     }
 
 }

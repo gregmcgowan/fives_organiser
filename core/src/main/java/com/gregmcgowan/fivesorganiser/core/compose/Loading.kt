@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiState
 
 @Composable
 fun Loading() {
@@ -19,9 +19,9 @@ fun Loading() {
 }
 
 @Composable
-fun <T> ErrorMessage(errorUiModel: UiModel.ErrorUiModel<T>) {
+fun <T> ErrorMessage(errorUiState: UiState.ErrorUiState<T>) {
     Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
-        Text(stringResource(id = errorUiModel.string))
+        Text(stringResource(id = errorUiState.string))
     }
 
 }

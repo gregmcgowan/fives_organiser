@@ -41,16 +41,16 @@ import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_300
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ContentUiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.ErrorUiModel
-import com.gregmcgowan.fivesorganiser.core.ui.UiModel.LoadingUiModel
+import com.gregmcgowan.fivesorganiser.core.ui.UiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 
 
 @Composable
 fun PlayerList(openImportContacts: () -> Unit) {
     PlayerListScreen(
-            uiModel = hiltViewModel<PlayerListViewModel>().uiModel,
+            uiState = hiltViewModel<PlayerListViewModel>().uiState,
             eventHandler = { playerListUserEvent ->
                 when (playerListUserEvent) {
                     AddPlayerSelectedEvent -> openImportContacts.invoke()
@@ -62,21 +62,21 @@ fun PlayerList(openImportContacts: () -> Unit) {
 
 @Composable
 fun PlayerListScreen(
-        uiModel: UiModel<PlayerListUiModel>,
+        uiState: UiState<PlayerListUiState>,
         eventHandler: (PlayerListUserEvent) -> Unit
 ) {
 
-    when (uiModel) {
-        is LoadingUiModel -> Loading()
-        is ErrorUiModel -> ErrorMessage(uiModel)
-        is ContentUiModel -> PlayerListContent(uiModel.content, eventHandler)
+    when (uiState) {
+        is LoadingUiState -> Loading()
+        is ErrorUiState -> ErrorMessage(uiState)
+        is ContentUiState -> PlayerListContent(uiState.content, eventHandler)
     }
 }
 
 
 @Composable
 fun PlayerListContent(
-        uiModel: PlayerListUiModel,
+        uiState: PlayerListUiState,
         eventHandler: (PlayerListUserEvent) -> Unit
 ) {
     Scaffold(
@@ -88,9 +88,9 @@ fun PlayerListContent(
                 )
             },
             content = {
-                if (uiModel.players.isNotEmpty()) {
+                if (uiState.players.isNotEmpty()) {
                     LazyColumn {
-                        items(uiModel.players) { player ->
+                        items(uiState.players) { player ->
                             PlayerListItem(player)
                         }
                     }
@@ -123,7 +123,7 @@ fun PlayerListContent(
 }
 
 @Composable
-fun PlayerListItem(player: PlayerListItemUiModel) {
+fun PlayerListItem(player: PlayerListItemUiState) {
     Column {
         Row(
                 modifier = Modifier
@@ -218,15 +218,15 @@ fun PlayerAvatarPreview() {
 fun PlayerListPreviewContent() {
     AppTheme {
         PlayerListScreen(
-                ContentUiModel(
+                ContentUiState(
                         content =
-                        PlayerListUiModel(
+                        PlayerListUiState(
                                 players =
                                 listOf(
-                                        PlayerListItemUiModel("1", "reg"),
-                                        PlayerListItemUiModel("1", "reg"),
-                                        PlayerListItemUiModel("1", "reg"),
-                                        PlayerListItemUiModel("1", "reg")
+                                        PlayerListItemUiState("1", "reg"),
+                                        PlayerListItemUiState("1", "reg"),
+                                        PlayerListItemUiState("1", "reg"),
+                                        PlayerListItemUiState("1", "reg")
                                 )
                         )
                 )
@@ -239,9 +239,9 @@ fun PlayerListPreviewContent() {
 fun PlayerListPreviewEmpty() {
     AppTheme {
         PlayerListScreen(
-                ContentUiModel(
+                ContentUiState(
                         content =
-                        PlayerListUiModel(players = emptyList())
+                        PlayerListUiState(players = emptyList())
                 )
         ) {
 
