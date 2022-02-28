@@ -1,5 +1,6 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,16 +22,23 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
+import com.gregmcgowan.fivesorganiser.core.compose.Grey_300
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
 import com.gregmcgowan.fivesorganiser.core.ui.UiModel
@@ -120,16 +128,10 @@ fun PlayerListItem(player: PlayerListItemUiModel) {
         Row(
                 modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp, bottom = 4.dp),
+                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 content = {
-                    AndroidView(
-                            factory = { context -> PlayerAvatar(context) },
-                            update = {},
-                            modifier = Modifier
-                                    .size(48.dp)
-                                    .padding(start = 16.dp, top = 8.dp)
-                    )
+                    PlayerAvatar()
                     Text(player.name, modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp))
@@ -139,6 +141,77 @@ fun PlayerListItem(player: PlayerListItemUiModel) {
     }
 
 }
+
+
+@Composable
+fun PlayerAvatar(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.size(48.dp)) {
+        val canvasWidth: Float = size.width
+        val canvasHeight: Float = size.height
+
+        // main circle
+        val mainCircleMargin: Float = 1.dp.toPx()
+        val mainCircleRadius = canvasWidth.div(2f) - mainCircleMargin
+        val middleX: Float = canvasWidth.div(2f)
+        val middleY: Float = canvasHeight.div(2f)
+        drawCircle(
+                color = Grey_300,
+                center = Offset(x = middleX, y = middleY),
+                radius = mainCircleRadius
+        )
+
+        // head
+        val headYOffset: Float = 4.dp.toPx()
+        val headX: Float = middleX
+        val headY: Float = middleY - headYOffset
+        val headRadiusOffset: Float = 1.dp.value
+        val headRatio = 3f
+        val headRadius: Float = (mainCircleRadius / headRatio) + headRadiusOffset
+        drawCircle(
+                color = White,
+                center = Offset(x = headX, y = headY),
+                radius = headRadius
+        )
+
+        // body
+        // clip outside the main circle
+        val path = Path().apply {
+            addOval(
+                    Rect(Offset(x = mainCircleMargin, mainCircleMargin),
+                            Size(width = mainCircleRadius.times(2),
+                                    height = mainCircleRadius.times(2))
+                    )
+            )
+        }
+        clipPath(path) {
+            val bodyHorizontalMargin = 8.dp.toPx()
+            val neckMargin: Float = 4.dp.toPx()
+            val bodyTop = headY + headRadius + neckMargin
+            drawOval(
+                    topLeft = Offset(x = bodyHorizontalMargin, y = bodyTop),
+                    size = Size(
+                            width = canvasWidth - (bodyHorizontalMargin * 2f),
+                            height = canvasHeight - bodyTop
+                    ),
+                    color = White,
+            )
+            drawCircle(
+                    color = Grey_300,
+                    center = Offset(x = middleX, y = middleY),
+                    radius = mainCircleRadius - (1.dp.toPx() / 2f),
+                    style = Stroke(width = 1.dp.toPx())
+            )
+        }
+
+    }
+}
+
+@Preview
+@Composable
+fun PlayerAvatarPreview() {
+    PlayerAvatar()
+}
+
 
 @Preview
 @Composable
@@ -175,5 +248,6 @@ fun PlayerListPreviewEmpty() {
         }
     }
 }
+
 
 
