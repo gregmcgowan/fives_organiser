@@ -16,6 +16,7 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
+    // TODO see if this can be removed - need to tidy up themes to do this
     api "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
 
     api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"

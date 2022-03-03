@@ -37,9 +37,6 @@ dependencies {
     implementation project(":playerlist")
     implementation project(":importcontacts")
 
-    // TODO remove once fully moved over to compose
-    implementation "com.google.android.material:material:${versions.material}"
-
     implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
 
