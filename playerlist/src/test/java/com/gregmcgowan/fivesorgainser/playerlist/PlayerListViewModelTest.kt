@@ -51,7 +51,7 @@ class PlayerListViewModelTest {
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
         runCurrent()
 
-        assertThat(sut.uiState, instanceOf(LoadingUiState::class.java))
+        assertThat(sut.uiStateFlow.value, instanceOf(LoadingUiState::class.java))
 
         // setup first ui state
         val expected = ContentUiState(fixture.build<PlayerListUiState>())
@@ -61,7 +61,7 @@ class PlayerListViewModelTest {
 
         runCurrent()
 
-        assertThat(sut.uiState, equalTo(expected))
+        assertThat(sut.uiStateFlow.value, equalTo(expected))
     }
 
 
@@ -70,7 +70,7 @@ class PlayerListViewModelTest {
         val fakeGetPlayersUseCase = FakeGetPlayersUseCase()
         val fakePlayerListUiModelMapper = FakePlayerListUiStateMapperImpl()
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
-        assertThat(sut.uiState, instanceOf(LoadingUiState::class.java))
+        assertThat(sut.uiStateFlow.value, instanceOf(LoadingUiState::class.java))
         runCurrent()
 
         // set up first ui state
@@ -81,7 +81,7 @@ class PlayerListViewModelTest {
 
         runCurrent()
 
-        assertThat(sut.uiState, equalTo(expected))
+        assertThat(sut.uiStateFlow.value, equalTo(expected))
 
         // setup new ui state
         val fixtNewUpdate: DataUpdate<Player> = fixDataUpdate()
@@ -91,7 +91,7 @@ class PlayerListViewModelTest {
 
         runCurrent()
 
-        assertThat(sut.uiState, equalTo(fixtNewUiModel))
+        assertThat(sut.uiStateFlow.value, equalTo(fixtNewUiModel))
     }
 
 
@@ -100,14 +100,14 @@ class PlayerListViewModelTest {
         val fakeGetPlayersUseCase = FakeGetPlayersUseCaseWithException()
         val fakePlayerListUiModelMapper = FakePlayerListUiStateMapperImpl()
         sut = PlayerListViewModel(fakePlayerListUiModelMapper, fakeGetPlayersUseCase)
-        assertThat(sut.uiState, instanceOf(LoadingUiState::class.java))
+        assertThat(sut.uiStateFlow.value, instanceOf(LoadingUiState::class.java))
         runCurrent()
 
         // setup and verifying error
         fakeGetPlayersUseCase.exception = RuntimeException()
         runCurrent()
 
-        assertThat(sut.uiState, instanceOf(ErrorUiState::class.java))
+        assertThat(sut.uiStateFlow.value, instanceOf(ErrorUiState::class.java))
     }
 
     private fun fixDataUpdate() =

@@ -22,6 +22,7 @@ dependencies {
     api "androidx.hilt:hilt-navigation-compose:${versions.androidx.hilt_navigation_compose}"
 
     api "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidx.lifecycle_runtime_ktx}"
 
     api "com.jakewharton.timber:timber:${versions.timber}"
 

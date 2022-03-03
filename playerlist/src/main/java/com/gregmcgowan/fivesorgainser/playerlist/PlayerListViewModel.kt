@@ -1,14 +1,15 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,21 +20,32 @@ class PlayerListViewModel @Inject constructor(
         getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase
 ) : ViewModel() {
 
-    var uiState: UiState<PlayerListUiState> by mutableStateOf(value = LoadingUiState())
-        private set
+    private val mutableUiStateFlow: MutableStateFlow<UiState<PlayerListUiState>> =
+            MutableStateFlow(LoadingUiState())
 
+    val uiStateFlow: StateFlow<UiState<PlayerListUiState>> = mutableUiStateFlow
+            .asStateFlow()
+    
     init {
         viewModelScope.launch {
+            // This will still collect data updates when app is backgrounded
+            // I haven't figured out how you can cancel them in that scenario
             getPlayerListUpdatesUseCase
                     .execute()
                     .catch { exception -> handleError(exception) }
-                    .collect { uiState = uiStateMapper.map(uiState, it) }
+                    .collect { dataUpdate ->
+                        mutableUiStateFlow.update { prev ->
+                            uiStateMapper.map(prev, dataUpdate)
+                        }
+                    }
         }
     }
 
     private fun handleError(throwable: Throwable) {
         Timber.e(throwable)
-        uiState = UiState.ErrorUiState(string = R.string.generic_error_message)
+        mutableUiStateFlow.update {
+            UiState.ErrorUiState(string = R.string.generic_error_message)
+        }
     }
 
 }
