@@ -68,11 +68,11 @@ class ImportContactsViewModelTest {
         setupFakes(uiState = fixtInitialUiModel, permission = true)
         setupSut()
 
-        assertThat(sut.uiState, equalTo(LoadingUiState))
+        assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
 
         runCurrent()
 
-        assertThat(sut.uiState, equalTo(fixtInitialUiModel))
+        assertThat(sut.uiStateFlow.value, equalTo(fixtInitialUiModel))
     }
 
     @Test
@@ -82,7 +82,7 @@ class ImportContactsViewModelTest {
         setupSut()
 
         // verify
-        assertThat(sut.uiState, equalTo(ShowRequestPermissionDialogUiState))
+        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
     }
 
     @Test
@@ -92,14 +92,14 @@ class ImportContactsViewModelTest {
         setupFakes(uiState = fixtInitialUiModel, permission = false)
         setupSut()
 
-        assertThat(sut.uiState, equalTo(ShowRequestPermissionDialogUiState))
+        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
 
         // run on contact permission granted
         sut.handleEvent(ContactPermissionGrantedEvent)
         runCurrent()
 
         // verify output
-        assertThat(sut.uiState, equalTo(fixtInitialUiModel))
+        assertThat(sut.uiStateFlow.value, equalTo(fixtInitialUiModel))
     }
 
 
@@ -111,7 +111,7 @@ class ImportContactsViewModelTest {
         setupSut()
         runCurrent()
 
-        val actualInitialUiModel = sut.uiState
+        val actualInitialUiModel = sut.uiStateFlow.value
 
         // add contact
         val contactId = fixtInitialUiModel.contacts[0].contactId
@@ -123,7 +123,7 @@ class ImportContactsViewModelTest {
                 initialUiModel = actualInitialUiModel,
                 selectedContacts = setOf(0)
         )
-        assertThat(sut.uiState,
+        assertThat(sut.uiStateFlow.value,
                 samePropertyValuesAs(
                         ContactsListUiState(expectedContactUiModelList, true)
                 )
@@ -138,7 +138,7 @@ class ImportContactsViewModelTest {
         setupSut()
         runCurrent()
 
-        val initialUiModel = sut.uiState
+        val initialUiModel = sut.uiStateFlow.value
 
         // add contact
         val firstContactId = fixtInitialUiModel.contacts[0].contactId
@@ -152,7 +152,7 @@ class ImportContactsViewModelTest {
 
         // check the second UI model is emitted
         val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(0, 1))
-        assertThat(sut.uiState, samePropertyValuesAs(
+        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
                         ContactsListUiState(expectedContactUiModelList, true)
                 )
         )
@@ -176,7 +176,7 @@ class ImportContactsViewModelTest {
         runCurrent()
 
         // check that the ui model is back to initial
-        assertThat(sut.uiState, samePropertyValuesAs(
+        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
                 ContactsListUiState(fixtInitialUiModel.contacts, false))
         )
     }
@@ -189,7 +189,7 @@ class ImportContactsViewModelTest {
         setupSut()
         runCurrent()
 
-        val initialUiModel = sut.uiState
+        val initialUiModel = sut.uiStateFlow.value
 
         // add contact
         val firstContactId = fixtInitialUiModel.contacts[0].contactId
@@ -207,7 +207,7 @@ class ImportContactsViewModelTest {
 
         // check the second UI model is emitted
         val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(1))
-        assertThat(sut.uiState, samePropertyValuesAs(
+        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
                 ContactsListUiState(expectedContactUiModelList, true))
         )
 
@@ -227,11 +227,11 @@ class ImportContactsViewModelTest {
 
         // check we show loading then close
         sut.handleEvent(AddButtonPressedEvent)
-        assertThat(sut.uiState, equalTo(LoadingUiState))
+        assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
 
         // run cour
         runCurrent()
-        assertThat(sut.uiState, equalTo(TerminalUiState))
+        assertThat(sut.uiStateFlow.value, equalTo(TerminalUiState))
     }
 
     @Test
@@ -251,11 +251,11 @@ class ImportContactsViewModelTest {
         fakeSavePlayersUseCase.exception = runTimeException
 
         sut.handleEvent(AddButtonPressedEvent)
-        assertThat(sut.uiState, equalTo(LoadingUiState))
+        assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
 
         // run
         runCurrent()
-        assertThat(sut.uiState, samePropertyValuesAs(ErrorUiState(R.string.generic_error_message)))
+        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(ErrorUiState(R.string.generic_error_message)))
     }
 
     private fun setupSut() {

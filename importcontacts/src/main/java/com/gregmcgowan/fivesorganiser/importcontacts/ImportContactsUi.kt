@@ -31,6 +31,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
+import com.gregmcgowan.fivesorganiser.core.compose.rememberFlowWithLifecycle
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
@@ -56,8 +59,11 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Con
 @Composable
 fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
+    val uiState by rememberFlowWithLifecycle(importContactsViewModel.uiStateFlow)
+            .collectAsState(initial = LoadingUiState)
+
     ImportContactsScreen(
-            importContactsViewModel.uiState,
+            uiState,
             userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
             exitScreenHandler = exitScreenHandler
     )

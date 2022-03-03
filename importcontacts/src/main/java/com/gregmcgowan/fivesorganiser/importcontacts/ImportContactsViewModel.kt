@@ -1,23 +1,24 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,22 +29,16 @@ class ImportContactsViewModel @Inject constructor(
         contactsPermission: Permission
 ) : ViewModel() {
 
-    var uiState: ImportContactsUiState by mutableStateOf(value = LoadingUiState)
-        private set
+    private val mutableUiStateFlow: MutableStateFlow<ImportContactsUiState> =
+            MutableStateFlow(LoadingUiState)
 
-    private val selectedContacts: Set<Long>
-        get() {
-            return uiState.safeContacts
-                    .filter { it.isSelected }
-                    .map { it.contactId }
-                    .toSet()
-        }
+    val uiStateFlow: StateFlow<ImportContactsUiState> = mutableUiStateFlow.asStateFlow()
 
     init {
         if (contactsPermission.hasPermission()) {
             loadContacts()
         } else {
-            uiState = ShowRequestPermissionDialogUiState
+            mutableUiStateFlow.update { ShowRequestPermissionDialogUiState }
         }
     }
 
@@ -58,9 +53,10 @@ class ImportContactsViewModel @Inject constructor(
     private fun loadContacts() {
         viewModelScope.launch {
             runCatching { uiStateMapper.map(getContactsUseCase.execute(), emptySet()) }
-                    .onFailure { uiState = handleException(it) }
-                    .onSuccess { uiState = it }
-
+                    .onFailure { exception ->
+                        mutableUiStateFlow.update { handleException(exception) }
+                    }
+                    .onSuccess { state -> mutableUiStateFlow.update { state } }
         }
     }
 
@@ -70,31 +66,38 @@ class ImportContactsViewModel @Inject constructor(
     }
 
     private fun onAddButtonPressed() {
-        val contactsToAdd: Set<Long> = selectedContacts
-        uiState = LoadingUiState
+        val previousUiState = mutableUiStateFlow.getAndUpdate { LoadingUiState }
+
         viewModelScope.launch {
             runCatching {
+                val contactsToAdd: Set<Long> = previousUiState.safeContacts
+                        .filter { it.isSelected }
+                        .map { it.contactId }
+                        .toSet()
                 if (contactsToAdd.isEmpty()) {
                     throw IllegalStateException("Attempting to save with no contacts selected")
                 }
                 savePlayersUseCase.execute(contactsToAdd)
             }
-                    .onFailure { uiState = handleException(it) }
-                    .onSuccess { uiState = TerminalUiState }
+                    .onFailure { exception -> mutableUiStateFlow.update { handleException(exception) } }
+                    .onSuccess { mutableUiStateFlow.update { TerminalUiState } }
         }
     }
 
 
     private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
-        val contacts: MutableList<ContactItemUiState> = uiState.safeContacts.toMutableList()
+        val contacts: MutableList<ContactItemUiState> = uiStateFlow.value
+                .safeContacts.toMutableList()
         val index = contacts.indexOfFirst { it.contactId == contactId }
         if (index != -1) {
             val updatedList = contacts
                     .apply { this[index] = this[index].copy(isSelected = selected) }
-            uiState = ContactsListUiState(
-                    contacts = updatedList,
-                    addContactsButtonEnabled = updatedList.any { it.isSelected }
-            )
+            mutableUiStateFlow.update {
+                ContactsListUiState(
+                        contacts = updatedList,
+                        addContactsButtonEnabled = updatedList.any { it.isSelected }
+                )
+            }
         } else {
             Timber.e("Could not update contact [$contactId] to [$selected]")
         }
