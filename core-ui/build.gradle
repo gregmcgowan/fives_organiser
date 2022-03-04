@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+apply from: "../base-android-library.gradle"
+
+android {
+
+    buildFeatures {
+        compose true
+    }
+}
+
+
+dependencies {
+    api project(":core")
+
+    api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"
+
+    api "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidx.lifecycle_runtime_ktx}"
+    api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
+
+    api "androidx.hilt:hilt-navigation-compose:${versions.androidx.hilt_navigation_compose}"
+
+    api "androidx.compose.runtime:runtime:${versions.compose}"
+    api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
+
+    api "androidx.compose.foundation:foundation-layout:${versions.compose}"
+    api "androidx.compose.foundation:foundation:${versions.compose}"
+
+    api "androidx.compose.ui:ui:${versions.compose}"
+    api "androidx.compose.ui:ui-tooling:${versions.compose}"
+
+    api "androidx.compose.animation:animation:${versions.compose}"
+
+    api "androidx.compose.material:material:${versions.compose}"
+    api "androidx.compose.material:material-icons-extended:${versions.compose}"
+
+    api "androidx.navigation:navigation-compose:${versions.androidx.navigation_compose}"
+    api "androidx.activity:activity-compose:${versions.androidx.activity_compose}"
+
+    // TODO see if this can be removed - need to tidy up themes to do this
+    api "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
+
+}
+

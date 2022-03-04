@@ -1,61 +1,12 @@
 apply plugin: 'com.android.library'
 apply from: "../base-android-library.gradle"
 
-android {
-
-    buildFeatures {
-        compose true
-    }
-}
-
-
 dependencies {
 
     api "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
-
-    // TODO see if this can be removed - need to tidy up themes to do this
-    api "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
-
-    api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"
-    api "androidx.hilt:hilt-navigation-compose:${versions.androidx.hilt_navigation_compose}"
-
-    api "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
-    api "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidx.lifecycle_runtime_ktx}"
 
     api "com.jakewharton.timber:timber:${versions.timber}"
 
-    api "androidx.compose.runtime:runtime:${versions.compose}"
-    api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
-
-    api "androidx.compose.foundation:foundation-layout:${versions.compose}"
-    api "androidx.compose.foundation:foundation:${versions.compose}"
-
-    api "androidx.compose.ui:ui:${versions.compose}"
-    api "androidx.compose.ui:ui-tooling:${versions.compose}"
-
-    api "androidx.compose.animation:animation:${versions.compose}"
-
-    api "androidx.compose.material:material:${versions.compose}"
-    api "androidx.compose.material:material-icons-extended:${versions.compose}"
-
-    api "androidx.navigation:navigation-compose:${versions.androidx.navigation_compose}"
-    api "androidx.activity:activity-compose:${versions.androidx.activity_compose}"
-
-    api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
-
-    testImplementation "junit:junit:${versions.junit}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-    testImplementation "androidx.test:core:${versions.androidx.test_core}"
-    testImplementation "androidx.test:runner:${versions.androidx.test_runner}"
-
-    androidTestImplementation "androidx.test:runner:${versions.androidx.test_runner}"
-    androidTestImplementation("androidx.test.espresso:espresso-core:${versions.espresso}", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-}
-repositories {
-    mavenCentral()
 }

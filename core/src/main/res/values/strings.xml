@@ -2,5 +2,4 @@
 <resources>
     <string name="app_name">Fives Organiser</string>
     <string name="generic_error_message">Really annoying generic error message</string>
-    <string name="navigate_up_content_description">Navigate up</string>
 </resources>

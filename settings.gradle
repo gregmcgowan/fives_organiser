@@ -1,5 +1,6 @@
 include ':app'
 include ':core'
+include ':core-ui'
 include ':authentication'
 include ':authentication-contract'
 include ':data'
