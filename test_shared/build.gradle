@@ -17,7 +17,7 @@ dependencies {
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
-    // api 'com.google.truth:truth:0.42'
+    api 'com.google.truth:truth:0.42'
 
     api 'com.flextrade.jfixture:jfixture:2.7.2'
 
