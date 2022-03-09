@@ -27,7 +27,7 @@ class FakePlayerRepo : PlayerRepo {
         }
     }
 
-    override suspend fun playersUpdates(): Flow<DataUpdate<Player>> {
+    override fun playersUpdates(): Flow<DataUpdate<Player>> {
         TODO("Not used in these test")
     }
 }

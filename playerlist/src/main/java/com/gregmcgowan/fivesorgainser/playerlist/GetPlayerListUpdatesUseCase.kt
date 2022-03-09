@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 interface GetPlayerListUpdatesUseCase {
-    suspend fun execute(): Flow<DataUpdate<Player>>
+    fun execute(): Flow<DataUpdate<Player>>
 }
 
 // Eventually will add in extra player data about reliability and more stats so there will be more
@@ -16,6 +16,6 @@ class GetPlayerListUpdatesUseCaseImpl @Inject constructor(
         private val playerRepo: PlayerRepo
 ) : GetPlayerListUpdatesUseCase {
 
-    override suspend fun execute(): Flow<DataUpdate<Player>> = playerRepo.playersUpdates()
+    override fun execute(): Flow<DataUpdate<Player>> = playerRepo.playersUpdates()
 
 }

@@ -20,7 +20,7 @@ class PlayersFirebaseRepo @Inject constructor(
 ) : PlayerRepo {
 
 
-    override suspend fun playersUpdates(): Flow<DataUpdate<Player>> {
+    override fun playersUpdates(): Flow<DataUpdate<Player>> {
         return firestoreHelper.flowOfDataUpdates(getPlayersRef(), ::mapToPlayer)
     }
 

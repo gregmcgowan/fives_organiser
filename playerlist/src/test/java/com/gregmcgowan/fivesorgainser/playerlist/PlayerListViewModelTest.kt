@@ -121,7 +121,7 @@ class PlayerListViewModelTest {
             flow.emit(either)
         }
 
-        override suspend fun execute(): Flow<DataUpdate<Player>> {
+        override fun execute(): Flow<DataUpdate<Player>> {
             return flow
         }
 
@@ -131,7 +131,7 @@ class PlayerListViewModelTest {
 
         lateinit var exception: RuntimeException
 
-        override suspend fun execute(): Flow<DataUpdate<Player>> = flow {
+        override fun execute(): Flow<DataUpdate<Player>> = flow {
             throw exception
         }
 

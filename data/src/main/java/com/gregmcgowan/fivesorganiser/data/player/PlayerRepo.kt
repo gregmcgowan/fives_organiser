@@ -12,6 +12,6 @@ interface PlayerRepo {
                           phoneNumber: String,
                           contactId: Long)
 
-    suspend fun playersUpdates(): Flow<DataUpdate<Player>>
+    fun playersUpdates(): Flow<DataUpdate<Player>>
 }
 
