@@ -102,7 +102,7 @@ subprojects {
     apply plugin: "io.gitlab.arturbosch.detekt"
     detekt {
         version = "${versions.detek}"
-        config = files("$projectDir/../quality/detekt-config.yml")
+        config = files("${rootProject.getProjectDir()}/quality/detekt-config.yml")
     }
 
 }
