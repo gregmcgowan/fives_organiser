@@ -5,8 +5,8 @@ include ':foundation:core-test'
 include ':libraries:authentication'
 include ':libraries:authentication-contract'
 include ':libraries:data'
-include ':importcontacts'
-include ':playerlist'
+include ':features:importcontacts'
+include ':features:playerlist'
 
 
 

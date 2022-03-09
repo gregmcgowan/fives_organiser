@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: "../base-android-library.gradle"
+apply from: "../../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 

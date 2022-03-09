@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: "../base-android-library.gradle"
+apply from: "../../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
@@ -18,7 +18,6 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
+
     testImplementation project(':foundation:core-test')
-
-
 }

@@ -35,8 +35,8 @@ dependencies {
     implementation project(":libraries:data")
     implementation project(":libraries:authentication")
     implementation project(":libraries:authentication-contract")
-    implementation project(":playerlist")
-    implementation project(":importcontacts")
+    implementation project(":features:playerlist")
+    implementation project(":features:importcontacts")
 
     implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
