@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 dependencies {
-    implementation project(":core")
+    implementation project(":foundation:core")
     implementation project(":libraries:authentication-contract")
 
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"

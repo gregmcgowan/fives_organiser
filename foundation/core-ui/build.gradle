@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: "../base-android-library.gradle"
+apply from: "../../base-android-library.gradle"
 
 android {
 
@@ -10,7 +10,7 @@ android {
 
 
 dependencies {
-    api project(":core")
+    api project(":foundation:core")
 
     api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"
 

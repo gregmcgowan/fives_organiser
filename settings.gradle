@@ -1,11 +1,12 @@
 include ':app'
-include ':core'
-include ':core-ui'
+include ':foundation:core'
+include ':foundation:core-ui'
+include ':foundation:core-test'
 include ':libraries:authentication'
 include ':libraries:authentication-contract'
 include ':libraries:data'
 include ':importcontacts'
 include ':playerlist'
-include ':test_shared'
+
 
 

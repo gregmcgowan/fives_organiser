@@ -13,4 +13,5 @@ signing.properties
 app/google-services.json
 */build/*
 libraries/*/build/*
+foundation/*/build/*
 *.class

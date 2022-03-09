@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 dependencies {
-    implementation project(":core")
+    implementation project(":foundation:core")
     implementation project(":libraries:authentication-contract")
 
     // api as only app module should depend on this and is needed for hilt
@@ -15,7 +15,7 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
+    testImplementation project(':foundation:core-test')
 
-    testImplementation project(":test_shared")
 
 }
