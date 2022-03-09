@@ -32,9 +32,9 @@ dependencies {
 
     implementation project(":core")
     implementation project(":core-ui")
-    implementation project(":data")
-    implementation project(":authentication")
-    implementation project(":authentication-contract")
+    implementation project(":libraries:data")
+    implementation project(":libraries:authentication")
+    implementation project(":libraries:authentication-contract")
     implementation project(":playerlist")
     implementation project(":importcontacts")
 

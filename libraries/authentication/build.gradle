@@ -1,11 +1,14 @@
 apply plugin: 'com.android.library'
-apply from: "../base-android-library.gradle"
+apply from: "../../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 dependencies {
     implementation project(":core")
-    implementation project(":authentication-contract")
+    implementation project(":libraries:authentication-contract")
+
+    // api as only app module should depend on this and is needed for hilt
+    api "com.google.firebase:firebase-auth:${versions.firebase_auth}"
 
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
 
@@ -13,9 +16,6 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
 
-    api "com.google.firebase:firebase-firestore:${versions.firestore}"
-
-    testImplementation "junit:junit:${versions.junit}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+    testImplementation project(":test_shared")
 
 }
