@@ -5,6 +5,10 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 android {
 
+    defaultConfig {
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
     buildFeatures {
         compose true
     }
@@ -20,4 +24,8 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
 
     testImplementation project(':foundation:core-test')
+    androidTestImplementation project(':foundation:core-android-test')
+
+    // TODO where should this go?
+    debugImplementation "androidx.compose.ui:ui-test-manifest:${versions.compose}"
 }

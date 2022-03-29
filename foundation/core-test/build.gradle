@@ -3,26 +3,19 @@ apply from: "../../base-android-library.gradle"
 apply plugin: 'kotlin-kapt'
 
 dependencies {
+
     implementation project(":foundation:core")
 
     api "junit:junit:${versions.junit}"
-
-    api "androidx.test:core:${versions.androidx.test_core}"
-    api "androidx.test:runner:${versions.androidx.test_runner}"
-    api "androidx.test.ext:junit:${versions.androidx.test_junit}"
-
-    api "androidx.test.espresso:espresso-core:${versions.espresso}"
-
-    api "org.robolectric:robolectric:${versions.robolectric}"
-
+    api "com.google.truth:truth:${versions.truth}"
+    api "com.flextrade.jfixture:jfixture:${versions.jfixture}"
+    api "org.hamcrest:hamcrest:${versions.hamcrest}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
-    api 'com.google.truth:truth:0.42'
+    // May be needed for robolectric tests
+    // api "org.robolectric:robolectric:${versions.robolectric}"
+    // api "androidx.test:runner:${versions.androidx.test_runner}"
+    // api "androidx.test:core:${versions.androidx.test_core}"
+    // api "androidx.test.ext:junit:${versions.androidx.test_junit}"
 
-    api 'com.flextrade.jfixture:jfixture:2.7.2'
-
-    androidTestImplementation "androidx.test:runner:${versions.androidx.test_runner}"
-    androidTestImplementation("androidx.test.espresso:espresso-core:${versions.espresso}", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 }

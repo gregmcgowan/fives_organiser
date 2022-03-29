@@ -1,6 +1,7 @@
 include ':app'
 include ':foundation:core'
 include ':foundation:core-ui'
+include ':foundation:core-android-test'
 include ':foundation:core-test'
 include ':libraries:authentication'
 include ':libraries:authentication-contract'
