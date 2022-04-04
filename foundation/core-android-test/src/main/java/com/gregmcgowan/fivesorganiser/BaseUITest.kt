@@ -10,4 +10,9 @@ open class BaseUITest {
     val composeTestRule: ComposeContentTestRule = createComposeRule()
 
 
+    fun runComposeTest(composeContentTestRule: ComposeContentTestRule = composeTestRule,
+                       testBody: ComposeContentTestRule.() -> Unit) {
+        testBody.invoke(composeContentTestRule)
+    }
+
 }

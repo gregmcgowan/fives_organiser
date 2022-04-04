@@ -4,12 +4,11 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ContactItemUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
 import org.junit.Test
 
-class ImportContactsUITest : BaseUITest(){
-
-
+class ImportContactsUITest : BaseUITest() {
+    
     @Test
-    fun showListOfContactsWithOneSelected() {
-        composeTestRule.givenContactListUiState(ContactsListUiState(
+    fun showListOfContactsWithOneSelected() = runComposeTest {
+        givenContactListUiState(ContactsListUiState(
                 listOf(
                         ContactItemUiState(name = "Greg", isSelected = false, contactId = 1),
                         ContactItemUiState(name = "Frances", isSelected = false, contactId = 2),
@@ -19,7 +18,7 @@ class ImportContactsUITest : BaseUITest(){
         ))
 
 
-        composeTestRule.assertContactListScreen {
+        assertContactListScreen {
             size = 3
             item(0) {
                 name = "Greg"
@@ -38,8 +37,8 @@ class ImportContactsUITest : BaseUITest(){
     }
 
     @Test
-    fun showListOfContactsWithNoneSelected() {
-        composeTestRule.givenContactListUiState(ContactsListUiState(
+    fun showListOfContactsWithNoneSelected() = runComposeTest {
+        givenContactListUiState(ContactsListUiState(
                 listOf(
                         ContactItemUiState(name = "Greg", isSelected = false, contactId = 1),
                         ContactItemUiState(name = "Frances", isSelected = false, contactId = 2),
@@ -49,7 +48,7 @@ class ImportContactsUITest : BaseUITest(){
         ))
 
 
-        composeTestRule.assertContactListScreen {
+        assertContactListScreen {
             size = 3
             item(0) {
                 name = "Greg"
