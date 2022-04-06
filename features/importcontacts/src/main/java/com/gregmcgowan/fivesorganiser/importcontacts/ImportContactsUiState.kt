@@ -6,8 +6,10 @@ import com.gregmcgowan.fivesorganiser.core.NO_STRING_RES_ID
 sealed class ImportContactsUserEvent {
 
     object ContactPermissionGrantedEvent : ImportContactsUserEvent()
+    object ContactPermissionDeniedEvent : ImportContactsUserEvent()
+    object TryPermissionAgainEvent : ImportContactsUserEvent()
+    object DoNotTryPermissionAgainEvent : ImportContactsUserEvent()
     object AddButtonPressedEvent : ImportContactsUserEvent()
-
     class ContactSelectedEvent(val contactId: Long,
                                val selected: Boolean) : ImportContactsUserEvent()
 }
@@ -16,6 +18,8 @@ sealed class ImportContactsUserEvent {
 sealed class ImportContactsUiState {
 
     object ShowRequestPermissionDialogUiState : ImportContactsUiState()
+
+    object UserDeniedPermissionUiState : ImportContactsUiState()
 
     object LoadingUiState : ImportContactsUiState()
 

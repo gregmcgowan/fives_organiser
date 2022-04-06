@@ -2,10 +2,11 @@ package com.gregmcgowan.fivesorganiser
 
 import com.gregmcgowan.fivesorganiser.importcontacts.ContactItemUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.UserDeniedPermissionUiState
 import org.junit.Test
 
 class ImportContactsUITest : BaseUITest() {
-    
+
     @Test
     fun showListOfContactsWithOneSelected() = runComposeTest {
         givenContactListUiState(ContactsListUiState(
@@ -66,5 +67,19 @@ class ImportContactsUITest : BaseUITest() {
         }
     }
 
+    @Test
+    fun showUserDeniedPermissionState() = runComposeTest {
+        givenContactListUiState(UserDeniedPermissionUiState)
+
+        assertContactListScreen {
+            permissionDeniedUi {
+                messageShown()
+                tryAgainButtonShown()
+                dontTryAgainButtonShown()
+            }
+            noContactsShown()
+            addButtonNotShown()
+        }
+    }
 }
 

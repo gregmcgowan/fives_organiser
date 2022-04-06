@@ -11,11 +11,13 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.printToLog
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsScreen
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState
 
-fun ComposeContentTestRule.givenContactListUiState(uiState: ImportContactsUiState.ContactsListUiState) {
+fun ComposeContentTestRule.givenContactListUiState(uiState: ImportContactsUiState) {
     this.setContent {
         AppTheme { ImportContactsScreen(uiState, {}, {}) }
     }
@@ -37,8 +39,16 @@ class ContactListAssertions(private val composeTestRule: ComposeContentTestRule)
         items.assertCountEquals(it)
     }
 
+    fun noContactsShown() {
+        items.assertCountEquals(0)
+    }
+
     fun item(index: Int, assertions: ContactListItemAssertions.() -> Unit) {
         ContactListItemAssertions(items[index]).assertions()
+    }
+
+    fun permissionDeniedUi(assertions: UserDeniedPermissionAssertions.() -> Unit) {
+        UserDeniedPermissionAssertions(composeTestRule).assertions()
     }
 
     fun addButtonShown() {
@@ -51,9 +61,35 @@ class ContactListAssertions(private val composeTestRule: ComposeContentTestRule)
 
 }
 
+class UserDeniedPermissionAssertions(private val composeTestRule: ComposeContentTestRule) {
+
+    fun messageShown() {
+        composeTestRule
+                .onNodeWithText(
+                        "We need contact permission to import from your contacts.\n" +
+                                "It will be quicker than entering it manually.\n" +
+                                "We won't use it for anything bad.. honest"
+
+                )
+                .assertIsDisplayed()
+    }
+
+    fun tryAgainButtonShown() {
+        composeTestRule
+                .onNodeWithText("I believe you, let's try again")
+                .assertIsDisplayed()
+    }
+
+    fun dontTryAgainButtonShown() {
+        composeTestRule
+                .onNodeWithText("No I don't want to give you permission")
+                .assertIsDisplayed()
+    }
+}
+
 class ContactListItemAssertions(private val item: SemanticsNodeInteraction) {
 
-    var name : String by setOnly {
+    var name: String by setOnly {
         item.onChildAt(1).assertTextEquals(it)
     }
 

@@ -5,12 +5,15 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.Error
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.UserDeniedPermissionUiState
 
-val ImportContactsUiState.safeContacts : List<ContactItemUiState>
+val ImportContactsUiState.safeContacts: List<ContactItemUiState>
     get() {
         return when (this) {
             is ContactsListUiState -> this.contacts
-            is ErrorUiState, LoadingUiState, ShowRequestPermissionDialogUiState, TerminalUiState ->
+            is ErrorUiState, LoadingUiState, ShowRequestPermissionDialogUiState,
+            UserDeniedPermissionUiState, TerminalUiState -> {
                 emptyList()
+            }
         }
     }

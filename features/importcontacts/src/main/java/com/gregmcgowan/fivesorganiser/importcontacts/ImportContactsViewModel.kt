@@ -8,9 +8,13 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.Error
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.UserDeniedPermissionUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionDeniedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.DoNotTryPermissionAgainEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.TryPermissionAgainEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,6 +51,15 @@ class ImportContactsViewModel @Inject constructor(
             is AddButtonPressedEvent -> onAddButtonPressed()
             is ContactSelectedEvent -> updateContactSelectedStatus(event.contactId, event.selected)
             is ContactPermissionGrantedEvent -> loadContacts()
+            is ContactPermissionDeniedEvent -> {
+                mutableUiStateFlow.update { UserDeniedPermissionUiState }
+            }
+            is DoNotTryPermissionAgainEvent -> {
+                mutableUiStateFlow.update { TerminalUiState }
+            }
+            is TryPermissionAgainEvent -> {
+                mutableUiStateFlow.update { ShowRequestPermissionDialogUiState }
+            }
         }
     }
 

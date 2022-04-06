@@ -7,9 +7,13 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.Error
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowRequestPermissionDialogUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.UserDeniedPermissionUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.AddButtonPressedEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionDeniedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactPermissionGrantedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.DoNotTryPermissionAgainEvent
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.TryPermissionAgainEvent
 import com.gregmcgowan.fivesorganiser.test_shared.CoroutinesTestRule
 import com.gregmcgowan.fivesorganiser.test_shared.build
 import com.gregmcgowan.fivesorganiser.test_shared.createList
@@ -256,6 +260,42 @@ class ImportContactsViewModelTest {
         // run
         runCurrent()
         assertThat(sut.uiStateFlow.value, samePropertyValuesAs(ErrorUiState(R.string.generic_error_message)))
+    }
+
+    @Test
+    fun `on contact permission denied return the correct ui state`() = runTest {
+        setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
+        setupSut()
+        runCurrent()
+        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+
+        sut.handleEvent(ContactPermissionDeniedEvent)
+        runCurrent()
+        assertThat(sut.uiStateFlow.value, equalTo(UserDeniedPermissionUiState))
+    }
+
+    @Test
+    fun `when user agrees to ask for permission again return the correct ui state`() = runTest {
+        setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
+        setupSut()
+        runCurrent()
+        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+
+        sut.handleEvent(TryPermissionAgainEvent)
+        runCurrent()
+        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+    }
+
+    @Test
+    fun `when user does not agree to ask for permission again return the correct ui state`() = runTest {
+        setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
+        setupSut()
+        runCurrent()
+        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+
+        sut.handleEvent(DoNotTryPermissionAgainEvent)
+        runCurrent()
+        assertThat(sut.uiStateFlow.value, equalTo(TerminalUiState))
     }
 
     private fun setupSut() {
