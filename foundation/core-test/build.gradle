@@ -10,6 +10,8 @@ dependencies {
     api "com.google.truth:truth:${versions.truth}"
     api "com.flextrade.jfixture:jfixture:${versions.jfixture}"
     api "org.hamcrest:hamcrest:${versions.hamcrest}"
+    api "org.hamcrest:hamcrest-core:${versions.hamcrest}"
+    api "org.hamcrest:hamcrest-library:${versions.hamcrest}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
     // May be needed for robolectric tests
