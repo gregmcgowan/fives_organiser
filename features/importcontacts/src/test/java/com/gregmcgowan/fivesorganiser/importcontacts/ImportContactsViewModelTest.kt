@@ -17,9 +17,10 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.samePropertyValuesAs
-import org.junit.Assert.assertThat
+
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -153,8 +154,7 @@ class ImportContactsViewModelTest {
         // check the second UI model is emitted
         val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(0, 1))
         assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
-                        ContactsListUiState(expectedContactUiModelList, true)
-                )
+                ContactsListUiState(expectedContactUiModelList, true))
         )
     }
 
