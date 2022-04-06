@@ -7,13 +7,13 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ShowR
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.TerminalUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.UserDeniedPermissionUiState
 
-val ImportContactsUiState.safeContacts: List<ContactItemUiState>
+val ImportContactsUiState.contacts: List<ContactItemUiState>
     get() {
         return when (this) {
             is ContactsListUiState -> this.contacts
             is ErrorUiState, LoadingUiState, ShowRequestPermissionDialogUiState,
             UserDeniedPermissionUiState, TerminalUiState -> {
-                emptyList()
+                throw IllegalStateException("Attempting to get the contact list from $this UI state")
             }
         }
     }

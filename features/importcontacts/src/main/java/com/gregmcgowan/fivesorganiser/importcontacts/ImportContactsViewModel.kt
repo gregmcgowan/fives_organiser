@@ -83,10 +83,11 @@ class ImportContactsViewModel @Inject constructor(
 
         viewModelScope.launch {
             runCatching {
-                val contactsToAdd: Set<Long> = previousUiState.safeContacts
+                val contactsToAdd: Set<Long> = previousUiState.contacts
                         .filter { it.isSelected }
                         .map { it.contactId }
                         .toSet()
+
                 if (contactsToAdd.isEmpty()) {
                     throw IllegalStateException("Attempting to save with no contacts selected")
                 }
@@ -100,7 +101,7 @@ class ImportContactsViewModel @Inject constructor(
 
     private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
         val contacts: MutableList<ContactItemUiState> = uiStateFlow.value
-                .safeContacts.toMutableList()
+                .contacts.toMutableList()
         val index = contacts.indexOfFirst { it.contactId == contactId }
         if (index != -1) {
             val updatedList = contacts

@@ -323,7 +323,7 @@ class ImportContactsViewModelTest {
 
     private fun createSelectedContacts(initialUiModel: ImportContactsUiState,
                                        selectedContacts: Set<Int> = emptySet()): List<ContactItemUiState> {
-        return initialUiModel.safeContacts
+        return initialUiModel.contacts
                 .toMutableList()
                 .mapIndexed { index, contactItemUiModel ->
                     contactItemUiModel.copy(isSelected = selectedContacts.contains(index))
