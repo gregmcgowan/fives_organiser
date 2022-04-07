@@ -40,23 +40,17 @@ dependencies {
     implementation project(":features:importcontacts")
 
     implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
-    implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
 
     // hilt
     implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
     kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
     kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-
-    kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
 
     // integration tests
     debugImplementation "androidx.compose.ui:ui-test-manifest:${versions.compose}"
     androidTestImplementation project(':foundation:core-android-test')
     androidTestImplementation "com.google.dagger:hilt-android-testing:${versions.dagger_hilt}"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
-
-
 }
 
 apply plugin: 'com.google.gms.google-services'
