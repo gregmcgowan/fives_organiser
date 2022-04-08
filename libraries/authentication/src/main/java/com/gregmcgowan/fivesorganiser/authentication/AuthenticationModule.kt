@@ -9,21 +9,22 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
-@Module(includes = [AuthenticationModule.Bindings::class])
+@Module
 class AuthenticationModule {
 
     @Provides
     @Singleton
     fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    @InstallIn(SingletonComponent::class)
-    @Module
-    interface Bindings {
+}
 
-        @Binds
-        @Singleton
-        fun auth(firebaseAuth: FirebaseAuthentication): Authentication
+@InstallIn(SingletonComponent::class)
+@Module
+interface AuthenticationBindings {
 
-    }
+    @Binds
+    @Singleton
+    fun bind(impl: FirebaseAuthentication): Authentication
+
 }
 

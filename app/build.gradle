@@ -13,7 +13,7 @@ android {
         applicationId "com.gregmcgowan.fivesorganiser"
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.gregmcgowan.fivesorganiser.FivesOrganiserTestRunner"
     }
 
     // remove once https://github.com/Kotlin/kotlinx.coroutines/issues/2023 is fixed
@@ -49,6 +49,13 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
     kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
+
+    // integration tests
+    debugImplementation "androidx.compose.ui:ui-test-manifest:${versions.compose}"
+    androidTestImplementation project(':foundation:core-android-test')
+    androidTestImplementation "com.google.dagger:hilt-android-testing:${versions.dagger_hilt}"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
+
 
 }
 
