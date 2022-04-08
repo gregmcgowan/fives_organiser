@@ -13,7 +13,7 @@ dependencies {
     api project(":foundation:core")
 
     api "androidx.hilt:hilt-lifecycle-viewmodel:${versions.androidx.hilt_lifecycle_viewmodel}"
-
+    api "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle_runtime}"
     api "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidx.lifecycle_runtime_ktx}"
     api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
 
