@@ -20,7 +20,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +42,7 @@ import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_300
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.compose.rememberFlowWithLifecycle
+import com.gregmcgowan.fivesorganiser.core.compose.rememberStateWithLifecycle
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
@@ -53,10 +52,7 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 @Composable
 fun PlayerList(openImportContacts: () -> Unit) {
     val playerListViewModel = hiltViewModel<PlayerListViewModel>()
-
-    // TODO can we avoiding having the same initial state here and the PlayerListViewModel
-    val uiState by rememberFlowWithLifecycle(playerListViewModel.uiStateFlow)
-            .collectAsState(initial = LoadingUiState())
+    val uiState by rememberStateWithLifecycle(playerListViewModel.uiStateFlow)
 
     PlayerListScreen(
             uiState = uiState,
