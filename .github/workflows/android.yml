@@ -10,12 +10,37 @@ jobs:
   build:
 
     runs-on: macos-latest
-
+    strategy:
+      matrix:
+        api-level: [29]
     steps:
-      - uses: actions/checkout@v2
+      - name: checkout
+      - uses: actions/checkout@v3
 
-      - name : google services
-        run:  ./signing/setup.sh "$env:GOOGLE_SERVICES_KEY"
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+       - name: create AVD and generate snapshot for caching
+         if: steps.avd-cache.outputs.cache-hit != 'true'
+         uses: reactivecircus/android-emulator-runner@v2.24.0
+         with:
+           api-level: ${{ matrix.api-level }}
+           force-avd-creation: false
+           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+           disable-animations: false
+           script: echo "Generated AVD snapshot for caching."
+
+      - name: google services
+        run: ./signing/setup.sh "$env:GOOGLE_SERVICES_KEY"
         env:
           GOOGLE_SERVICES_KEY: ${{ secrets.GOOGLE_SERVICES_KEY }}
 
@@ -26,9 +51,12 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-        
+
       - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2.14.3
+        uses: reactivecircus/android-emulator-runner@v2.24.0
         with:
-          api-level: 29
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: ./gradlew connectedCheck
