@@ -18,6 +18,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,6 +44,7 @@ class PlayerListIntegrationTest {
     val repo: PlayerRepo = FakePlayerRepo()
 
     @Test
+    @Ignore("https://issuetracker.google.com/issues/209497244")
     fun testPlayersShown() {
         setPlayers(
                 listOf(Player("1,", "greg", "1", "2", 1))
