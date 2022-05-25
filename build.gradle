@@ -23,7 +23,7 @@ buildscript {
             'kotlin'                     : '1.6.10',
             'kotlin_gradle_plugin'       : '1.6.10',
             'coroutines'                 : '1.6.0',
-            'compose'                    : '1.1.0',
+            'compose'                    : '1.2.0-beta02',
             'compose_compiler'           : '1.1.0',
             'firebase_auth'              : '21.0.1',
             'firestore'                  : '24.0.0',
