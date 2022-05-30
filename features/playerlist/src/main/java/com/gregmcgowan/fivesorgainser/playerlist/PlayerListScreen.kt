@@ -92,16 +92,20 @@ fun PlayerListContent(
                         }
                 )
             },
-            content = {
+            content = { padding ->
                 if (uiState.players.isNotEmpty()) {
-                    LazyColumn {
+                    LazyColumn(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)) {
                         items(uiState.players) { player ->
                             PlayerListItem(player)
                         }
                     }
                 } else {
                     Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(padding),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
