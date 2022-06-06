@@ -160,8 +160,8 @@ private fun ContactListUi(exitScreenHandler: () -> Unit, importContactsUiState: 
                         }
                 )
             },
-            content = {
-                Column(modifier = Modifier.fillMaxSize()) {
+            content = { padding ->
+                Column(modifier = Modifier.fillMaxSize().padding(padding)) {
                     Row(modifier = Modifier.weight(1.0f)) {
                         LazyColumn {
                             items(importContactsUiState.contacts) { contact ->
