@@ -1,6 +1,10 @@
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
 
+android {
+    namespace = "com.gregmcgowan.fivesorganiser.core"
+}
+
 dependencies {
 
     api "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"

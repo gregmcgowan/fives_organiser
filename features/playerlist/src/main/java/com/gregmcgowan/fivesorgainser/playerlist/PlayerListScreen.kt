@@ -36,13 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.ErrorMessage
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_300
 import com.gregmcgowan.fivesorganiser.core.compose.Grey_400
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.compose.rememberStateWithLifecycle
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
@@ -52,7 +52,7 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 @Composable
 fun PlayerList(openImportContacts: () -> Unit) {
     val playerListViewModel = hiltViewModel<PlayerListViewModel>()
-    val uiState by rememberStateWithLifecycle(playerListViewModel.uiStateFlow)
+    val uiState by playerListViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     PlayerListScreen(
             uiState = uiState,
@@ -94,14 +94,18 @@ fun PlayerListContent(
             },
             content = {
                 if (uiState.players.isNotEmpty()) {
-                    LazyColumn {
+                    LazyColumn(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it)) {
                         items(uiState.players) { player ->
                             PlayerListItem(player)
                         }
                     }
                 } else {
                     Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(it),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
@@ -225,15 +229,15 @@ fun PlayerListPreviewContent() {
         PlayerListScreen(
                 ContentUiState(
                         content =
-                        PlayerListUiState(
-                                players =
-                                listOf(
-                                        PlayerListItemUiState("1", "reg"),
-                                        PlayerListItemUiState("1", "frances"),
-                                        PlayerListItemUiState("1", "reg"),
-                                        PlayerListItemUiState("1", "reg")
+                                PlayerListUiState(
+                                        players =
+                                                listOf(
+                                                        PlayerListItemUiState("1", "reg"),
+                                                        PlayerListItemUiState("1", "frances"),
+                                                        PlayerListItemUiState("1", "reg"),
+                                                        PlayerListItemUiState("1", "reg")
+                                                )
                                 )
-                        )
                 )
         ) {}
     }
@@ -246,7 +250,7 @@ fun PlayerListPreviewEmpty() {
         PlayerListScreen(
                 ContentUiState(
                         content =
-                        PlayerListUiState(players = emptyList())
+                                PlayerListUiState(players = emptyList())
                 )
         ) {
 

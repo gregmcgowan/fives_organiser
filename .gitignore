@@ -16,3 +16,5 @@ libraries/*/build/*
 foundation/*/build/*
 features/*/build/*
 *.class
+.kotlin/*
+

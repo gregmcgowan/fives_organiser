@@ -28,8 +28,6 @@ class PlayerListViewModel @Inject constructor(
     
     init {
         viewModelScope.launch {
-            // This will still collect data updates when app is backgrounded
-            // I haven't figured out how you can cancel them in that scenario
             getPlayerListUpdatesUseCase
                     .execute()
                     .catch { exception -> handleError(exception) }

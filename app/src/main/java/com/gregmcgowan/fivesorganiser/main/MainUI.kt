@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,9 +32,10 @@ import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
 fun MainScreen() {
     val navController: NavHostController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
+    val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
     val navigationActions = NavigationActions(navController, mainViewModel::nestedScreenShown)
 
-    when (val uiModel = mainViewModel.uiState) {
+    when (val uiModel = uiState) {
         is LoadingUiState -> Loading()
         is ErrorUiState -> ErrorMessage(uiModel)
         is ContentUiState -> MainContent(uiModel.content, navController, navigationActions)
