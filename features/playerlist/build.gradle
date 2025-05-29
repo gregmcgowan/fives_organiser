@@ -1,26 +1,33 @@
+plugins {
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+}
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'com.google.dagger.hilt.android'
 
 android {
+
+    defaultConfig {
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
 
     buildFeatures {
         compose true
     }
-
+    namespace = "com.gregmcgowan.fivesorgainser.playerlist"
 }
 
 dependencies {
     implementation project(":foundation:core-ui")
     implementation project(":libraries:data")
 
-    implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
+    implementation "com.google.dagger:hilt-android:${versions.dagger}"
+    ksp "com.google.dagger:hilt-compiler:${versions.dagger}"
 
-    kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-    kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
     testImplementation project(':foundation:core-test')
+    androidTestImplementation project(':foundation:core-android-test')
 
-
+    // TODO where should this go?
+    debugImplementation "androidx.compose.ui:ui-test-manifest:${versions.compose}"
 }

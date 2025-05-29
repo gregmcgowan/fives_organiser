@@ -30,7 +30,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -48,9 +48,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
-import com.gregmcgowan.fivesorganiser.core.compose.rememberStateWithLifecycle
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.LoadingUiState
@@ -68,10 +68,10 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Try
 @Composable
 fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
-    val uiState by rememberStateWithLifecycle(importContactsViewModel.uiStateFlow)
+    val uiState by importContactsViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     ImportContactsScreen(
-            uiState,
+            importContactsUiState = uiState,
             userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
             exitScreenHandler = exitScreenHandler
     )
@@ -94,12 +94,15 @@ fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
         is ShowRequestPermissionDialogUiState -> {
             SideEffect { launcher.launch(Manifest.permission.READ_CONTACTS) }
         }
+
         is UserDeniedPermissionUiState -> {
             NoPermissionGrantedUi(userEventHandler)
         }
+
         is ContactsListUiState -> {
             ContactListUi(exitScreenHandler, importContactsUiState, userEventHandler)
         }
+
         is ErrorUiState -> {
             Box(modifier = Modifier
                     .fillMaxSize()
@@ -108,6 +111,7 @@ fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
                 Text(stringResource(id = importContactsUiState.errorMessage))
             }
         }
+
         is TerminalUiState -> {
             SideEffect { exitScreenHandler.invoke() }
         }
@@ -152,16 +156,18 @@ private fun ContactListUi(exitScreenHandler: () -> Unit, importContactsUiState: 
                         navigationIcon = {
                             IconButton(onClick = exitScreenHandler) {
                                 Icon(
-                                        imageVector = Icons.Default.ArrowBack,
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                         contentDescription =
-                                        stringResource(R.string.navigate_up_content_description),
+                                                stringResource(R.string.navigate_up_content_description),
                                 )
                             }
                         }
                 )
             },
             content = {
-                Column(modifier = Modifier.fillMaxSize()) {
+                Column(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)) {
                     Row(modifier = Modifier.weight(1.0f)) {
                         LazyColumn {
                             items(importContactsUiState.contacts) { contact ->

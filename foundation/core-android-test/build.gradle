@@ -1,6 +1,10 @@
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
 
+android {
+    namespace = "com.gregmgowan.fivesorganiser.core.android.test"
+}
+
 dependencies {
 
     implementation project(":foundation:core")
@@ -10,7 +14,7 @@ dependencies {
 
     api "androidx.arch.core:core-testing:${versions.androidx.test_core_testing}"
     // exclude protobuf-lite as there is duplicate classes there and in protobuf-javalite
-    api ("androidx.test.espresso:espresso-contrib:${versions.espresso}", {
+    api("androidx.test.espresso:espresso-contrib:${versions.espresso}", {
         exclude group: 'com.google.protobuf', module: 'protobuf-lite'
     })
     api "androidx.test.espresso:espresso-core:${versions.espresso}"

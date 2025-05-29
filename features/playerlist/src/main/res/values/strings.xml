@@ -1,4 +1,5 @@
 <resources>
     <string name="player_list_title">Players</string>
     <string name="player_list_no_players_message">"No players, press + to add"</string>
+    <string name="generic_error_message">Really annoying generic error message</string>
 </resources>

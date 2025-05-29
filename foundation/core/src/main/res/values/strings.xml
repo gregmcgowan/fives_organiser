@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Fives Organiser</string>
-    <string name="generic_error_message">Really annoying generic error message</string>
 </resources>

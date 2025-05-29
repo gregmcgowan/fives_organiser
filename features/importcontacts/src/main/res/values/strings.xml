@@ -6,4 +6,6 @@
     <string name="permissions_denied_no">No I don\'t want to give you permission</string>
     <string name="no_contacts_message">No contacts to add</string>
     <string name="import_contacts_add">Add</string>
+    <string name="navigate_up_content_description">Navigate up</string>
+    <string name="generic_error_message">Really annoying generic error message</string>
 </resources>

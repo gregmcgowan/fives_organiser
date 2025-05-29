@@ -1,17 +1,29 @@
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'com.google.dagger.hilt.android'
+
+android {
+    namespace = "com.gregmcgowan.fivesorganiser.data"
+    beforeEvaluate {
+        android.testOptions {
+            it.test
+        }
+    }
+}
+
+androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        variant.androidTest?.enable = false
+    }
+}
 
 dependencies {
     implementation project(":foundation:core")
     implementation project(":libraries:authentication-contract")
 
-    implementation "com.google.dagger:hilt-android:${versions.dagger_hilt}"
-
-    kapt "com.google.dagger:hilt-android-compiler:${versions.dagger_hilt}"
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-    kapt "androidx.hilt:hilt-compiler:${versions.androidx.hilt_compiler}"
+    implementation "com.google.dagger:hilt-android:${versions.dagger}"
+    ksp "com.google.dagger:hilt-compiler:${versions.dagger}"
 
     api "com.google.firebase:firebase-firestore:${versions.firestore}"
 

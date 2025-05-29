@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
-apply plugin: 'kotlin-kapt'
+
+android {
+    namespace = "com.gregmgowan.fivesorganiser.core.test"
+}
 
 dependencies {
 
@@ -13,11 +16,5 @@ dependencies {
     api "org.hamcrest:hamcrest-core:${versions.hamcrest}"
     api "org.hamcrest:hamcrest-library:${versions.hamcrest}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
-
-    // May be needed for robolectric tests
-    // api "org.robolectric:robolectric:${versions.robolectric}"
-    // api "androidx.test:runner:${versions.androidx.test_runner}"
-    // api "androidx.test:core:${versions.androidx.test_core}"
-    // api "androidx.test.ext:junit:${versions.androidx.test_junit}"
 
 }
