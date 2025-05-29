@@ -4,29 +4,31 @@ import android.content.ContentResolver
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.provider.ContactsContract.Contacts
-import java.util.*
 import javax.inject.Inject
 
 class AndroidContactImporter @Inject constructor(
-        private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
 ) : ContactImporter {
-
-
     override suspend fun getAllContacts(): List<Contact> {
-        val selectString = "((" + Contacts.DISPLAY_NAME +
+        val selectString =
+            "((" + Contacts.DISPLAY_NAME +
                 " NOTNULL) AND (" +
                 Contacts.HAS_PHONE_NUMBER + "=1) AND (" +
                 Contacts.DISPLAY_NAME + " != '' ) )"
 
-        val cursor = contentResolver.query(
+        val cursor =
+            contentResolver.query(
                 Contacts.CONTENT_URI,
-                arrayOf(Contacts._ID,
-                        Contacts.LOOKUP_KEY,
-                        Contacts.DISPLAY_NAME_PRIMARY,
-                        Contacts.SORT_KEY_PRIMARY),
+                arrayOf(
+                    Contacts._ID,
+                    Contacts.LOOKUP_KEY,
+                    Contacts.DISPLAY_NAME_PRIMARY,
+                    Contacts.SORT_KEY_PRIMARY,
+                ),
                 selectString,
                 null,
-                Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC")
+                Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC",
+            )
         return cursor?.let { createContactList(cursor) } ?: emptyList()
     }
 
@@ -46,14 +48,19 @@ class AndroidContactImporter @Inject constructor(
 
     private fun createContact(cursor: Cursor): Contact? {
         val contactId = safeGetString(cursor, Contacts._ID)
-        val select = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
+        val select =
+            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
                 ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
                 ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
 
-        val phonesCursor = contentResolver.query(
+        val phonesCursor =
+            contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                null, select, arrayOf(contactId), null
-        )
+                null,
+                select,
+                arrayOf(contactId),
+                null,
+            )
 
         if (phonesCursor != null && phonesCursor.count > 0) {
             phonesCursor.moveToFirst()
@@ -62,7 +69,7 @@ class AndroidContactImporter @Inject constructor(
             val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
 
             phonesCursor.close()
-            //TODO actually add email address
+            // TODO actually add email address
             return Contact(name, phoneNumber, "", contactId.toLong())
         }
 
@@ -70,12 +77,14 @@ class AndroidContactImporter @Inject constructor(
         return null
     }
 
-    private fun safeGetString(cursor: Cursor, columnName: String): String {
+    private fun safeGetString(
+        cursor: Cursor,
+        columnName: String,
+    ): String {
         val columnIndex = cursor.getColumnIndex(columnName)
         if (columnIndex != -1) {
             return cursor.getString(columnIndex)
         }
         return ""
     }
-
 }

@@ -4,27 +4,29 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.Conta
 import javax.inject.Inject
 
 interface ImportContactsUiStateMapper {
-    fun map(contacts: List<Contact>, selectedContacts: Set<Long>): ImportContactsUiState
+    fun map(
+        contacts: List<Contact>,
+        selectedContacts: Set<Long>,
+    ): ImportContactsUiState
 }
 
 class ImportContactsUiStateMapperImpl @Inject constructor() : ImportContactsUiStateMapper {
-
-    override fun map(contacts: List<Contact>,
-                     selectedContacts: Set<Long>): ContactsListUiState =
-            contacts
-                    .map {
-                        ContactItemUiState(
-                                name = it.name,
-                                contactId = it.contactId,
-                                isSelected = selectedContacts.contains(it.contactId)
-                        )
-                    }
-                    .run {
-                        ContactsListUiState(
-                                contacts = this,
-                                addContactsButtonEnabled = selectedContacts.isNotEmpty()
-                        )
-                    }
-
+    override fun map(
+        contacts: List<Contact>,
+        selectedContacts: Set<Long>,
+    ): ContactsListUiState =
+        contacts
+            .map {
+                ContactItemUiState(
+                    name = it.name,
+                    contactId = it.contactId,
+                    isSelected = selectedContacts.contains(it.contactId),
+                )
+            }
+            .run {
+                ContactsListUiState(
+                    contacts = this,
+                    addContactsButtonEnabled = selectedContacts.isNotEmpty(),
+                )
+            }
 }
-

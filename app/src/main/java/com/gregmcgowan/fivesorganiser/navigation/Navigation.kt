@@ -10,7 +10,6 @@ import androidx.navigation.compose.composable
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerList
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsScreen
 
-
 object Destinations {
     // Main tabs
     const val PLAYER_LIST_ROUTE = "player_list"
@@ -21,10 +20,10 @@ object Destinations {
     const val IMPORT_CONTACTS_ROUTE = "import_contacts"
 }
 
-class NavigationActions(private val navController: NavHostController,
-                        private val nestedScreenShown : (Boolean) -> Unit) {
-
-
+class NavigationActions(
+    private val navController: NavHostController,
+    private val nestedScreenShown: (Boolean) -> Unit,
+) {
     val navigateToMainScreenTab: (String) -> Unit = { route ->
         navController.navigate(route) {
             nestedScreenShown(false)
@@ -47,18 +46,19 @@ class NavigationActions(private val navController: NavHostController,
         nestedScreenShown(false)
         navController.popBackStack()
     }
-
 }
 
-
 @Composable
-fun NavigationGraph(modifier: Modifier = Modifier,
-                    navController: NavHostController,
-                    startDestination: String,
-                    navigationActions: NavigationActions) {
-    NavHost(navController,
-            startDestination = startDestination,
-            modifier = modifier
+fun NavigationGraph(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    startDestination: String,
+    navigationActions: NavigationActions,
+) {
+    NavHost(
+        navController,
+        startDestination = startDestination,
+        modifier = modifier,
     ) {
         composable(Destinations.PLAYER_LIST_ROUTE) {
             PlayerList(openImportContacts = {

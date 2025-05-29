@@ -16,26 +16,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerListViewModel @Inject constructor(
-        private val uiStateMapper: PlayerListUiStateMapper,
-        getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase
+    private val uiStateMapper: PlayerListUiStateMapper,
+    getPlayerListUpdatesUseCase: GetPlayerListUpdatesUseCase,
 ) : ViewModel() {
-
     private val mutableUiStateFlow: MutableStateFlow<UiState<PlayerListUiState>> =
-            MutableStateFlow(LoadingUiState())
+        MutableStateFlow(LoadingUiState())
 
-    val uiStateFlow: StateFlow<UiState<PlayerListUiState>> = mutableUiStateFlow
+    val uiStateFlow: StateFlow<UiState<PlayerListUiState>> =
+        mutableUiStateFlow
             .asStateFlow()
-    
+
     init {
         viewModelScope.launch {
             getPlayerListUpdatesUseCase
-                    .execute()
-                    .catch { exception -> handleError(exception) }
-                    .collect { dataUpdate ->
-                        mutableUiStateFlow.update { prev ->
-                            uiStateMapper.map(prev, dataUpdate)
-                        }
+                .execute()
+                .catch { exception -> handleError(exception) }
+                .collect { dataUpdate ->
+                    mutableUiStateFlow.update { prev ->
+                        uiStateMapper.map(prev, dataUpdate)
                     }
+                }
         }
     }
 
@@ -45,5 +45,4 @@ class PlayerListViewModel @Inject constructor(
             UiState.ErrorUiState(string = R.string.generic_error_message)
         }
     }
-
 }

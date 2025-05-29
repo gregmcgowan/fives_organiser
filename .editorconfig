@@ -1,0 +1,6 @@
+# .editorconfig
+[*.kt]
+ktlint_standard_package-name = disabled
+# does not work well with @Inject on the constructor
+ktlint_standard_annotation = disabled
+ktlint_function_naming_ignore_when_annotated_with=Composable

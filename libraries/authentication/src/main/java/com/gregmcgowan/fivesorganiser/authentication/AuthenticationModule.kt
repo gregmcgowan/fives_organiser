@@ -11,20 +11,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class AuthenticationModule {
-
     @Provides
     @Singleton
     fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
 }
 
 @InstallIn(SingletonComponent::class)
 @Module
 interface AuthenticationBindings {
-
     @Binds
     @Singleton
     fun bind(impl: FirebaseAuthentication): Authentication
-
 }
-

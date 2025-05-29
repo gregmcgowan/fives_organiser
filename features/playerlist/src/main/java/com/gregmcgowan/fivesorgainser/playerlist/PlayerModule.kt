@@ -8,11 +8,9 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 @InstallIn(ActivityRetainedComponent::class)
 @Module
 interface PlayerModule {
-
     @Binds
     fun bindGetPlayersUseCase(impl: GetPlayerListUpdatesUseCaseImpl): GetPlayerListUpdatesUseCase
 
     @Binds
-    fun bindPLayerListUiStateMapper(impl : PlayerListUiStateMapperImpl) : PlayerListUiStateMapper
-
+    fun bindPLayerListUiStateMapper(impl: PlayerListUiStateMapperImpl): PlayerListUiStateMapper
 }

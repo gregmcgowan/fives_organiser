@@ -64,28 +64,29 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Con
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.DoNotTryPermissionAgainEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.TryPermissionAgainEvent
 
-
 @Composable
 fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
     val uiState by importContactsViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     ImportContactsScreen(
-            importContactsUiState = uiState,
-            userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
-            exitScreenHandler = exitScreenHandler
+        importContactsUiState = uiState,
+        userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
+        exitScreenHandler = exitScreenHandler,
     )
 }
 
-
 @Composable
-fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
-                         userEventHandler: (ImportContactsUserEvent) -> Unit,
-                         exitScreenHandler: () -> Unit) {
-    val launcher = rememberLauncherForActivityResult(RequestPermission()) { result ->
-        val event = if (result) ContactPermissionGrantedEvent else ContactPermissionDeniedEvent
-        userEventHandler.invoke(event)
-    }
+fun ImportContactsScreen(
+    importContactsUiState: ImportContactsUiState,
+    userEventHandler: (ImportContactsUserEvent) -> Unit,
+    exitScreenHandler: () -> Unit,
+) {
+    val launcher =
+        rememberLauncherForActivityResult(RequestPermission()) { result ->
+            val event = if (result) ContactPermissionGrantedEvent else ContactPermissionDeniedEvent
+            userEventHandler.invoke(event)
+        }
 
     BackHandler(onBack = exitScreenHandler)
 
@@ -104,10 +105,13 @@ fun ImportContactsScreen(importContactsUiState: ImportContactsUiState,
         }
 
         is ErrorUiState -> {
-            Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 8.dp, end = 8.dp)
-                    .wrapContentSize(Alignment.Center)) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 8.dp, end = 8.dp)
+                        .wrapContentSize(Alignment.Center),
+            ) {
                 Text(stringResource(id = importContactsUiState.errorMessage))
             }
         }
@@ -125,125 +129,142 @@ fun NoPermissionGrantedUi(userEventHandler: (ImportContactsUserEvent) -> Unit) {
         Text(stringResource(id = R.string.permissions_denied_text), textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.size(16.dp))
         Button(
-                modifier = Modifier
-                        .align(CenterHorizontally)
-                        .fillMaxWidth()
-                        .padding(start = 32.dp, end = 32.dp),
-                content = { Text(stringResource(id = R.string.permissions_denied_request_permission_again)) },
-                onClick = { userEventHandler.invoke(TryPermissionAgainEvent) }
+            modifier =
+                Modifier
+                    .align(CenterHorizontally)
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp),
+            content = { Text(stringResource(id = R.string.permissions_denied_request_permission_again)) },
+            onClick = { userEventHandler.invoke(TryPermissionAgainEvent) },
         )
         Spacer(modifier = Modifier.size(16.dp))
         Button(
-                modifier = Modifier
-                        .align(CenterHorizontally)
-                        .fillMaxWidth()
-                        .padding(start = 32.dp, end = 32.dp),
-                content = { Text(stringResource(id = R.string.permissions_denied_no)) },
-                onClick = { userEventHandler.invoke(DoNotTryPermissionAgainEvent) }
+            modifier =
+                Modifier
+                    .align(CenterHorizontally)
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp),
+            content = { Text(stringResource(id = R.string.permissions_denied_no)) },
+            onClick = { userEventHandler.invoke(DoNotTryPermissionAgainEvent) },
         )
     }
 }
 
 @Composable
-private fun ContactListUi(exitScreenHandler: () -> Unit, importContactsUiState: ContactsListUiState,
-                          userEventHandler: (ImportContactsUserEvent) -> Unit) {
+private fun ContactListUi(
+    exitScreenHandler: () -> Unit,
+    importContactsUiState: ContactsListUiState,
+    userEventHandler: (ImportContactsUserEvent) -> Unit,
+) {
     Scaffold(
-            topBar = {
-                TopAppBar(
-                        title = {
-                            Text(text = stringResource(id = R.string.import_contacts_title))
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = exitScreenHandler) {
-                                Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription =
-                                                stringResource(R.string.navigate_up_content_description),
-                                )
-                            }
-                        }
-                )
-            },
-            content = {
-                Column(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)) {
-                    Row(modifier = Modifier.weight(1.0f)) {
-                        LazyColumn {
-                            items(importContactsUiState.contacts) { contact ->
-                                ContactItem(contact, userEventHandler)
-                            }
-                        }
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.import_contacts_title))
+                },
+                navigationIcon = {
+                    IconButton(onClick = exitScreenHandler) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription =
+                                stringResource(R.string.navigate_up_content_description),
+                        )
                     }
-                    Row(horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                    .padding(start = 48.dp, end = 48.dp, bottom = 16.dp)
-                                    .fillMaxWidth()
-                    ) {
-                        AnimatedVisibility(importContactsUiState.addContactsButtonEnabled) {
-                            Button(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    content = { Text(stringResource(id = R.string.import_contacts_add)) },
-                                    onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
-                            )
+                },
+            )
+        },
+        content = {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(it),
+            ) {
+                Row(modifier = Modifier.weight(1.0f)) {
+                    LazyColumn {
+                        items(importContactsUiState.contacts) { contact ->
+                            ContactItem(contact, userEventHandler)
                         }
-
                     }
                 }
-            })
-}
-
-
-@Composable
-fun ContactItem(contact: ContactItemUiState,
-                eventHandler: (ImportContactsUserEvent) -> Unit) {
-    Row(
-            modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics { contentDescription = "ContactItem-${contact.name}" }
-                    .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            content = {
-                BiggerBadge(
-                        backgroundColor = MaterialTheme.colors.secondary,
-                        content = {
-                            Text(
-                                    text = contact.name.substring(0, 1).uppercase(),
-                                    fontSize = 20.sp,
-                                    color = Color.White
-                            )
-                        },
-                )
-                Text(
-                        text = contact.name,
-                        modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 8.dp))
-                Checkbox(
-                        checked = contact.isSelected,
-                        modifier = Modifier.padding(start = 16.dp),
-                        onCheckedChange = { selected ->
-                            eventHandler.invoke(ContactSelectedEvent(contact.contactId, selected))
-                        }
-                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier =
+                        Modifier
+                            .padding(start = 48.dp, end = 48.dp, bottom = 16.dp)
+                            .fillMaxWidth(),
+                ) {
+                    AnimatedVisibility(importContactsUiState.addContactsButtonEnabled) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            content = { Text(stringResource(id = R.string.import_contacts_add)) },
+                            onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
+                        )
+                    }
+                }
             }
+        },
     )
 }
 
 @Composable
-fun BiggerBadge(modifier: Modifier = Modifier,
-                backgroundColor: Color,
-                radius: Dp = 18.dp,
-                content: @Composable (RowScope.() -> Unit)? = null) {
+fun ContactItem(
+    contact: ContactItemUiState,
+    eventHandler: (ImportContactsUserEvent) -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = "ContactItem-${contact.name}" }
+                .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        content = {
+            BiggerBadge(
+                backgroundColor = MaterialTheme.colors.secondary,
+                content = {
+                    Text(
+                        text = contact.name.substring(0, 1).uppercase(),
+                        fontSize = 20.sp,
+                        color = Color.White,
+                    )
+                },
+            )
+            Text(
+                text = contact.name,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+            )
+            Checkbox(
+                checked = contact.isSelected,
+                modifier = Modifier.padding(start = 16.dp),
+                onCheckedChange = { selected ->
+                    eventHandler.invoke(ContactSelectedEvent(contact.contactId, selected))
+                },
+            )
+        },
+    )
+}
+
+@Composable
+fun BiggerBadge(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color,
+    radius: Dp = 18.dp,
+    content: @Composable (RowScope.() -> Unit)? = null,
+) {
     val shape = RoundedCornerShape(radius)
     Row(
-            modifier = modifier
-                    .defaultMinSize(minWidth = radius * 2, minHeight = radius * 2)
-                    .background(color = backgroundColor, shape = shape)
-                    .clip(shape)
-                    .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        modifier =
+            modifier
+                .defaultMinSize(minWidth = radius * 2, minHeight = radius * 2)
+                .background(color = backgroundColor, shape = shape)
+                .clip(shape)
+                .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
         if (content != null) {
             content()
@@ -257,7 +278,6 @@ fun NoPermissionGrantedPreview() {
     AppTheme {
         NoPermissionGrantedUi {}
     }
-
 }
 
 @Preview
@@ -265,15 +285,16 @@ fun NoPermissionGrantedPreview() {
 fun ContactListPreview() {
     AppTheme {
         ImportContactsScreen(
-                ContactsListUiState(
-                        listOf(
-                                ContactItemUiState(name = "Greg", isSelected = true, contactId = 1),
-                                ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
-                                ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3)
-                        ),
-                        addContactsButtonEnabled = true,
+            ContactsListUiState(
+                listOf(
+                    ContactItemUiState(name = "Greg", isSelected = true, contactId = 1),
+                    ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
+                    ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3),
                 ),
-                { }, { }
+                addContactsButtonEnabled = true,
+            ),
+            { },
+            { },
         )
     }
 }

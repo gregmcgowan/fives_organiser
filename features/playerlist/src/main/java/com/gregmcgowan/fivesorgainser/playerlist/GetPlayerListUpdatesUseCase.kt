@@ -11,11 +11,9 @@ interface GetPlayerListUpdatesUseCase {
 }
 
 // Eventually will add in extra player data about reliability and more stats so there will be more
-// of a need for this to be a UseCase. 
+// of a need for this to be a UseCase.
 class GetPlayerListUpdatesUseCaseImpl @Inject constructor(
-        private val playerRepo: PlayerRepo
+    private val playerRepo: PlayerRepo,
 ) : GetPlayerListUpdatesUseCase {
-
     override fun execute(): Flow<DataUpdate<Player>> = playerRepo.playersUpdates()
-
 }

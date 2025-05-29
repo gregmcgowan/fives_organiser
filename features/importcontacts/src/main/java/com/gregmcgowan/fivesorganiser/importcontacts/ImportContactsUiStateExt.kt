@@ -12,7 +12,8 @@ val ImportContactsUiState.contacts: List<ContactItemUiState>
         return when (this) {
             is ContactsListUiState -> this.contacts
             is ErrorUiState, LoadingUiState, ShowRequestPermissionDialogUiState,
-            UserDeniedPermissionUiState, TerminalUiState -> {
+            UserDeniedPermissionUiState, TerminalUiState,
+            -> {
                 throw IllegalStateException("Attempting to get the contact list from $this UI state")
             }
         }

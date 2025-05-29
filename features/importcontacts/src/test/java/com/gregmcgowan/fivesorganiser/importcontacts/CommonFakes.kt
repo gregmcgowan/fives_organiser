@@ -6,7 +6,6 @@ import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
 import kotlinx.coroutines.flow.Flow
 
 class FakePlayerRepo : PlayerRepo {
-
     var players: MutableList<Player> = mutableListOf()
 
     var exception: RuntimeException? = null
@@ -19,7 +18,12 @@ class FakePlayerRepo : PlayerRepo {
         }
     }
 
-    override suspend fun addPlayer(name: String, email: String, phoneNumber: String, contactId: Long) {
+    override suspend fun addPlayer(
+        name: String,
+        email: String,
+        phoneNumber: String,
+        contactId: Long,
+    ) {
         if (exception != null) {
             throw exception!!
         } else {
@@ -33,7 +37,6 @@ class FakePlayerRepo : PlayerRepo {
 }
 
 class FakeContactsImporter : ContactImporter {
-
     var contacts: List<Contact> = listOf()
 
     var exception: RuntimeException? = null
@@ -45,5 +48,4 @@ class FakeContactsImporter : ContactImporter {
             return contacts
         }
     }
-
 }

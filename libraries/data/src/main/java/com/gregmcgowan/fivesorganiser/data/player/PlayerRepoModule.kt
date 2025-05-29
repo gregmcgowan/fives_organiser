@@ -8,8 +8,6 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 @InstallIn(ActivityRetainedComponent::class)
 @Module
 interface PlayerRepoModule {
-
     @Binds
     fun playerRepo(firebasePlayerRepo: PlayersFirebaseRepo): PlayerRepo
-
 }
