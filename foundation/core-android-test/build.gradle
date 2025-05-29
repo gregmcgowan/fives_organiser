@@ -18,4 +18,7 @@ dependencies {
         exclude group: 'com.google.protobuf', module: 'protobuf-lite'
     })
     api "androidx.test.espresso:espresso-core:${versions.espresso}"
+
+    api "com.squareup.leakcanary:leakcanary-android-instrumentation:2.9.1"
+
 }
