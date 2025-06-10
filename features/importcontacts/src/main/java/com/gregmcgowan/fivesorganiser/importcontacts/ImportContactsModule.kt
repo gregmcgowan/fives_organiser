@@ -16,21 +16,21 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 @InstallIn(ViewModelComponent::class)
 @Module(includes = [ImportContactsModule.Bindings::class])
 class ImportContactsModule {
-
     @Provides
     fun contentResolver(app: Application): ContentResolver {
         return app.contentResolver
     }
 
     @Provides
-    fun hasContactPermission(@ApplicationContext context: Context): Permission {
+    fun hasContactPermission(
+        @ApplicationContext context: Context,
+    ): Permission {
         return AndroidPermission(context, Manifest.permission.READ_CONTACTS)
     }
 
     @InstallIn(ViewModelComponent::class)
     @Module
     interface Bindings {
-
         @Binds
         fun bindContactImporter(impl: AndroidContactImporter): ContactImporter
 
@@ -38,11 +38,9 @@ class ImportContactsModule {
         fun bindGetContactsUseCase(impl: GetContactsUseCaseImpl): GetContactsUseCase
 
         @Binds
-        fun bindSavePlayersUseCase(impl : SavePlayersUseCaseImpl) : SavePlayersUseCase
+        fun bindSavePlayersUseCase(impl: SavePlayersUseCaseImpl): SavePlayersUseCase
 
         @Binds
-        fun bindUiMapper(impl : ImportContactsUiStateMapperImpl) : ImportContactsUiStateMapper
+        fun bindUiMapper(impl: ImportContactsUiStateMapperImpl): ImportContactsUiStateMapper
     }
-
-
 }

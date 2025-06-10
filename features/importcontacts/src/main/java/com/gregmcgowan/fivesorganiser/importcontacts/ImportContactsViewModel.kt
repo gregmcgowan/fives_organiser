@@ -27,14 +27,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ImportContactsViewModel @Inject constructor(
-        private val uiStateMapper: ImportContactsUiStateMapper,
-        private val savePlayersUseCase: SavePlayersUseCase,
-        private val getContactsUseCase: GetContactsUseCase,
-        contactsPermission: Permission
+    private val uiStateMapper: ImportContactsUiStateMapper,
+    private val savePlayersUseCase: SavePlayersUseCase,
+    private val getContactsUseCase: GetContactsUseCase,
+    contactsPermission: Permission,
 ) : ViewModel() {
-
     private val mutableUiStateFlow: MutableStateFlow<ImportContactsUiState> =
-            MutableStateFlow(LoadingUiState)
+        MutableStateFlow(LoadingUiState)
 
     val uiStateFlow: StateFlow<ImportContactsUiState> = mutableUiStateFlow.asStateFlow()
 
@@ -66,10 +65,10 @@ class ImportContactsViewModel @Inject constructor(
     private fun loadContacts() {
         viewModelScope.launch {
             runCatching { uiStateMapper.map(getContactsUseCase.execute(), emptySet()) }
-                    .onFailure { exception ->
-                        mutableUiStateFlow.update { handleException(exception) }
-                    }
-                    .onSuccess { state -> mutableUiStateFlow.update { state } }
+                .onFailure { exception ->
+                    mutableUiStateFlow.update { handleException(exception) }
+                }
+                .onSuccess { state -> mutableUiStateFlow.update { state } }
         }
     }
 
@@ -83,7 +82,8 @@ class ImportContactsViewModel @Inject constructor(
 
         viewModelScope.launch {
             runCatching {
-                val contactsToAdd: Set<Long> = previousUiState.contacts
+                val contactsToAdd: Set<Long> =
+                    previousUiState.contacts
                         .filter { it.isSelected }
                         .map { it.contactId }
                         .toSet()
@@ -93,29 +93,31 @@ class ImportContactsViewModel @Inject constructor(
                 }
                 savePlayersUseCase.execute(contactsToAdd)
             }
-                    .onFailure { exception -> mutableUiStateFlow.update { handleException(exception) } }
-                    .onSuccess { mutableUiStateFlow.update { TerminalUiState } }
+                .onFailure { exception -> mutableUiStateFlow.update { handleException(exception) } }
+                .onSuccess { mutableUiStateFlow.update { TerminalUiState } }
         }
     }
 
-
-    private fun updateContactSelectedStatus(contactId: Long, selected: Boolean) {
-        val contacts: MutableList<ContactItemUiState> = uiStateFlow.value
+    private fun updateContactSelectedStatus(
+        contactId: Long,
+        selected: Boolean,
+    ) {
+        val contacts: MutableList<ContactItemUiState> =
+            uiStateFlow.value
                 .contacts.toMutableList()
         val index = contacts.indexOfFirst { it.contactId == contactId }
         if (index != -1) {
-            val updatedList = contacts
+            val updatedList =
+                contacts
                     .apply { this[index] = this[index].copy(isSelected = selected) }
             mutableUiStateFlow.update {
                 ContactsListUiState(
-                        contacts = updatedList,
-                        addContactsButtonEnabled = updatedList.any { it.isSelected }
+                    contacts = updatedList,
+                    addContactsButtonEnabled = updatedList.any { it.isSelected },
                 )
             }
         } else {
             Timber.e("Could not update contact [$contactId] to [$selected]")
         }
     }
-
-
 }

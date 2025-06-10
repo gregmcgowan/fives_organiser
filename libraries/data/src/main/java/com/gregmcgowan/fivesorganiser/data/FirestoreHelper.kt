@@ -15,45 +15,55 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class FirestoreHelper @Inject constructor(private val authentication: Authentication,
-                                          private val firebaseFirestore: FirebaseFirestore) {
+class FirestoreHelper @Inject constructor(
+    private val authentication: Authentication,
+    private val firebaseFirestore: FirebaseFirestore,
+) {
     fun getUserDocRef(): DocumentReference {
         return firebaseFirestore
-                .collection(authentication.getUserId())
-                .document("User ${authentication.getUserId()}")
+            .collection(authentication.getUserId())
+            .document("User ${authentication.getUserId()}")
     }
 
+    fun <T> flowOfDataUpdates(
+        collectionReference: CollectionReference,
+        map: (Map<String, Any>) -> T,
+    ): Flow<DataUpdate<T>> =
+        callbackFlow {
+            val subscription =
+                collectionReference.addSnapshotListener { snapshot, _ ->
+                    if (snapshot == null) {
+                        return@addSnapshotListener
+                    }
+                    // Sends events to the flow! Consumers will get the new events
+                    try {
+                        this.trySend(getDataChangeList(snapshot, map)).isSuccess
+                    } catch (
+                        @Suppress("TooGenericExceptionCaught") e: Throwable,
+                    ) {
+                        // TODO not sure about this, needs to check
+                        this.close(e)
+                    }
+                }
 
-    fun <T> flowOfDataUpdates(collectionReference: CollectionReference,
-                              map: (Map<String, Any>) -> T): Flow<DataUpdate<T>> = callbackFlow {
-        val subscription = collectionReference.addSnapshotListener { snapshot, _ ->
-            if (snapshot == null) {
-                return@addSnapshotListener
-            }
-            // Sends events to the flow! Consumers will get the new events
-            try {
-                this.trySend(getDataChangeList(snapshot, map)).isSuccess
-            } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
-                // TODO not sure about this, needs to check
-                this.close(e)
-            }
+            // The callback inside awaitClose will be executed when the flow is
+            // either closed or cancelled.
+            // In this case, remove the callback from Firestore
+            awaitClose { subscription.remove() }
         }
 
-        // The callback inside awaitClose will be executed when the flow is
-        // either closed or cancelled.
-        // In this case, remove the callback from Firestore
-        awaitClose { subscription.remove() }
-    }
-
-    private fun <T> getDataChangeList(querySnapshot: QuerySnapshot,
-                                      map: (Map<String, Any>) -> T): DataUpdate<T> {
-        val listOfChanges = querySnapshot.documentChanges.mapNotNull { changes ->
-            changes?.let { documentChange ->
-                val data = documentChange.document.data
-                data[ID_KEY] = documentChange.document.id
-                DataChange(mapToDataChange(documentChange.type), map(data))
+    private fun <T> getDataChangeList(
+        querySnapshot: QuerySnapshot,
+        map: (Map<String, Any>) -> T,
+    ): DataUpdate<T> {
+        val listOfChanges =
+            querySnapshot.documentChanges.mapNotNull { changes ->
+                changes?.let { documentChange ->
+                    val data = documentChange.document.data
+                    data[ID_KEY] = documentChange.document.id
+                    DataChange(mapToDataChange(documentChange.type), map(data))
+                }
             }
-        }
         return DataUpdate(listOfChanges)
     }
 
@@ -65,11 +75,12 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
         }
     }
 
-    suspend fun runQuery(query: Query): QuerySnapshot = suspendCoroutine { cont ->
-        query.get()
+    suspend fun runQuery(query: Query): QuerySnapshot =
+        suspendCoroutine { cont ->
+            query.get()
                 .addOnSuccessListener { querySnapshot -> cont.resume(querySnapshot) }
                 .addOnFailureListener { exception -> cont.resumeWithException(exception) }
-    }
+        }
 
 // These will be used later - I think
 //
@@ -122,6 +133,4 @@ class FirestoreHelper @Inject constructor(private val authentication: Authentica
 //                .addOnCompleteListener { cont.resume(Unit) }
 //                .addOnFailureListener { exception -> cont.resumeWithException(exception) }
 //    }
-
-
 }

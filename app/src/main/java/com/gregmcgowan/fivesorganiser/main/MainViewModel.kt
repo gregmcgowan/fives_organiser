@@ -1,7 +1,6 @@
 package com.gregmcgowan.fivesorganiser.main
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,14 +13,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class MainViewModel @Inject constructor(
-        private val useCase: MainInitialiseUseCase
+    private val useCase: MainInitialiseUseCase,
 ) : ViewModel() {
-
     private var _uiState: MutableStateFlow<UiState<MainScreenUiState>> =
-            MutableStateFlow(value = UiState.LoadingUiState())
+        MutableStateFlow(value = UiState.LoadingUiState())
 
     val uiState = _uiState.asStateFlow()
 
@@ -38,7 +35,6 @@ class MainViewModel @Inject constructor(
             _uiState.update {
                 ContentUiState(content.content.copy(showBottomNavigation = nestedScreenShown))
             }
-
         }
     }
 
@@ -47,5 +43,4 @@ class MainViewModel @Inject constructor(
             ContentUiState(MainScreenUiState(selectedScreen))
         }
     }
-
 }

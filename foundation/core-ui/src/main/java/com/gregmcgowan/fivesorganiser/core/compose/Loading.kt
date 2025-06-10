@@ -23,5 +23,4 @@ fun <T> ErrorMessage(errorUiState: UiState.ErrorUiState<T>) {
     Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
         Text(stringResource(id = errorUiState.string))
     }
-
 }

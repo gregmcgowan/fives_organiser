@@ -19,24 +19,21 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module(includes = [AppModule.Bindings::class])
 class AppModule {
-
     @Provides
     @Singleton
     fun dispatchers(): CoroutineDispatchers = CoroutineDispatchers(Main, IO)
 
     @Provides
     @Reusable
-    fun resources(@ApplicationContext application: Context): Resources = application.resources
+    fun resources(
+        @ApplicationContext application: Context,
+    ): Resources = application.resources
 
     @InstallIn(SingletonComponent::class)
     @Module
     interface Bindings {
-
         @Binds
         @Reusable
         fun strings(androidStrings: AndroidStrings): Strings
-
     }
-
-
 }

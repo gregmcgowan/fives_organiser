@@ -10,21 +10,21 @@ interface SavePlayersUseCase {
 }
 
 class SavePlayersUseCaseImpl @Inject constructor(
-        private val playersRepo: PlayerRepo,
-        private val contactsImporter: ContactImporter,
-        private val coroutineDispatchers: CoroutineDispatchers
+    private val playersRepo: PlayerRepo,
+    private val contactsImporter: ContactImporter,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : SavePlayersUseCase {
-
-    override suspend fun execute(selectedContacts: Set<Long>) = withContext(coroutineDispatchers.io) {
-        contactsImporter.getAllContacts()
+    override suspend fun execute(selectedContacts: Set<Long>) =
+        withContext(coroutineDispatchers.io) {
+            contactsImporter.getAllContacts()
                 .filter { contact -> selectedContacts.contains(contact.contactId) }
                 .forEach { contact ->
                     playersRepo.addPlayer(
-                            contact.name,
-                            contact.emailAddress,
-                            contact.phoneNumber,
-                            contact.contactId
+                        contact.name,
+                        contact.emailAddress,
+                        contact.phoneNumber,
+                        contact.contactId,
                     )
                 }
-    }
+        }
 }

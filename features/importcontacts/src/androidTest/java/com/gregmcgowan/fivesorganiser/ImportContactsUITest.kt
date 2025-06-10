@@ -6,80 +6,83 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.UserD
 import org.junit.Test
 
 class ImportContactsUITest : BaseUITest() {
-
     @Test
-    fun showListOfContactsWithOneSelected() = runComposeTest {
-        givenContactListUiState(ContactsListUiState(
-                listOf(
+    fun showListOfContactsWithOneSelected() =
+        runComposeTest {
+            givenContactListUiState(
+                ContactsListUiState(
+                    listOf(
                         ContactItemUiState(name = "Greg", isSelected = false, contactId = 1),
                         ContactItemUiState(name = "Frances", isSelected = false, contactId = 2),
-                        ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3)
+                        ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3),
+                    ),
+                    addContactsButtonEnabled = true,
                 ),
-                addContactsButtonEnabled = true,
-        ))
+            )
 
-
-        assertContactListScreen {
-            size = 3
-            item(0) {
-                name = "Greg"
-                notSelected()
+            assertContactListScreen {
+                size = 3
+                item(0) {
+                    name = "Greg"
+                    notSelected()
+                }
+                item(1) {
+                    name = "Frances"
+                    notSelected()
+                }
+                item(2) {
+                    name = "Joe Wicks"
+                    selected()
+                }
+                addButtonShown()
             }
-            item(1) {
-                name = "Frances"
-                notSelected()
-            }
-            item(2) {
-                name = "Joe Wicks"
-                selected()
-            }
-            addButtonShown()
         }
-    }
 
     @Test
-    fun showListOfContactsWithNoneSelected() = runComposeTest {
-        givenContactListUiState(ContactsListUiState(
-                listOf(
+    fun showListOfContactsWithNoneSelected() =
+        runComposeTest {
+            givenContactListUiState(
+                ContactsListUiState(
+                    listOf(
                         ContactItemUiState(name = "Greg", isSelected = false, contactId = 1),
                         ContactItemUiState(name = "Frances", isSelected = false, contactId = 2),
-                        ContactItemUiState(name = "Joe Wicks", isSelected = false, contactId = 3)
+                        ContactItemUiState(name = "Joe Wicks", isSelected = false, contactId = 3),
+                    ),
+                    addContactsButtonEnabled = false,
                 ),
-                addContactsButtonEnabled = false,
-        ))
+            )
 
-
-        assertContactListScreen {
-            size = 3
-            item(0) {
-                name = "Greg"
-                notSelected()
+            assertContactListScreen {
+                size = 3
+                item(0) {
+                    name = "Greg"
+                    notSelected()
+                }
+                item(1) {
+                    name = "Frances"
+                    notSelected()
+                }
+                item(2) {
+                    name = "Joe Wicks"
+                    notSelected()
+                }
+                addButtonNotShown()
             }
-            item(1) {
-                name = "Frances"
-                notSelected()
-            }
-            item(2) {
-                name = "Joe Wicks"
-                notSelected()
-            }
-            addButtonNotShown()
         }
-    }
 
     @Test
-    fun showUserDeniedPermissionState() = runComposeTest {
-        givenContactListUiState(UserDeniedPermissionUiState)
+    fun showUserDeniedPermissionState() =
+        runComposeTest {
+            givenContactListUiState(UserDeniedPermissionUiState)
 
-        assertContactListScreen {
-            permissionDeniedUi {
-                messageShown()
-                tryAgainButtonShown()
-                dontTryAgainButtonShown()
+            assertContactListScreen {
+                permissionDeniedUi {
+                    messageShown()
+                    tryAgainButtonShown()
+                    dontTryAgainButtonShown()
+                }
+                noContactsShown()
+                addButtonNotShown()
             }
-            noContactsShown()
-            addButtonNotShown()
         }
-    }
 }
-

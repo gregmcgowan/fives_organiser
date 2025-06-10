@@ -25,12 +25,11 @@ import javax.inject.Singleton
 
 @HiltAndroidTest
 @UninstallModules(
-        AuthenticationBindings::class,
-        PlayerRepoModule::class
+    AuthenticationBindings::class,
+    PlayerRepoModule::class,
 )
 @RunWith(AndroidJUnit4::class)
 class PlayerListIntegrationTest {
-
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -45,11 +44,11 @@ class PlayerListIntegrationTest {
     @Test
     fun testPlayersShown() {
         setPlayers(
-                listOf(Player("1,", "greg", "1", "2", 1))
+            listOf(Player("1,", "greg", "1", "2", 1)),
         )
         // Simple verification for now. As we are mostly making sure nothing crashes
         composeTestRule.onNodeWithText("greg")
-                .assertIsDisplayed()
+            .assertIsDisplayed()
     }
 
     private fun setPlayers(players: List<Player>) {
@@ -62,13 +61,8 @@ class PlayerListIntegrationTest {
     @Module
     @InstallIn(SingletonComponent::class)
     interface FakeAuthenticationBindings {
-
         @Binds
         @Singleton
         fun bind(impl: FakeAuthentication): Authentication
-
     }
 }
-
-
-

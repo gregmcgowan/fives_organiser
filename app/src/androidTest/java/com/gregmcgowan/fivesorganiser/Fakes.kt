@@ -18,11 +18,9 @@ class FakeAuthentication @Inject constructor() : Authentication {
     override fun isInitialised(): Boolean = true
 
     override fun getUserId(): String = "1"
-
 }
 
 class FakePlayerRepo @Inject constructor() : PlayerRepo {
-
     var players: MutableList<Player> = mutableListOf()
 
     var exception: RuntimeException? = null
@@ -35,7 +33,12 @@ class FakePlayerRepo @Inject constructor() : PlayerRepo {
         }
     }
 
-    override suspend fun addPlayer(name: String, email: String, phoneNumber: String, contactId: Long) {
+    override suspend fun addPlayer(
+        name: String,
+        email: String,
+        phoneNumber: String,
+        contactId: Long,
+    ) {
         if (exception != null) {
             throw exception!!
         } else {
@@ -47,7 +50,5 @@ class FakePlayerRepo @Inject constructor() : PlayerRepo {
         return emitPlayers()
     }
 
-    fun emitPlayers() =
-            listOf(DataUpdate(players.map { DataChange(DataChangeType.Added, it) })).asFlow()
+    fun emitPlayers() = listOf(DataUpdate(players.map { DataChange(DataChangeType.Added, it) })).asFlow()
 }
-

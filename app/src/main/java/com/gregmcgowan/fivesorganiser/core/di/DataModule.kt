@@ -9,8 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 @Module
 class DataModule {
-
     @Provides
     fun fireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
 }

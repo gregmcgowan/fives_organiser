@@ -10,19 +10,18 @@ interface GetContactsUseCase {
 }
 
 class GetContactsUseCaseImpl @Inject constructor(
-        private val playersRepo: PlayerRepo,
-        private val contactsImporter: ContactImporter,
-        private val coroutineDispatchers: CoroutineDispatchers
+    private val playersRepo: PlayerRepo,
+    private val contactsImporter: ContactImporter,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : GetContactsUseCase {
-
     override suspend fun execute(): List<Contact> =
-            withContext(coroutineDispatchers.io) {
-                val alreadyAddedContacts = playersRepo.getPlayers()
-                        .map { it.contactId }
-                        .toSet()
+        withContext(coroutineDispatchers.io) {
+            val alreadyAddedContacts =
+                playersRepo.getPlayers()
+                    .map { it.contactId }
+                    .toSet()
 
-                contactsImporter.getAllContacts()
-                        .filter { !alreadyAddedContacts.contains(it.contactId) }
-            }
-
+            contactsImporter.getAllContacts()
+                .filter { !alreadyAddedContacts.contains(it.contactId) }
+        }
 }

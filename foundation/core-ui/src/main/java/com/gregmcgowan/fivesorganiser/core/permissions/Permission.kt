@@ -9,11 +9,12 @@ interface Permission {
     fun hasPermission(): Boolean
 }
 
-class AndroidPermission constructor(private val context: Context,
-                                    private val permissionName: String) : Permission {
+class AndroidPermission(
+    private val context: Context,
+    private val permissionName: String,
+) : Permission {
     override val name: String
         get() = permissionName
 
     override fun hasPermission(): Boolean = context.hasPermission(name)
 }
-

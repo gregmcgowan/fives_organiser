@@ -7,7 +7,6 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class FivesOrganiserApp : Application() {
-
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
@@ -15,9 +14,4 @@ class FivesOrganiserApp : Application() {
         }
         FirebaseApp.initializeApp(this)
     }
-
 }
-
-
-
-

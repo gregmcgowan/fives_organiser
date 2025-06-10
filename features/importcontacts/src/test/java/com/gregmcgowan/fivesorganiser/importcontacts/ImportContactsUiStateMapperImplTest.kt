@@ -9,7 +9,6 @@ import org.junit.Before
 import org.junit.Test
 
 class ImportContactsUiStateMapperImplTest {
-
     private lateinit var fixture: JFixture
 
     private lateinit var sut: ImportContactsUiStateMapperImpl
@@ -19,7 +18,6 @@ class ImportContactsUiStateMapperImplTest {
         fixture = JFixture()
         sut = ImportContactsUiStateMapperImpl()
     }
-
 
     @Test
     fun `map() when there are contacts and no selected contacts`() {
@@ -32,7 +30,6 @@ class ImportContactsUiStateMapperImplTest {
         assertContact(fixtContacts[1], false, output.contacts[1])
         assertContact(fixtContacts[2], false, output.contacts[2])
     }
-
 
     @Test
     fun `map() when there are contacts and selected contacts`() {
@@ -52,12 +49,13 @@ class ImportContactsUiStateMapperImplTest {
 
         assertThat(output.addContactsButtonEnabled, equalTo(false))
         assertThat(output.contacts, hasSize(0))
-
     }
 
-    private fun assertContact(contact: Contact,
-                              isSelected: Boolean,
-                              actual: ContactItemUiState) {
+    private fun assertContact(
+        contact: Contact,
+        isSelected: Boolean,
+        actual: ContactItemUiState,
+    ) {
         val expectedUiState = ContactItemUiState(contact.name, isSelected, contact.contactId)
         assertThat(actual, equalTo(expectedUiState))
     }

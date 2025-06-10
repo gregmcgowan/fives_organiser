@@ -48,29 +48,26 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 
-
 @Composable
 fun PlayerList(openImportContacts: () -> Unit) {
     val playerListViewModel = hiltViewModel<PlayerListViewModel>()
     val uiState by playerListViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     PlayerListScreen(
-            uiState = uiState,
-            eventHandler = { playerListUserEvent ->
-                when (playerListUserEvent) {
-                    AddPlayerSelectedEvent -> openImportContacts.invoke()
-                }
+        uiState = uiState,
+        eventHandler = { playerListUserEvent ->
+            when (playerListUserEvent) {
+                AddPlayerSelectedEvent -> openImportContacts.invoke()
             }
+        },
     )
 }
 
-
 @Composable
 fun PlayerListScreen(
-        uiState: UiState<PlayerListUiState>,
-        eventHandler: (PlayerListUserEvent) -> Unit
+    uiState: UiState<PlayerListUiState>,
+    eventHandler: (PlayerListUserEvent) -> Unit,
 ) {
-
     when (uiState) {
         is LoadingUiState -> Loading()
         is ErrorUiState -> ErrorMessage(uiState)
@@ -78,56 +75,59 @@ fun PlayerListScreen(
     }
 }
 
-
 @Composable
 fun PlayerListContent(
-        uiState: PlayerListUiState,
-        eventHandler: (PlayerListUserEvent) -> Unit
+    uiState: PlayerListUiState,
+    eventHandler: (PlayerListUserEvent) -> Unit,
 ) {
     Scaffold(
-            topBar = {
-                TopAppBar(
-                        title = {
-                            Text(text = stringResource(id = R.string.player_list_title))
-                        }
-                )
-            },
-            content = {
-                if (uiState.players.isNotEmpty()) {
-                    LazyColumn(modifier = Modifier
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.player_list_title))
+                },
+            )
+        },
+        content = {
+            if (uiState.players.isNotEmpty()) {
+                LazyColumn(
+                    modifier =
+                        Modifier
                             .fillMaxSize()
-                            .padding(it)) {
-                        items(uiState.players) { player ->
-                            PlayerListItem(player)
-                        }
+                            .padding(it),
+                ) {
+                    items(uiState.players) { player ->
+                        PlayerListItem(player)
                     }
-                } else {
-                    Column(
-                            modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(it),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            content = {
-                                Image(
-                                        modifier = Modifier.size(256.dp),
-                                        painter = painterResource(id = R.drawable.peter_beardsley),
-                                        contentDescription = null
-                                )
-                                Text(
-                                        stringResource(id = R.string.player_list_no_players_message),
-                                        fontSize = 24.sp
-                                )
-                            }
-                    )
                 }
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                        onClick = { eventHandler.invoke(AddPlayerSelectedEvent) },
-                        content = { Icon(Icons.Filled.Add, "") }
+            } else {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(it),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = {
+                        Image(
+                            modifier = Modifier.size(256.dp),
+                            painter = painterResource(id = R.drawable.peter_beardsley),
+                            contentDescription = null,
+                        )
+                        Text(
+                            stringResource(id = R.string.player_list_no_players_message),
+                            fontSize = 24.sp,
+                        )
+                    },
                 )
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { eventHandler.invoke(AddPlayerSelectedEvent) },
+                content = { Icon(Icons.Filled.Add, "") },
+            )
+        },
     )
 }
 
@@ -135,22 +135,25 @@ fun PlayerListContent(
 fun PlayerListItem(player: PlayerListItemUiState) {
     Column {
         Row(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                content = {
-                    PlayerAvatar()
-                    Text(player.name, modifier = Modifier
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = {
+                PlayerAvatar()
+                Text(
+                    player.name,
+                    modifier =
+                        Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp))
-                }
+                            .padding(start = 16.dp),
+                )
+            },
         )
         Divider(color = Grey_400, modifier = Modifier.padding(start = 8.dp))
     }
-
 }
-
 
 @Composable
 fun PlayerAvatar(modifier: Modifier = Modifier) {
@@ -164,9 +167,9 @@ fun PlayerAvatar(modifier: Modifier = Modifier) {
         val middleX: Float = canvasWidth.div(2f)
         val middleY: Float = canvasHeight.div(2f)
         drawCircle(
-                color = Grey_300,
-                center = Offset(x = middleX, y = middleY),
-                radius = mainCircleRadius
+            color = Grey_300,
+            center = Offset(x = middleX, y = middleY),
+            radius = mainCircleRadius,
         )
 
         // head
@@ -177,41 +180,45 @@ fun PlayerAvatar(modifier: Modifier = Modifier) {
         val headRatio = 3f
         val headRadius: Float = (mainCircleRadius / headRatio) + headRadiusOffset
         drawCircle(
-                color = White,
-                center = Offset(x = headX, y = headY),
-                radius = headRadius
+            color = White,
+            center = Offset(x = headX, y = headY),
+            radius = headRadius,
         )
 
         // body
         // clip outside the main circle
-        val path = Path().apply {
-            addOval(
-                    Rect(Offset(x = mainCircleMargin, mainCircleMargin),
-                            Size(width = mainCircleRadius.times(2),
-                                    height = mainCircleRadius.times(2))
-                    )
-            )
-        }
+        val path =
+            Path().apply {
+                addOval(
+                    Rect(
+                        Offset(x = mainCircleMargin, mainCircleMargin),
+                        Size(
+                            width = mainCircleRadius.times(2),
+                            height = mainCircleRadius.times(2),
+                        ),
+                    ),
+                )
+            }
         clipPath(path) {
             val bodyHorizontalMargin = 8.dp.toPx()
             val neckMargin: Float = 4.dp.toPx()
             val bodyTop = headY + headRadius + neckMargin
             drawOval(
-                    topLeft = Offset(x = bodyHorizontalMargin, y = bodyTop),
-                    size = Size(
-                            width = canvasWidth - (bodyHorizontalMargin * 2f),
-                            height = canvasHeight - bodyTop
+                topLeft = Offset(x = bodyHorizontalMargin, y = bodyTop),
+                size =
+                    Size(
+                        width = canvasWidth - (bodyHorizontalMargin * 2f),
+                        height = canvasHeight - bodyTop,
                     ),
-                    color = White,
+                color = White,
             )
             drawCircle(
-                    color = Grey_300,
-                    center = Offset(x = middleX, y = middleY),
-                    radius = mainCircleRadius - (1.dp.toPx() / 2f),
-                    style = Stroke(width = 1.dp.toPx())
+                color = Grey_300,
+                center = Offset(x = middleX, y = middleY),
+                radius = mainCircleRadius - (1.dp.toPx() / 2f),
+                style = Stroke(width = 1.dp.toPx()),
             )
         }
-
     }
 }
 
@@ -221,24 +228,23 @@ fun PlayerAvatarPreview() {
     PlayerAvatar()
 }
 
-
 @Preview
 @Composable
 fun PlayerListPreviewContent() {
     AppTheme {
         PlayerListScreen(
-                ContentUiState(
-                        content =
-                                PlayerListUiState(
-                                        players =
-                                                listOf(
-                                                        PlayerListItemUiState("1", "reg"),
-                                                        PlayerListItemUiState("1", "frances"),
-                                                        PlayerListItemUiState("1", "reg"),
-                                                        PlayerListItemUiState("1", "reg")
-                                                )
-                                )
-                )
+            ContentUiState(
+                content =
+                    PlayerListUiState(
+                        players =
+                            listOf(
+                                PlayerListItemUiState("1", "reg"),
+                                PlayerListItemUiState("1", "frances"),
+                                PlayerListItemUiState("1", "reg"),
+                                PlayerListItemUiState("1", "reg"),
+                            ),
+                    ),
+            ),
         ) {}
     }
 }
@@ -248,15 +254,11 @@ fun PlayerListPreviewContent() {
 fun PlayerListPreviewEmpty() {
     AppTheme {
         PlayerListScreen(
-                ContentUiState(
-                        content =
-                                PlayerListUiState(players = emptyList())
-                )
+            ContentUiState(
+                content =
+                    PlayerListUiState(players = emptyList()),
+            ),
         ) {
-
         }
     }
 }
-
-
-

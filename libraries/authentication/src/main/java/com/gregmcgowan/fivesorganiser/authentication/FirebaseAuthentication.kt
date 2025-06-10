@@ -7,16 +7,15 @@ import kotlinx.coroutines.withTimeout
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.coroutines.suspendCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 private const val TIMEOUT = 10L
 
 class FirebaseAuthentication @Inject constructor(
-        private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
 ) : Authentication {
-
     private var currentUserId: String? = null
     private lateinit var currentUser: FirebaseUser
 
@@ -39,17 +38,17 @@ class FirebaseAuthentication @Inject constructor(
     private suspend fun signInAnonymously(): AuthResult {
         return suspendCoroutine { cont ->
             firebaseAuth
-                    .signInAnonymously()
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            cont.resume(task.result!!)
-                        } else {
-                            cont.resumeWithException(task.exception as Throwable)
-                        }
+                .signInAnonymously()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        cont.resume(task.result!!)
+                    } else {
+                        cont.resumeWithException(task.exception as Throwable)
                     }
-                    .addOnFailureListener { exception ->
-                        cont.resumeWithException(exception)
-                    }
+                }
+                .addOnFailureListener { exception ->
+                    cont.resumeWithException(exception)
+                }
         }
     }
 
@@ -57,7 +56,7 @@ class FirebaseAuthentication @Inject constructor(
         authResult.user?.let {
             this.currentUser = it
             this.currentUserId = it.uid
-            //TODO move data stored under fake ID to real Id store
+            // TODO move data stored under fake ID to real Id store
             Timber.d("Initialise with currentUser $currentUserId")
 //                }
 //            } else {
@@ -65,10 +64,5 @@ class FirebaseAuthentication @Inject constructor(
 //                Timber.d("Initialise with fakeUserID $currentUserId taskException ${task.exception?.message}")
 //            }
         }
-
     }
 }
-
-
-
-

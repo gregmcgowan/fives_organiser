@@ -43,43 +43,45 @@ fun MainScreen() {
 }
 
 @Composable
-fun MainContent(mainScreenUiState: MainScreenUiState,
-                navController: NavHostController,
-                navigationActions: NavigationActions) {
-
+fun MainContent(
+    mainScreenUiState: MainScreenUiState,
+    navController: NavHostController,
+    navigationActions: NavigationActions,
+) {
     Scaffold(
-            bottomBar = {
-                AnimatedVisibility(visible = mainScreenUiState.showBottomNavigation,
-                        enter = fadeIn(), exit = fadeOut()) {
-                    BottomNavigation {
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val currentDestination = navBackStackEntry?.destination
-                        mainScreenUiState.mainTabScreens.forEach { screen ->
-                            BottomNavigationItem(
-                                    icon = {
-                                        Icon(painter = painterResource(id = screen.iconRes),
-                                                contentDescription = null)
-                                    },
-                                    label = { Text(stringResource(screen.resourceId)) },
-                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                    onClick = {
-                                        navigationActions.navigateToMainScreenTab(screen.route)
-                                    }
-                            )
-                        }
+        bottomBar = {
+            AnimatedVisibility(
+                visible = mainScreenUiState.showBottomNavigation,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                BottomNavigation {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
+                    mainScreenUiState.mainTabScreens.forEach { screen ->
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = screen.iconRes),
+                                    contentDescription = null,
+                                )
+                            },
+                            label = { Text(stringResource(screen.resourceId)) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            onClick = {
+                                navigationActions.navigateToMainScreenTab(screen.route)
+                            },
+                        )
                     }
                 }
-
             }
+        },
     ) { innerPadding ->
         NavigationGraph(
-                startDestination = mainScreenUiState.screenToShow.route,
-                modifier = Modifier.padding(innerPadding),
-                navController = navController,
-                navigationActions = navigationActions
+            startDestination = mainScreenUiState.screenToShow.route,
+            modifier = Modifier.padding(innerPadding),
+            navController = navController,
+            navigationActions = navigationActions,
         )
     }
 }
-
-
-

@@ -24,15 +24,12 @@ import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.samePropertyValuesAs
-
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.lang.RuntimeException
 
-
 class ImportContactsViewModelTest {
-
     // StandardTestDispatcher does not run coroutines by default. So we can control the execution
     private val testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
 
@@ -53,9 +50,9 @@ class ImportContactsViewModelTest {
         fixture = JFixture()
         fixture.customise().lazyInstance(ContactItemUiState::class.java) {
             ContactItemUiState(
-                    name = fixture.build(),
-                    isSelected = false,
-                    contactId = fixture.build()
+                name = fixture.build(),
+                isSelected = false,
+                contactId = fixture.build(),
             )
         }
 
@@ -65,276 +62,298 @@ class ImportContactsViewModelTest {
         fakeSavePlayersUseCase = FakeSavePlayersUseCase()
     }
 
+    @Test
+    fun `init() when permission is granted shows loading then content`() =
+        runTest {
+            // setup
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+
+            assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
+
+            runCurrent()
+
+            assertThat(sut.uiStateFlow.value, equalTo(fixtInitialUiModel))
+        }
 
     @Test
-    fun `init() when permission is granted shows loading then content`() = runTest {
-        // setup
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
+    fun `init() without permission returns request permission state`() =
+        runTest {
+            // run
+            setupFakes(permission = false)
+            setupSut()
 
-        assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
-
-        runCurrent()
-
-        assertThat(sut.uiStateFlow.value, equalTo(fixtInitialUiModel))
-    }
+            // verify
+            assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+        }
 
     @Test
-    fun `init() without permission returns request permission state`() = runTest {
-        // run
-        setupFakes(permission = false)
-        setupSut()
+    fun `onContactsPermissionGranted() loads contacts`() =
+        runTest {
+            // setup
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = false)
+            setupSut()
 
-        // verify
-        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
-    }
+            assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
 
-    @Test
-    fun `onContactsPermissionGranted() loads contacts`() = runTest {
-        // setup
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = false)
-        setupSut()
+            // run on contact permission granted
+            sut.handleEvent(ContactPermissionGrantedEvent)
+            runCurrent()
 
-        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
-
-        // run on contact permission granted
-        sut.handleEvent(ContactPermissionGrantedEvent)
-        runCurrent()
-
-        // verify output
-        assertThat(sut.uiStateFlow.value, equalTo(fixtInitialUiModel))
-    }
-
+            // verify output
+            assertThat(sut.uiStateFlow.value, equalTo(fixtInitialUiModel))
+        }
 
     @Test
-    fun `onContactSelected() updates model when one is selected`() = runTest {
-        // initial setup
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
-        runCurrent()
+    fun `onContactSelected() updates model when one is selected`() =
+        runTest {
+            // initial setup
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+            runCurrent()
 
-        val actualInitialUiModel = sut.uiStateFlow.value
+            val actualInitialUiModel = sut.uiStateFlow.value
 
-        // add contact
-        val contactId = fixtInitialUiModel.contacts[0].contactId
-        sut.handleEvent(ContactSelectedEvent(contactId, true))
-        runCurrent()
+            // add contact
+            val contactId = fixtInitialUiModel.contacts[0].contactId
+            sut.handleEvent(ContactSelectedEvent(contactId, true))
+            runCurrent()
 
-        // check ui model is updated correctly
-        val expectedContactUiModelList = createSelectedContacts(
-                initialUiModel = actualInitialUiModel,
-                selectedContacts = setOf(0)
-        )
-        assertThat(sut.uiStateFlow.value,
-                samePropertyValuesAs(
-                        ContactsListUiState(expectedContactUiModelList, true)
+            // check ui model is updated correctly
+            val expectedContactUiModelList =
+                createSelectedContacts(
+                    initialUiModel = actualInitialUiModel,
+                    selectedContacts = setOf(0),
                 )
-        )
-    }
+            assertThat(
+                sut.uiStateFlow.value,
+                samePropertyValuesAs(
+                    ContactsListUiState(expectedContactUiModelList, true),
+                ),
+            )
+        }
 
     @Test
-    fun `onContactSelected() updates model when some are already are selected`() = runTest {
-        // initial setup
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
-        runCurrent()
+    fun `onContactSelected() updates model when some are already are selected`() =
+        runTest {
+            // initial setup
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+            runCurrent()
 
-        val initialUiModel = sut.uiStateFlow.value
+            val initialUiModel = sut.uiStateFlow.value
 
-        // add contact
-        val firstContactId = fixtInitialUiModel.contacts[0].contactId
-        sut.handleEvent(ContactSelectedEvent(firstContactId, true))
-        runCurrent()
+            // add contact
+            val firstContactId = fixtInitialUiModel.contacts[0].contactId
+            sut.handleEvent(ContactSelectedEvent(firstContactId, true))
+            runCurrent()
 
-        // add another
-        val secondContactId = fixtInitialUiModel.contacts[1].contactId
-        sut.handleEvent(ContactSelectedEvent(secondContactId, true))
-        runCurrent()
+            // add another
+            val secondContactId = fixtInitialUiModel.contacts[1].contactId
+            sut.handleEvent(ContactSelectedEvent(secondContactId, true))
+            runCurrent()
 
-        // check the second UI model is emitted
-        val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(0, 1))
-        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
-                ContactsListUiState(expectedContactUiModelList, true))
-        )
-    }
-
-    @Test
-    fun `onContactDeselected() when only 1 is already selected`() = runTest {
-        // initial setup
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
-        runCurrent()
-
-        // add contact
-        val firstContactId = fixtInitialUiModel.contacts[0].contactId
-        sut.handleEvent(ContactSelectedEvent(firstContactId, true))
-        runCurrent()
-
-        // deselect
-        sut.handleEvent(ContactSelectedEvent(firstContactId, false))
-        runCurrent()
-
-        // check that the ui model is back to initial
-        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
-                ContactsListUiState(fixtInitialUiModel.contacts, false))
-        )
-    }
+            // check the second UI model is emitted
+            val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(0, 1))
+            assertThat(
+                sut.uiStateFlow.value,
+                samePropertyValuesAs(
+                    ContactsListUiState(expectedContactUiModelList, true),
+                ),
+            )
+        }
 
     @Test
-    fun `onContactDeselected() when there is more than 1 selected`() = runTest {
-        // initial setup
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
-        runCurrent()
+    fun `onContactDeselected() when only 1 is already selected`() =
+        runTest {
+            // initial setup
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+            runCurrent()
 
-        val initialUiModel = sut.uiStateFlow.value
+            // add contact
+            val firstContactId = fixtInitialUiModel.contacts[0].contactId
+            sut.handleEvent(ContactSelectedEvent(firstContactId, true))
+            runCurrent()
 
-        // add contact
-        val firstContactId = fixtInitialUiModel.contacts[0].contactId
-        sut.handleEvent(ContactSelectedEvent(firstContactId, true))
-        runCurrent()
+            // deselect
+            sut.handleEvent(ContactSelectedEvent(firstContactId, false))
+            runCurrent()
 
-        // add another contact
-        val secondContactId = fixtInitialUiModel.contacts[1].contactId
-        sut.handleEvent(ContactSelectedEvent(secondContactId, true))
-        runCurrent()
-
-        // deselect first one
-        sut.handleEvent(ContactSelectedEvent(firstContactId, false))
-        runCurrent()
-
-        // check the second UI model is emitted
-        val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(1))
-        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(
-                ContactsListUiState(expectedContactUiModelList, true))
-        )
-
-    }
+            // check that the ui model is back to initial
+            assertThat(
+                sut.uiStateFlow.value,
+                samePropertyValuesAs(
+                    ContactsListUiState(fixtInitialUiModel.contacts, false),
+                ),
+            )
+        }
 
     @Test
-    fun `onAddButtonPressed() saves contacts and close screens`() = runTest {
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
-        runCurrent()
+    fun `onContactDeselected() when there is more than 1 selected`() =
+        runTest {
+            // initial setup
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+            runCurrent()
 
-        // add contact
-        val contactId = fixtInitialUiModel.contacts[0].contactId
-        sut.handleEvent(ContactSelectedEvent(contactId, true))
-        runCurrent()
+            val initialUiModel = sut.uiStateFlow.value
 
-        // check we show loading then close
-        sut.handleEvent(AddButtonPressedEvent)
-        assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
+            // add contact
+            val firstContactId = fixtInitialUiModel.contacts[0].contactId
+            sut.handleEvent(ContactSelectedEvent(firstContactId, true))
+            runCurrent()
 
-        // run cour
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(TerminalUiState))
-    }
+            // add another contact
+            val secondContactId = fixtInitialUiModel.contacts[1].contactId
+            sut.handleEvent(ContactSelectedEvent(secondContactId, true))
+            runCurrent()
 
-    @Test
-    fun `onAddButtonPressed() when there is an error`() = runTest {
-        val fixtInitialUiModel = createInitialUiModel()
-        setupFakes(uiState = fixtInitialUiModel, permission = true)
-        setupSut()
-        runCurrent()
+            // deselect first one
+            sut.handleEvent(ContactSelectedEvent(firstContactId, false))
+            runCurrent()
 
-        // add contact
-        val contactId = fixtInitialUiModel.contacts[0].contactId
-        sut.handleEvent(ContactSelectedEvent(contactId, true))
-        runCurrent()
-
-        // run
-        val runTimeException: RuntimeException = fixture.build()
-        fakeSavePlayersUseCase.exception = runTimeException
-
-        sut.handleEvent(AddButtonPressedEvent)
-        assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
-
-        // run
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, samePropertyValuesAs(ErrorUiState(R.string.generic_error_message)))
-    }
+            // check the second UI model is emitted
+            val expectedContactUiModelList = createSelectedContacts(initialUiModel, selectedContacts = setOf(1))
+            assertThat(
+                sut.uiStateFlow.value,
+                samePropertyValuesAs(
+                    ContactsListUiState(expectedContactUiModelList, true),
+                ),
+            )
+        }
 
     @Test
-    fun `on contact permission denied return the correct ui state`() = runTest {
-        setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
-        setupSut()
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+    fun `onAddButtonPressed() saves contacts and close screens`() =
+        runTest {
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+            runCurrent()
 
-        sut.handleEvent(ContactPermissionDeniedEvent)
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(UserDeniedPermissionUiState))
-    }
+            // add contact
+            val contactId = fixtInitialUiModel.contacts[0].contactId
+            sut.handleEvent(ContactSelectedEvent(contactId, true))
+            runCurrent()
 
-    @Test
-    fun `when user agrees to ask for permission again return the correct ui state`() = runTest {
-        setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
-        setupSut()
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+            // check we show loading then close
+            sut.handleEvent(AddButtonPressedEvent)
+            assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
 
-        sut.handleEvent(TryPermissionAgainEvent)
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
-    }
+            // run cour
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(TerminalUiState))
+        }
 
     @Test
-    fun `when user does not agree to ask for permission again return the correct ui state`() = runTest {
-        setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
-        setupSut()
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+    fun `onAddButtonPressed() when there is an error`() =
+        runTest {
+            val fixtInitialUiModel = createInitialUiModel()
+            setupFakes(uiState = fixtInitialUiModel, permission = true)
+            setupSut()
+            runCurrent()
 
-        sut.handleEvent(DoNotTryPermissionAgainEvent)
-        runCurrent()
-        assertThat(sut.uiStateFlow.value, equalTo(TerminalUiState))
-    }
+            // add contact
+            val contactId = fixtInitialUiModel.contacts[0].contactId
+            sut.handleEvent(ContactSelectedEvent(contactId, true))
+            runCurrent()
+
+            // run
+            val runTimeException: RuntimeException = fixture.build()
+            fakeSavePlayersUseCase.exception = runTimeException
+
+            sut.handleEvent(AddButtonPressedEvent)
+            assertThat(sut.uiStateFlow.value, equalTo(LoadingUiState))
+
+            // run
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, samePropertyValuesAs(ErrorUiState(R.string.generic_error_message)))
+        }
+
+    @Test
+    fun `on contact permission denied return the correct ui state`() =
+        runTest {
+            setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
+            setupSut()
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+
+            sut.handleEvent(ContactPermissionDeniedEvent)
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(UserDeniedPermissionUiState))
+        }
+
+    @Test
+    fun `when user agrees to ask for permission again return the correct ui state`() =
+        runTest {
+            setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
+            setupSut()
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+
+            sut.handleEvent(TryPermissionAgainEvent)
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+        }
+
+    @Test
+    fun `when user does not agree to ask for permission again return the correct ui state`() =
+        runTest {
+            setupFakes(uiState = ShowRequestPermissionDialogUiState, permission = false)
+            setupSut()
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(ShowRequestPermissionDialogUiState))
+
+            sut.handleEvent(DoNotTryPermissionAgainEvent)
+            runCurrent()
+            assertThat(sut.uiStateFlow.value, equalTo(TerminalUiState))
+        }
 
     private fun setupSut() {
-        sut = ImportContactsViewModel(
+        sut =
+            ImportContactsViewModel(
                 fakeUiStateMapper,
                 fakeSavePlayersUseCase,
                 fakeFakeGetContactsUseCase,
-                fakePermission
-        )
+                fakePermission,
+            )
     }
 
-    private fun setupFakes(contacts: List<Contact> = fixture.createList(),
-                           uiState: ImportContactsUiState = createInitialUiModel(),
-                           permission: Boolean) {
+    private fun setupFakes(
+        contacts: List<Contact> = fixture.createList(),
+        uiState: ImportContactsUiState = createInitialUiModel(),
+        permission: Boolean,
+    ) {
         fakeFakeGetContactsUseCase.contacts = contacts.toMutableList()
         fakeUiStateMapper.uiState = uiState
         fakePermission.hasPermission = permission
     }
 
     private fun createInitialUiModel(): ContactsListUiState =
-            ContactsListUiState(
-                    contacts = fixture.createList(),
-                    addContactsButtonEnabled = false
-            )
+        ContactsListUiState(
+            contacts = fixture.createList(),
+            addContactsButtonEnabled = false,
+        )
 
-    private fun createSelectedContacts(initialUiModel: ImportContactsUiState,
-                                       selectedContacts: Set<Int> = emptySet()): List<ContactItemUiState> {
+    private fun createSelectedContacts(
+        initialUiModel: ImportContactsUiState,
+        selectedContacts: Set<Int> = emptySet(),
+    ): List<ContactItemUiState> {
         return initialUiModel.contacts
-                .toMutableList()
-                .mapIndexed { index, contactItemUiModel ->
-                    contactItemUiModel.copy(isSelected = selectedContacts.contains(index))
-                }
+            .toMutableList()
+            .mapIndexed { index, contactItemUiModel ->
+                contactItemUiModel.copy(isSelected = selectedContacts.contains(index))
+            }
     }
-
 }
 
-
 class FakeGetContactsUseCase : GetContactsUseCase {
-
     var contacts: MutableList<Contact> = mutableListOf()
 
     override suspend fun execute(): List<Contact> {
@@ -343,7 +362,6 @@ class FakeGetContactsUseCase : GetContactsUseCase {
 }
 
 class FakeSavePlayersUseCase : SavePlayersUseCase {
-
     var exception: RuntimeException? = null
 
     override suspend fun execute(selectedContacts: Set<Long>) {
@@ -351,26 +369,22 @@ class FakeSavePlayersUseCase : SavePlayersUseCase {
             throw exception!!
         }
     }
-
-
 }
 
 class FakeUiStateMapper : ImportContactsUiStateMapper {
-
     lateinit var uiState: ImportContactsUiState
 
-    override fun map(contacts: List<Contact>, selectedContacts: Set<Long>): ImportContactsUiState =
-            this.uiState
-
+    override fun map(
+        contacts: List<Contact>,
+        selectedContacts: Set<Long>,
+    ): ImportContactsUiState = this.uiState
 }
 
 class FakePermission : Permission {
-
     var hasPermission: Boolean = false
 
     override val name: String
         get() = "Contacts permission"
 
     override fun hasPermission(): Boolean = hasPermission
-
 }

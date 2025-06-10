@@ -14,7 +14,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class SavePlayersUseCaseTest {
-
     @get:Rule var coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var fixture: JFixture
@@ -29,42 +28,48 @@ class SavePlayersUseCaseTest {
         fakePlayerRepo = FakePlayerRepo()
         fakeContactImporter = FakeContactsImporter()
 
-        sut = SavePlayersUseCaseImpl(
+        sut =
+            SavePlayersUseCaseImpl(
                 fakePlayerRepo,
                 fakeContactImporter,
                 CoroutineDispatchers(
-                        coroutinesTestRule.testDispatcher,
-                        coroutinesTestRule.testDispatcher
-                )
-        )
+                    coroutinesTestRule.testDispatcher,
+                    coroutinesTestRule.testDispatcher,
+                ),
+            )
     }
 
     @Test
-    fun `save selected contacts`() = runTest {
-        val fixtContacts: List<Contact> = fixture.createList()
-        fakeContactImporter.contacts = fixtContacts
-        val fixtContact = fixtContacts[1]
+    fun `save selected contacts`() =
+        runTest {
+            val fixtContacts: List<Contact> = fixture.createList()
+            fakeContactImporter.contacts = fixtContacts
+            val fixtContact = fixtContacts[1]
 
-        sut.execute(setOf(fixtContact.contactId))
+            sut.execute(setOf(fixtContact.contactId))
 
-        assertThat(fakePlayerRepo.players[0],
-                equalTo(Player(
+            assertThat(
+                fakePlayerRepo.players[0],
+                equalTo(
+                    Player(
                         playerId = "0",
                         name = fixtContact.name,
                         phoneNumber = fixtContact.phoneNumber,
                         email = fixtContact.emailAddress,
-                        contactId = fixtContact.contactId))
-        )
-    }
+                        contactId = fixtContact.contactId,
+                    ),
+                ),
+            )
+        }
 
     @Test
-    fun `do save when there is no selected contacts`() = runTest {
-        val fixtContacts: List<Contact> = fixture.createList()
-        fakeContactImporter.contacts = fixtContacts
+    fun `do save when there is no selected contacts`() =
+        runTest {
+            val fixtContacts: List<Contact> = fixture.createList()
+            fakeContactImporter.contacts = fixtContacts
 
-        sut.execute(emptySet())
+            sut.execute(emptySet())
 
-        assertThat(fakePlayerRepo.players, hasSize(0))
-    }
+            assertThat(fakePlayerRepo.players, hasSize(0))
+        }
 }
-

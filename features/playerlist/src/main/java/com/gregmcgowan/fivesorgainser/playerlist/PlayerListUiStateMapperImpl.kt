@@ -1,9 +1,9 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
+import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
-import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.data.DataChange
 import com.gregmcgowan.fivesorganiser.data.DataChangeType.Added
 import com.gregmcgowan.fivesorganiser.data.DataChangeType.Modified
@@ -13,30 +13,35 @@ import com.gregmcgowan.fivesorganiser.data.player.Player
 import javax.inject.Inject
 
 interface PlayerListUiStateMapper {
-    fun map(existingState: UiState<PlayerListUiState>, updates: DataUpdate<Player>): UiState<PlayerListUiState>
+    fun map(
+        existingState: UiState<PlayerListUiState>,
+        updates: DataUpdate<Player>,
+    ): UiState<PlayerListUiState>
 }
 
 class PlayerListUiStateMapperImpl @Inject constructor() : PlayerListUiStateMapper {
-
-    override fun map(existingState: UiState<PlayerListUiState>, updates: DataUpdate<Player>) =
-            when (existingState) {
-                is LoadingUiState,
-                is ErrorUiState -> ContentUiState(PlayerListUiState(mapPlayerList(updates.changes)))
-                is ContentUiState -> mapFromExistingContent(existingState.content, updates)
-            }
+    override fun map(
+        existingState: UiState<PlayerListUiState>,
+        updates: DataUpdate<Player>,
+    ) = when (existingState) {
+        is LoadingUiState,
+        is ErrorUiState,
+        -> ContentUiState(PlayerListUiState(mapPlayerList(updates.changes)))
+        is ContentUiState -> mapFromExistingContent(existingState.content, updates)
+    }
 
     private fun mapFromExistingContent(
-            existingState: PlayerListUiState,
-            update: DataUpdate<Player>): UiState<PlayerListUiState> {
+        existingState: PlayerListUiState,
+        update: DataUpdate<Player>,
+    ): UiState<PlayerListUiState> {
         val updatedPlayerUiModels = mapPlayerList(update.changes, existingState.players.toMutableList())
 
         return ContentUiState(existingState.copy(players = updatedPlayerUiModels))
     }
 
-
     private fun mapPlayerList(
-            updates: List<DataChange<Player>>,
-            existingPlayerUiStates: MutableList<PlayerListItemUiState> = mutableListOf(),
+        updates: List<DataChange<Player>>,
+        existingPlayerUiStates: MutableList<PlayerListItemUiState> = mutableListOf(),
     ): List<PlayerListItemUiState> {
         updates.forEach { update ->
             val player = update.data
