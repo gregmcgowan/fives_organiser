@@ -32,7 +32,7 @@ sealed class MainScreen(
     )
 
     object ResultsListScreen : MainScreen(
-        Destinations.MATCHES_LIST_ROUTE,
+        Destinations.RESULTS_LIST_ROUTE,
         R.string.results_title,
         R.drawable.ic_results_black_24dp,
     )

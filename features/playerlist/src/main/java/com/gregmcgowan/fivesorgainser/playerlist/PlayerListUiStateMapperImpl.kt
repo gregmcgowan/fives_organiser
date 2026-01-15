@@ -27,6 +27,7 @@ class PlayerListUiStateMapperImpl @Inject constructor() : PlayerListUiStateMappe
         is LoadingUiState,
         is ErrorUiState,
         -> ContentUiState(PlayerListUiState(mapPlayerList(updates.changes)))
+
         is ContentUiState -> mapFromExistingContent(existingState.content, updates)
     }
 
@@ -34,7 +35,8 @@ class PlayerListUiStateMapperImpl @Inject constructor() : PlayerListUiStateMappe
         existingState: PlayerListUiState,
         update: DataUpdate<Player>,
     ): UiState<PlayerListUiState> {
-        val updatedPlayerUiModels = mapPlayerList(update.changes, existingState.players.toMutableList())
+        val updatedPlayerUiModels =
+            mapPlayerList(update.changes, existingState.players.toMutableList())
 
         return ContentUiState(existingState.copy(players = updatedPlayerUiModels))
     }
@@ -52,11 +54,13 @@ class PlayerListUiStateMapperImpl @Inject constructor() : PlayerListUiStateMappe
                         existingPlayerUiStates.add(map(player))
                     }
                 }
+
                 Modified -> {
                     if (findPlayerIndex != -1) {
                         existingPlayerUiStates[findPlayerIndex] = map(player)
                     }
                 }
+
                 Removed -> {
                     if (findPlayerIndex != -1) {
                         existingPlayerUiStates.removeAt(findPlayerIndex)

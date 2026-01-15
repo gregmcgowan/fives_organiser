@@ -33,7 +33,11 @@ fun MainScreen() {
     val navController: NavHostController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
     val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
-    val navigationActions = NavigationActions(navController, mainViewModel::nestedScreenShown)
+    val navigationActions =
+        NavigationActions(
+            navController = navController,
+            nestedScreenShown = mainViewModel::nestedScreenShown,
+        )
 
     when (val uiModel = uiState) {
         is LoadingUiState -> Loading()
