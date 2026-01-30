@@ -1,7 +1,5 @@
 package com.gregmcgowan.fivesorganiser.main
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
@@ -33,14 +31,14 @@ class MainViewModel @Inject constructor(
         if (_uiState.value is ContentUiState) {
             val content = _uiState.value as ContentUiState
             _uiState.update {
-                ContentUiState(content.content.copy(showBottomNavigation = nestedScreenShown))
+                ContentUiState(content.content.copy(showBottomNavigation = !nestedScreenShown))
             }
         }
     }
 
     private fun updateUiState(selectedScreen: MainScreen) {
         _uiState.update {
-            ContentUiState(MainScreenUiState(selectedScreen))
+            ContentUiState(MainScreenUiState(screenToShow = selectedScreen))
         }
     }
 }

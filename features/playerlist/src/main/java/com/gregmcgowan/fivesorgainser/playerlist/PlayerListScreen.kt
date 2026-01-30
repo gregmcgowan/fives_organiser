@@ -125,7 +125,7 @@ fun PlayerListContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { eventHandler.invoke(AddPlayerSelectedEvent) },
-                content = { Icon(Icons.Filled.Add, "") },
+                content = { Icon(Icons.Filled.Add, "Add Player") },
             )
         },
     )
