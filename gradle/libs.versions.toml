@@ -1,7 +1,7 @@
 [versions]
 minSdk = "23"
 compileSdk = "35"
-targetSdk = "28"
+targetSdk = "35"
 
 kotlinStdlibVersion = "2.1.10"
 kotlinxCoroutinesVersion = "1.10.2"

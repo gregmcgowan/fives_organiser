@@ -29,7 +29,7 @@ import com.gregmcgowan.fivesorganiser.navigation.NavigationActions
 import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
 
 @Composable
-fun MainScreen() {
+fun MainScreen(modifier: Modifier = Modifier) {
     val navController: NavHostController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
     val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
@@ -40,9 +40,22 @@ fun MainScreen() {
         )
 
     when (val uiModel = uiState) {
-        is LoadingUiState -> Loading()
-        is ErrorUiState -> ErrorMessage(uiModel)
-        is ContentUiState -> MainContent(uiModel.content, navController, navigationActions)
+        is LoadingUiState -> {
+            Loading(modifier = modifier)
+        }
+
+        is ErrorUiState -> {
+            ErrorMessage(errorUiState = uiModel, modifier = modifier)
+        }
+
+        is ContentUiState -> {
+            MainContent(
+                mainScreenUiState = uiModel.content,
+                navController = navController,
+                navigationActions = navigationActions,
+                modifier = modifier,
+            )
+        }
     }
 }
 
@@ -51,8 +64,10 @@ fun MainContent(
     mainScreenUiState: MainScreenUiState,
     navController: NavHostController,
     navigationActions: NavigationActions,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         bottomBar = {
             AnimatedVisibility(
                 visible = mainScreenUiState.showBottomNavigation,

@@ -12,15 +12,28 @@ import androidx.compose.ui.res.stringResource
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
 
 @Composable
-fun Loading() {
-    Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
+fun Loading(modifier: Modifier = Modifier) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center),
+    ) {
         CircularProgressIndicator()
     }
 }
 
 @Composable
-fun <T> ErrorMessage(errorUiState: UiState.ErrorUiState<T>) {
-    Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)) {
+fun <T> ErrorMessage(
+    errorUiState: UiState.ErrorUiState<T>,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center),
+    ) {
         Text(stringResource(id = errorUiState.string))
     }
 }
