@@ -1,0 +1,110 @@
+[versions]
+minSdk = "23"
+compileSdk = "35"
+targetSdk = "28"
+
+kotlinStdlibVersion = "2.1.10"
+kotlinxCoroutinesVersion = "1.10.2"
+kotlinxCoroutinesAndroid = "1.10.2"
+
+androidGradlePlugin = '8.10.0'
+
+activityCompose = "1.10.1"
+appcompat = "1.2.0"
+hiltNavigationCompose = "1.2.0"
+runtimeLivedata = "1.8.2"
+androidx-navigation_compose = "2.9.0"
+androidxActivityKtx = '1.2.0'
+androidxLifecycle = '2.2.0'
+androidxLifecycleRuntimeKtx = '2.7.0'
+androidxCoreTestingVersion = "2.2.0"
+
+compose = "1.8.2"
+composePlugin = "2.1.10"
+
+material = "1.8.2"
+material_icons = "1.7.8"
+
+firebaseAuthVersion = "23.2.1"
+firebaseFirestoreVersion = "25.1.4"
+firebaseCrashlytics = "19.4.3"
+firebaseCrashlyticsGradleVersion = "3.0.3"
+googleServicesVersion = "4.4.2"
+
+kspVersion = "2.1.10-1.0.31"
+daggerVersion = "2.56.2"
+
+detekVersion = "1.19.0"
+ktLintVersion = "12.3.0"
+
+junitVersion = "4.13.2"
+timberVersion = "4.7.1"
+hamcrestVersion = "2.2"
+jfixtureVersion = "2.7.2"
+espressoVersion = "3.6.1"
+truthVersion = "0.42"
+
+[libraries]
+firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradleVersion" }
+google-services = { module = "com.google.gms:google-services", version.ref = "googleServicesVersion" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinStdlibVersion" }
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlibVersion" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesVersion" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesVersion" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivityKtx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "compose" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test", version.ref = "compose" }
+androidx-compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
+androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "material_icons" }
+androidx-compose-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
+
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation_compose" }
+
+androidx-lifecycle-runtime-ktx = {module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref= "androidxLifecycleRuntimeKtx"}
+androidx-lifecycle-runtime-compose = {module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycleRuntimeKtx"}
+androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime", version.ref = "androidxLifecycle" }
+
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "androidxCoreTestingVersion" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoVersion" }
+androidx-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espressoVersion" }
+
+firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestoreVersion" }
+
+dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerVersion" }
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerVersion" }
+dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "daggerVersion" }
+dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "daggerVersion" }
+
+hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrestVersion" }
+hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrestVersion" }
+hamcrest-library = { module = "org.hamcrest:hamcrest-library", version.ref = "hamcrestVersion" }
+jfixture = { module = "com.flextrade.jfixture:jfixture", version.ref = "jfixtureVersion" }
+junit = { module = "junit:junit", version.ref = "junitVersion" }
+
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
+truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
+
+[plugins]
+ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+hilt-android-plugin = { id = "com.google.dagger.hilt.android", version.ref = "daggerVersion" }
+compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "composePlugin" }
+detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekVersion" }
+ktLint-plugin = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktLintVersion" }

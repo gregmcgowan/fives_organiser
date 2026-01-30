@@ -9,12 +9,12 @@ dependencies {
 
     implementation project(":foundation:core")
 
-    api "junit:junit:${versions.junit}"
-    api "com.google.truth:truth:${versions.truth}"
-    api "com.flextrade.jfixture:jfixture:${versions.jfixture}"
-    api "org.hamcrest:hamcrest:${versions.hamcrest}"
-    api "org.hamcrest:hamcrest-core:${versions.hamcrest}"
-    api "org.hamcrest:hamcrest-library:${versions.hamcrest}"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
+    api libs.junit
+    api libs.truth
+    api libs.jfixture
+    api libs.hamcrest
+    api libs.hamcrest.core
+    api libs.hamcrest.library
+    api libs.kotlinx.coroutines.test
 
 }
