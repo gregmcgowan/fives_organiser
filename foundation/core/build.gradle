@@ -7,10 +7,10 @@ android {
 
 dependencies {
 
-    api "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+    api libs.kotlin.stdlib
+    api libs.kotlinx.coroutines.core
+    api libs.kotlinx.coroutines.android
 
-    api "com.jakewharton.timber:timber:${versions.timber}"
+    api libs.timber
 
 }

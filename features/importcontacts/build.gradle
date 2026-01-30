@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    alias libs.plugins.compose.plugin
 }
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
@@ -22,12 +22,12 @@ dependencies {
     implementation project(":foundation:core-ui")
     implementation project(":libraries:data")
 
-    implementation "com.google.dagger:hilt-android:${versions.dagger}"
-    ksp "com.google.dagger:hilt-compiler:${versions.dagger}"
+    implementation libs.dagger.hilt.android
+    ksp libs.dagger.hilt.compiler
 
     testImplementation project(':foundation:core-test')
     androidTestImplementation project(':foundation:core-android-test')
 
     // TODO where should this go?
-    debugImplementation "androidx.compose.ui:ui-test-manifest:${versions.compose}"
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }

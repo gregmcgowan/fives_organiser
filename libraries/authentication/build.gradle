@@ -18,10 +18,10 @@ dependencies {
     implementation project(":libraries:authentication-contract")
 
     // api as only app module should depend on this and is needed for hilt
-    api "com.google.firebase:firebase-auth:${versions.firebase_auth}"
+    api libs.firebase.auth
 
-    implementation "com.google.dagger:hilt-android:${versions.dagger}"
-    ksp "com.google.dagger:hilt-compiler:${versions.dagger}"
+    implementation libs.dagger.hilt.android
+    ksp libs.dagger.hilt.compiler
 
     testImplementation project(':foundation:core-test')
 

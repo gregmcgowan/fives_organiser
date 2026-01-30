@@ -56,7 +56,7 @@ fun NavigationGraph(
     navigationActions: NavigationActions,
 ) {
     NavHost(
-        navController,
+        navController = navController,
         startDestination = startDestination,
         modifier = modifier,
     ) {

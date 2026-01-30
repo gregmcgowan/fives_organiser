@@ -1,11 +1,11 @@
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion buildConfig.compileSdk
+    compileSdkVersion "android-${libs.versions.compileSdk.get()}"
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
-        targetSdkVersion buildConfig.targetSdk
+        minSdkVersion libs.versions.minSdk.get() as Integer
+        targetSdkVersion libs.versions.targetSdk.get() as Integer
     }
 
     compileOptions {

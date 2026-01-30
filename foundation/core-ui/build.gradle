@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    alias libs.plugins.compose.plugin
 }
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
@@ -17,32 +17,30 @@ android {
 dependencies {
     api project(":foundation:core")
 
-    api "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
-    api "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidx.lifecycle_runtime_ktx}"
-    api "androidx.lifecycle:lifecycle-runtime-compose:${versions.androidx.lifecycle_runtime_ktx}"
-    api "androidx.activity:activity-ktx:${versions.androidx.activity_ktx}"
+    api libs.androidx.lifecycle.extensions
+    api libs.androidx.lifecycle.runtime.ktx
+    api libs.androidx.lifecycle.runtime.compose
+    api libs.androidx.activity.ktx
 
-    api "androidx.hilt:hilt-navigation-compose:${versions.androidx.hilt_navigation_compose}"
+    api libs.androidx.hilt.navigation.compose
+    api libs.androidx.compose.runtime.livedata
 
-    api "androidx.compose.runtime:runtime:${versions.compose}"
-    api "androidx.compose.runtime:runtime-livedata:${versions.compose}"
+    api libs.androidx.compose.runtime
+    api libs.androidx.compose.foundation
+    api libs.androidx.compose.foundation.layout
 
-    api "androidx.compose.foundation:foundation-layout:${versions.compose}"
-    api "androidx.compose.foundation:foundation:${versions.compose}"
+    api libs.androidx.compose.ui
+    api libs.androidx.compose.ui.tooling
+    api libs.androidx.compose.animation
 
-    api "androidx.compose.ui:ui:${versions.compose}"
-    api "androidx.compose.ui:ui-tooling:${versions.compose}"
+    api libs.androidx.compose.material
+    api libs.androidx.compose.material.icons
 
-    api "androidx.compose.animation:animation:${versions.compose}"
-
-    api "androidx.compose.material:material:${versions.material}"
-    api "androidx.compose.material:material-icons-extended:${versions.material_icons}"
-
-    api "androidx.navigation:navigation-compose:${versions.androidx.navigation_compose}"
-    api "androidx.activity:activity-compose:${versions.androidx.activity_compose}"
+    api libs.androidx.navigation.compose
+    api libs.androidx.activity.compose
 
     // TODO see if this can be removed - need to tidy up themes to do this
-    api "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
+    api libs.androidx.appcompat
 
 }
 

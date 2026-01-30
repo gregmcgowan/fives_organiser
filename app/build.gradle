@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    alias libs.plugins.compose.plugin
 }
 apply plugin: 'com.android.application'
 apply from: "../base-android-library.gradle"
@@ -33,18 +33,18 @@ dependencies {
     implementation project(":features:playerlist")
     implementation project(":features:importcontacts")
 
-    implementation "com.google.firebase:firebase-crashlytics:${versions.firebase_crashlytics}"
-    implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
+    implementation libs.firebase.crashlytics
+    implementation libs.androidx.lifecycle.runtime
 
     // hilt
-    implementation "com.google.dagger:hilt-android:${versions.dagger}"
-    ksp "com.google.dagger:hilt-compiler:${versions.dagger}"
+    implementation libs.dagger.hilt.android
+    ksp libs.dagger.hilt.compiler
 
     // integration tests
-    debugImplementation "androidx.compose.ui:ui-test-manifest:${versions.compose}"
+    debugImplementation libs.androidx.compose.ui.test.manifest
     androidTestImplementation project(':foundation:core-android-test')
-    androidTestImplementation "com.google.dagger:hilt-android-testing:${versions.dagger}"
-    kspAndroidTest "com.google.dagger:hilt-android-compiler:${versions.dagger}"
+    androidTestImplementation libs.dagger.hilt.android.testing
+    kspAndroidTest libs.dagger.hilt.android.compiler
 
 }
 

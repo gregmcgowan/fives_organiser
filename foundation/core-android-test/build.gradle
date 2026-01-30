@@ -9,13 +9,13 @@ dependencies {
 
     implementation project(":foundation:core")
 
-    api "androidx.compose.ui:ui-test:${versions.compose}"
-    api "androidx.compose.ui:ui-test-junit4:${versions.compose}"
+    api libs.androidx.compose.ui.test
+    api libs.androidx.compose.ui.test.junit
 
-    api "androidx.arch.core:core-testing:${versions.androidx.test_core_testing}"
+    api libs.androidx.core.testing
     // exclude protobuf-lite as there is duplicate classes there and in protobuf-javalite
-    api("androidx.test.espresso:espresso-contrib:${versions.espresso}", {
+    api (libs.androidx.espresso.contrib) {
         exclude group: 'com.google.protobuf', module: 'protobuf-lite'
-    })
-    api "androidx.test.espresso:espresso-core:${versions.espresso}"
+    }
+    api libs.androidx.espresso.core
 }
