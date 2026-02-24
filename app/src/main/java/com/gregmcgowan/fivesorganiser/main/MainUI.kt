@@ -3,10 +3,14 @@ package com.gregmcgowan.fivesorganiser.main
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,23 +78,34 @@ fun MainContent(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                NavigationBar {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-                    mainScreenUiState.mainTabScreens.forEach { screen ->
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = screen.iconRes),
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(screen.resourceId)) },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = {
-                                navigationActions.navigateToMainScreenTab(screen.route)
-                            },
-                        )
+                Column {
+                    HorizontalDivider()
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ) {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
+                        mainScreenUiState.mainTabScreens.forEach { screen ->
+                            NavigationBarItem(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = screen.iconRes),
+                                        contentDescription = null,
+                                    )
+                                },
+                                colors =
+                                    NavigationBarItemDefaults
+                                        .colors()
+                                        .copy(
+                                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                        ),
+                                label = { Text(stringResource(screen.resourceId)) },
+                                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                onClick = {
+                                    navigationActions.navigateToMainScreenTab(screen.route)
+                                },
+                            )
+                        }
                     }
                 }
             }

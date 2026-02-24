@@ -26,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,7 +71,7 @@ fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
     val uiState by importContactsViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
-    ImportContactsScreen(
+    ImportContactsContent(
         importContactsUiState = uiState,
         userEventHandler = { event -> importContactsViewModel.handleEvent(event) },
         exitScreenHandler = exitScreenHandler,
@@ -78,10 +79,11 @@ fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
 }
 
 @Composable
-fun ImportContactsScreen(
+fun ImportContactsContent(
     importContactsUiState: ImportContactsUiState,
     userEventHandler: (ImportContactsUserEvent) -> Unit,
     exitScreenHandler: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val launcher =
         rememberLauncherForActivityResult(RequestPermission()) { result ->
@@ -92,24 +94,36 @@ fun ImportContactsScreen(
     BackHandler(onBack = exitScreenHandler)
 
     when (importContactsUiState) {
-        is LoadingUiState -> Loading()
+        is LoadingUiState -> {
+            Loading(modifier)
+        }
+
         is ShowRequestPermissionDialogUiState -> {
             SideEffect { launcher.launch(Manifest.permission.READ_CONTACTS) }
         }
 
         is UserDeniedPermissionUiState -> {
-            NoPermissionGrantedUi(userEventHandler)
+            NoPermissionGrantedUi(
+                modifier = modifier,
+                userEventHandler = userEventHandler,
+            )
         }
 
         is ContactsListUiState -> {
-            ContactListUi(exitScreenHandler, importContactsUiState, userEventHandler)
+            ContactListUi(
+                exitScreenHandler = exitScreenHandler,
+                importContactsUiState = importContactsUiState,
+                userEventHandler = userEventHandler,
+                modifier = modifier,
+            )
         }
 
         is ErrorUiState -> {
             Box(
                 modifier =
-                    Modifier
+                    modifier
                         .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(start = 8.dp, end = 8.dp)
                         .wrapContentSize(Alignment.Center),
             ) {
@@ -124,10 +138,23 @@ fun ImportContactsScreen(
 }
 
 @Composable
-fun NoPermissionGrantedUi(userEventHandler: (ImportContactsUserEvent) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize()) {
+fun NoPermissionGrantedUi(
+    modifier: Modifier = Modifier,
+    userEventHandler: (ImportContactsUserEvent) -> Unit,
+) {
+    Column(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
+    ) {
         Spacer(modifier = Modifier.size(32.dp))
-        Text(stringResource(id = R.string.permissions_denied_text), textAlign = TextAlign.Center)
+        Text(
+            text = stringResource(id = R.string.permissions_denied_text),
+            textAlign = TextAlign.Center,
+            // Not sure why we need to specify colour for dark mode here
+            color = MaterialTheme.colorScheme.onSurface,
+        )
         Spacer(modifier = Modifier.size(16.dp))
         Button(
             modifier =
@@ -157,24 +184,29 @@ private fun ContactListUi(
     exitScreenHandler: () -> Unit,
     importContactsUiState: ContactsListUiState,
     userEventHandler: (ImportContactsUserEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(id = R.string.import_contacts_title))
-                },
-                navigationIcon = {
-                    IconButton(onClick = exitScreenHandler) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription =
-                                stringResource(R.string.navigate_up_content_description),
-                        )
-                    }
-                },
-            )
+            Column {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(id = R.string.import_contacts_title))
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = exitScreenHandler) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription =
+                                    stringResource(R.string.navigate_up_content_description),
+                            )
+                        }
+                    },
+                )
+            }
         },
+        containerColor = MaterialTheme.colorScheme.surface,
         content = {
             Column(
                 modifier =
@@ -189,20 +221,20 @@ private fun ContactListUi(
                         }
                     }
                 }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier =
-                        Modifier
-                            .padding(start = 48.dp, end = 48.dp, bottom = 16.dp)
-                            .fillMaxWidth(),
-                ) {
-                    AnimatedVisibility(importContactsUiState.addContactsButtonEnabled) {
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            content = { Text(stringResource(id = R.string.import_contacts_add)) },
-                            onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
-                        )
-                    }
+            }
+        },
+        bottomBar = {
+            AnimatedVisibility(importContactsUiState.addContactsButtonEnabled) {
+                Column {
+                    HorizontalDivider()
+                    Button(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp, horizontal = 16.dp),
+                        content = { Text(stringResource(id = R.string.import_contacts_add)) },
+                        onClick = { userEventHandler.invoke(AddButtonPressedEvent) },
+                    )
                 }
             }
         },
@@ -213,10 +245,11 @@ private fun ContactListUi(
 fun ContactItem(
     contact: ContactItemUiState,
     eventHandler: (ImportContactsUserEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .semantics { contentDescription = "ContactItem-${contact.name}" }
                 .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
@@ -252,8 +285,8 @@ fun ContactItem(
 
 @Composable
 fun BiggerBadge(
-    modifier: Modifier = Modifier,
     backgroundColor: Color,
+    modifier: Modifier = Modifier,
     radius: Dp = 18.dp,
     content: @Composable (RowScope.() -> Unit)? = null,
 ) {
@@ -274,29 +307,35 @@ fun BiggerBadge(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun NoPermissionGrantedPreview() {
     AppTheme {
-        NoPermissionGrantedUi {}
+        NoPermissionGrantedUi(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+        ) {}
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun ContactListPreview() {
     AppTheme {
-        ImportContactsScreen(
-            ContactsListUiState(
-                listOf(
-                    ContactItemUiState(name = "Greg", isSelected = true, contactId = 1),
-                    ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
-                    ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3),
+        ImportContactsContent(
+            importContactsUiState =
+                ContactsListUiState(
+                    listOf(
+                        ContactItemUiState(name = "Greg", isSelected = true, contactId = 1),
+                        ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
+                        ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3),
+                    ),
+                    addContactsButtonEnabled = true,
                 ),
-                addContactsButtonEnabled = true,
-            ),
-            { },
-            { },
+            userEventHandler = { },
+            exitScreenHandler = { },
         )
     }
 }

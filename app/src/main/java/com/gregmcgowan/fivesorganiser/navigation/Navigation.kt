@@ -7,7 +7,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.gregmcgowan.fivesorgainser.playerlist.PlayerList
+import com.gregmcgowan.fivesorgainser.playerlist.PlayerListScreen
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsScreen
 
 object Destinations {
@@ -61,7 +61,7 @@ fun NavigationGraph(
         modifier = modifier,
     ) {
         composable(Destinations.PLAYER_LIST_ROUTE) {
-            PlayerList(openImportContacts = {
+            PlayerListScreen(openImportContacts = {
                 navigationActions.navigateToNestedScreen(Destinations.IMPORT_CONTACTS_ROUTE)
             })
         }

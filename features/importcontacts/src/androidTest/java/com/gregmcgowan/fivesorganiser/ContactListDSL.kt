@@ -12,12 +12,12 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithText
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
-import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsScreen
+import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsContent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState
 
 fun ComposeContentTestRule.givenContactListUiState(uiState: ImportContactsUiState) {
     this.setContent {
-        AppTheme { ImportContactsScreen(uiState, {}, {}) }
+        AppTheme { ImportContactsContent(uiState, {}, {}) }
     }
 }
 

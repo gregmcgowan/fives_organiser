@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,11 +52,11 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 
 @Composable
-fun PlayerList(openImportContacts: () -> Unit) {
+fun PlayerListScreen(openImportContacts: () -> Unit) {
     val playerListViewModel = hiltViewModel<PlayerListViewModel>()
     val uiState by playerListViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
-    PlayerListScreen(
+    PlayerListContent(
         uiState = uiState,
         eventHandler = { playerListUserEvent ->
             when (playerListUserEvent) {
@@ -65,14 +67,27 @@ fun PlayerList(openImportContacts: () -> Unit) {
 }
 
 @Composable
-fun PlayerListScreen(
+fun PlayerListContent(
     uiState: UiState<PlayerListUiState>,
     eventHandler: (PlayerListUserEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when (uiState) {
-        is LoadingUiState -> Loading()
-        is ErrorUiState -> ErrorMessage(uiState)
-        is ContentUiState -> PlayerListContent(uiState.content, eventHandler)
+        is LoadingUiState -> {
+            Loading(modifier)
+        }
+
+        is ErrorUiState -> {
+            ErrorMessage(errorUiState = uiState, modifier = modifier)
+        }
+
+        is ContentUiState -> {
+            PlayerListContent(
+                modifier = modifier,
+                uiState = uiState.content,
+                eventHandler = eventHandler,
+            )
+        }
     }
 }
 
@@ -81,15 +96,20 @@ fun PlayerListScreen(
 fun PlayerListContent(
     uiState: PlayerListUiState,
     eventHandler: (PlayerListUserEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(id = R.string.player_list_title))
-                },
-            )
+            Column {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(id = R.string.player_list_title))
+                    },
+                )
+            }
         },
+        containerColor = MaterialTheme.colorScheme.surface,
         content = {
             if (uiState.players.isNotEmpty()) {
                 LazyColumn(
@@ -126,6 +146,7 @@ fun PlayerListContent(
         },
         floatingActionButton = {
             FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.primary,
                 onClick = { eventHandler.invoke(AddPlayerSelectedEvent) },
                 content = { Icon(Icons.Filled.Add, "Add Player") },
             )
@@ -134,11 +155,14 @@ fun PlayerListContent(
 }
 
 @Composable
-fun PlayerListItem(player: PlayerListItemUiState) {
+fun PlayerListItem(
+    player: PlayerListItemUiState,
+    modifier: Modifier = Modifier,
+) {
     Column {
         Row(
             modifier =
-                Modifier
+                modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -230,37 +254,40 @@ fun PlayerAvatarPreview() {
     PlayerAvatar()
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PlayerListPreviewContent() {
     AppTheme {
-        PlayerListScreen(
-            ContentUiState(
-                content =
-                    PlayerListUiState(
-                        players =
-                            listOf(
-                                PlayerListItemUiState("1", "reg"),
-                                PlayerListItemUiState("1", "frances"),
-                                PlayerListItemUiState("1", "reg"),
-                                PlayerListItemUiState("1", "reg"),
-                            ),
-                    ),
-            ),
-        ) {}
+        PlayerListContent(
+            uiState =
+                ContentUiState(
+                    content =
+                        PlayerListUiState(
+                            players =
+                                listOf(
+                                    PlayerListItemUiState("1", "reg"),
+                                    PlayerListItemUiState("1", "frances"),
+                                    PlayerListItemUiState("1", "reg"),
+                                    PlayerListItemUiState("1", "reg"),
+                                ),
+                        ),
+                ),
+            eventHandler = {},
+        )
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PlayerListPreviewEmpty() {
     AppTheme {
-        PlayerListScreen(
-            ContentUiState(
-                content =
-                    PlayerListUiState(players = emptyList()),
-            ),
-        ) {
-        }
+        PlayerListContent(
+            uiState =
+                ContentUiState(
+                    content =
+                        PlayerListUiState(players = emptyList()),
+                ),
+            eventHandler = {},
+        )
     }
 }
