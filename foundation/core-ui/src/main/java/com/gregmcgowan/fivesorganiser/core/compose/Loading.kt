@@ -1,9 +1,11 @@
 package com.gregmcgowan.fivesorganiser.core.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ fun Loading(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
                 .wrapContentSize(Alignment.Center),
     ) {
         CircularProgressIndicator()
@@ -32,6 +35,7 @@ fun <T> ErrorMessage(
         modifier =
             modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
                 .wrapContentSize(Alignment.Center),
     ) {
         Text(stringResource(id = errorUiState.string))
