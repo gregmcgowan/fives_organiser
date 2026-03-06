@@ -1,9 +1,7 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
-import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
-import kotlinx.coroutines.flow.Flow
 
 class FakePlayerRepo : PlayerRepo {
     var players: MutableList<Player> = mutableListOf()
@@ -29,10 +27,6 @@ class FakePlayerRepo : PlayerRepo {
         } else {
             players.add(Player(players.size.toString(), name, phoneNumber, email, contactId))
         }
-    }
-
-    override fun playersUpdates(): Flow<DataUpdate<Player>> {
-        TODO("Not used in these test")
     }
 }
 

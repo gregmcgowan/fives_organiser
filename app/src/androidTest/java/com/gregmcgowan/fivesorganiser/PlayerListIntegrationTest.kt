@@ -47,14 +47,14 @@ class PlayerListIntegrationTest {
             listOf(Player("1,", "greg", "1", "2", 1)),
         )
         // Simple verification for now. As we are mostly making sure nothing crashes
-        composeTestRule.onNodeWithText("greg")
+        composeTestRule
+            .onNodeWithText("greg")
             .assertIsDisplayed()
     }
 
     private fun setPlayers(players: List<Player>) {
         with(repo as FakePlayerRepo) {
             this.players = players.toMutableList()
-            this.emitPlayers()
         }
     }
 
