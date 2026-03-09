@@ -11,7 +11,7 @@ As such it is very much a work in progress and a lot of things won't work and lo
 
 
 ## Setup
-The app uses Crashlytics and Firebase Firestore so if you try to build without any changes you will get missing a `google-services.json` file build error.
+The app uses Crashlytics so if you try to build without any changes you will get missing a `google-services.json` file build error.
 
 If you want to build and run the app, you need to obtain your own copy from Firebase:
 
