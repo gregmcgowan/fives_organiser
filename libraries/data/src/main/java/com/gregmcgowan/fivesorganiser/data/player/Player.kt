@@ -1,9 +1,9 @@
 package com.gregmcgowan.fivesorganiser.data.player
 
 data class Player(
-    val playerId: String = "",
-    val name: String = "Unknown Player",
-    val phoneNumber: String = "",
-    val email: String = "",
-    val contactId: Long = -1,
+    val playerId: String,
+    val name: String,
+    val phoneNumber: String? = null,
+    val email: String? = null,
+    val contactId: Long? = null,
 )

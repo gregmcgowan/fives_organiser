@@ -17,11 +17,13 @@ class GetContactsUseCaseImpl @Inject constructor(
     override suspend fun execute(): List<Contact> =
         withContext(coroutineDispatchers.io) {
             val alreadyAddedContacts =
-                playersRepo.getPlayers()
+                playersRepo
+                    .getPlayers()
                     .map { it.contactId }
                     .toSet()
 
-            contactsImporter.getAllContacts()
+            contactsImporter
+                .getAllContacts()
                 .filter { !alreadyAddedContacts.contains(it.contactId) }
         }
 }

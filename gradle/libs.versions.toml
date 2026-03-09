@@ -3,7 +3,7 @@ minSdk = "23"
 compileSdk = "35"
 targetSdk = "35"
 
-kotlinStdlibVersion = "2.1.10"
+kotlinStdlibVersion = "2.2.21"
 kotlinxCoroutinesVersion = "1.10.2"
 kotlinxCoroutinesAndroid = "1.10.2"
 
@@ -19,19 +19,18 @@ androidxLifecycle = '2.2.0'
 androidxLifecycleRuntimeKtx = '2.7.0'
 androidxCoreTestingVersion = "2.2.0"
 
-compose = "1.8.2"
-composePlugin = "2.1.10"
+compose = "1.10.4"
+composePlugin = "2.3.10"
 
 material = "1.4.0"
 material_icons = "1.7.8"
 
 firebaseAuthVersion = "23.2.1"
-firebaseFirestoreVersion = "25.1.4"
 firebaseCrashlytics = "19.4.3"
 firebaseCrashlyticsGradleVersion = "3.0.3"
 googleServicesVersion = "4.4.2"
 
-kspVersion = "2.1.10-1.0.31"
+kspVersion = "2.2.21-2.0.4"
 daggerVersion = "2.56.2"
 
 detekVersion = "1.19.0"
@@ -39,10 +38,11 @@ ktLintVersion = "12.3.0"
 
 junitVersion = "4.13.2"
 timberVersion = "4.7.1"
-hamcrestVersion = "2.2"
+hamcrestVersion = "3.0"
 jfixtureVersion = "2.7.2"
 espressoVersion = "3.6.1"
-truthVersion = "0.42"
+truthVersion = "1.4.5"
+sqlDelightVersion = "2.2.1"
 
 [libraries]
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradleVersion" }
@@ -86,12 +86,14 @@ androidx-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib"
 
 firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
-firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestoreVersion" }
 
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerVersion" }
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerVersion" }
 dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "daggerVersion" }
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "daggerVersion" }
+
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelightVersion" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelightVersion" }
 
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrestVersion" }
 hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrestVersion" }
@@ -108,3 +110,4 @@ hilt-android-plugin = { id = "com.google.dagger.hilt.android", version.ref = "da
 compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "composePlugin" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekVersion" }
 ktLint-plugin = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktLintVersion" }
+sqldelight-plugin = { id = "app.cash.sqldelight", version.ref = "sqlDelightVersion" }

@@ -47,44 +47,53 @@ class AndroidContactImporter @Inject constructor(
     }
 
     private fun createContact(cursor: Cursor): Contact? {
-        val contactId = safeGetString(cursor, Contacts._ID)
-        val select =
-            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
-                ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
-                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
+        val contactId = safeGetString(cursor, Contacts._ID) ?: return null
 
         val phonesCursor =
             contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
-                select,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
+                    ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
+                    ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
                 arrayOf(contactId),
                 null,
             )
 
-        if (phonesCursor != null && phonesCursor.count > 0) {
-            phonesCursor.moveToFirst()
-
-            val phoneNumber = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.NUMBER)
-            val name = safeGetString(phonesCursor, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-
-            phonesCursor.close()
-            // TODO actually add email address
-            return Contact(name, phoneNumber, "", contactId.toLong())
-        }
+        phonesCursor?.moveToFirst()
+        val name =
+            safeGetString(
+                cursor = phonesCursor,
+                columnName = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+            )
+        val phoneNumber =
+            safeGetString(
+                cursor = phonesCursor,
+                columnName = ContactsContract.CommonDataKinds.Phone.NUMBER,
+            )
 
         phonesCursor?.close()
-        return null
-    }
-
-    private fun safeGetString(
-        cursor: Cursor,
-        columnName: String,
-    ): String {
-        val columnIndex = cursor.getColumnIndex(columnName)
-        if (columnIndex != -1) {
-            return cursor.getString(columnIndex)
+        return if (name != null) {
+            // TODO actually add email address
+            Contact(
+                name = name,
+                phoneNumber = phoneNumber,
+                emailAddress = null,
+                contactId = contactId.toLong(),
+            )
+        } else {
+            null
         }
-        return ""
     }
+}
+
+private fun safeGetString(
+    cursor: Cursor?,
+    columnName: String,
+): String? {
+    val columnIndex = cursor?.getColumnIndex(columnName) ?: -1
+    if (columnIndex != -1 && cursor != null && cursor.count > 0) {
+        return cursor.getString(columnIndex)
+    }
+    return null
 }

@@ -49,7 +49,7 @@ class GetContactsUseCaseTest {
             fakeContactImporter.contacts = fixtContacts
 
             val output = sut.execute()
-            assertThat(output).containsAllIn(fixtContacts)
+            assertThat(output).containsExactlyElementsIn(fixtContacts)
         }
 
     @Test
@@ -70,7 +70,7 @@ class GetContactsUseCaseTest {
             fakeContactImporter.contacts = fixtContacts
 
             val output = sut.execute()
-            assertThat(output).containsAllIn(arrayOf(fixtContacts[0], fixtContacts[2]))
+            assertThat(output).containsExactlyElementsIn(arrayOf(fixtContacts[0], fixtContacts[2]))
         }
 
     @Test(expected = RuntimeException::class)

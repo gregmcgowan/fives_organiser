@@ -9,5 +9,5 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 @Module
 interface PlayerRepoModule {
     @Binds
-    fun playerRepo(firebasePlayerRepo: PlayersFirebaseRepo): PlayerRepo
+    fun playerRepo(firebasePlayerRepo: PlayersSqliteRepo): PlayerRepo
 }

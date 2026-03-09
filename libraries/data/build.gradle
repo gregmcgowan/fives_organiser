@@ -2,12 +2,21 @@ apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
 apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'com.google.dagger.hilt.android'
+apply plugin: 'app.cash.sqldelight'
 
 android {
     namespace = "com.gregmcgowan.fivesorganiser.data"
     beforeEvaluate {
         android.testOptions {
             it.test
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        FivesOrganiserDatabase {
+            packageName = "com.gregmcgowan.fivesorganiser.data"
         }
     }
 }
@@ -20,12 +29,13 @@ androidComponents {
 
 dependencies {
     implementation project(":foundation:core")
+    implementation project(":foundation:core-test")
     implementation project(":libraries:authentication-contract")
+
+    implementation libs.sqldelight.android.driver
 
     implementation libs.dagger.hilt.android
     ksp libs.dagger.hilt.compiler
 
-    api libs.firebase.firestore
-
-
+    testImplementation libs.sqldelight.sqlite.driver
 }

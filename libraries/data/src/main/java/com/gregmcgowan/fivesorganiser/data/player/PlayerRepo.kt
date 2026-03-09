@@ -5,8 +5,8 @@ interface PlayerRepo {
 
     suspend fun addPlayer(
         name: String,
-        email: String,
-        phoneNumber: String,
-        contactId: Long,
+        email: String?,
+        phoneNumber: String?,
+        contactId: Long?,
     )
 }
