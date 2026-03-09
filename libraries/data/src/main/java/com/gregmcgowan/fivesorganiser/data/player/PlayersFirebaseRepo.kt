@@ -1,13 +1,11 @@
 package com.gregmcgowan.fivesorganiser.data.player
 
 import com.google.firebase.firestore.CollectionReference
-import com.gregmcgowan.fivesorganiser.data.DataUpdate
 import com.gregmcgowan.fivesorganiser.data.FirestoreHelper
-import com.gregmcgowan.fivesorganiser.data.ID_KEY
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
+internal const val ID_KEY = "auto_generated_id"
 private const val PLAYERS_KEY = "Players"
 private const val NAME_KEY = "Name"
 private const val EMAIL_KEY = "Email"
@@ -18,10 +16,6 @@ private const val TIMESTAMP_KEY = "timestamp"
 class PlayersFirebaseRepo @Inject constructor(
     private val firestoreHelper: FirestoreHelper,
 ) : PlayerRepo {
-    override fun playersUpdates(): Flow<DataUpdate<Player>> {
-        return firestoreHelper.flowOfDataUpdates(getPlayersRef(), ::mapToPlayer)
-    }
-
     override suspend fun getPlayers(): List<Player> {
         return firestoreHelper
             .runQuery(getPlayersRef().orderBy(NAME_KEY))

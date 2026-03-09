@@ -31,12 +31,13 @@ class GetContactsUseCaseTest {
 
         sut =
             GetContactsUseCaseImpl(
-                fakePlayerRepo,
-                fakeContactImporter,
-                CoroutineDispatchers(
-                    coroutinesTestRule.testDispatcher,
-                    coroutinesTestRule.testDispatcher,
-                ),
+                playersRepo = fakePlayerRepo,
+                contactsImporter = fakeContactImporter,
+                coroutineDispatchers =
+                    CoroutineDispatchers(
+                        ui = coroutinesTestRule.testDispatcher,
+                        io = coroutinesTestRule.testDispatcher,
+                    ),
             )
     }
 
