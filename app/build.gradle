@@ -29,8 +29,6 @@ dependencies {
     implementation project(":foundation:core")
     implementation project(":foundation:core-ui")
     implementation project(":libraries:data")
-    implementation project(":libraries:authentication")
-    implementation project(":libraries:authentication-contract")
     implementation project(":features:playerlist")
     implementation project(":features:importcontacts")
 

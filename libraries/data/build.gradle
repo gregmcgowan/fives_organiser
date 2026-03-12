@@ -30,7 +30,6 @@ androidComponents {
 dependencies {
     implementation project(":foundation:core")
     implementation project(":foundation:core-test")
-    implementation project(":libraries:authentication-contract")
 
     implementation libs.sqldelight.android.driver
 
