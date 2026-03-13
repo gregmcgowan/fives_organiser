@@ -20,10 +20,10 @@ class SavePlayersUseCaseImpl @Inject constructor(
                 .filter { contact -> selectedContacts.contains(contact.contactId) }
                 .forEach { contact ->
                     playersRepo.addPlayer(
-                        contact.name,
-                        contact.emailAddress,
-                        contact.phoneNumber,
-                        contact.contactId,
+                        name = contact.name,
+                        email = contact.emailAddress,
+                        phoneNumber = contact.phoneNumber,
+                        contactId = contact.contactId,
                     )
                 }
         }

@@ -30,9 +30,9 @@ class FakePlayerRepo @Inject constructor() : PlayerRepo {
 
     override suspend fun addPlayer(
         name: String,
-        email: String,
-        phoneNumber: String,
-        contactId: Long,
+        email: String?,
+        phoneNumber: String?,
+        contactId: Long?,
     ) {
         if (exception != null) {
             throw exception!!

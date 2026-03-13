@@ -1,0 +1,21 @@
+CREATE TABLE player (
+  playerId INTEGER PRIMARY KEY NOT NULL,
+  contactId INTEGER,
+  name TEXT NOT NULL,
+  email TEXT,
+  phoneNumber TEXT
+);
+
+CREATE INDEX player_name ON player(name);
+
+selectAll:
+SELECT *
+FROM player;
+
+insert:
+INSERT INTO player(contactId,name, email, phoneNumber)
+VALUES (?, ?, ? , ?);
+
+insertFullPlayerObject:
+INSERT INTO player(contactId,name, email, phoneNumber)
+VALUES ?;
