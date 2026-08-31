@@ -47,15 +47,26 @@ class ImportContactsViewModel @Inject constructor(
 
     fun handleEvent(event: ImportContactsUserEvent) {
         when (event) {
-            is AddButtonPressedEvent -> onAddButtonPressed()
-            is ContactSelectedEvent -> updateContactSelectedStatus(event.contactId, event.selected)
-            is ContactPermissionGrantedEvent -> loadContacts()
+            is AddButtonPressedEvent -> {
+                onAddButtonPressed()
+            }
+
+            is ContactSelectedEvent -> {
+                updateContactSelectedStatus(event.contactId, event.selected)
+            }
+
+            is ContactPermissionGrantedEvent -> {
+                loadContacts()
+            }
+
             is ContactPermissionDeniedEvent -> {
                 mutableUiStateFlow.update { UserDeniedPermissionUiState }
             }
+
             is DoNotTryPermissionAgainEvent -> {
                 mutableUiStateFlow.update { TerminalUiState }
             }
+
             is TryPermissionAgainEvent -> {
                 mutableUiStateFlow.update { ShowRequestPermissionDialogUiState }
             }
@@ -67,8 +78,7 @@ class ImportContactsViewModel @Inject constructor(
             runCatching { uiStateMapper.map(getContactsUseCase.execute(), emptySet()) }
                 .onFailure { exception ->
                     mutableUiStateFlow.update { handleException(exception) }
-                }
-                .onSuccess { state -> mutableUiStateFlow.update { state } }
+                }.onSuccess { state -> mutableUiStateFlow.update { state } }
         }
     }
 
@@ -92,8 +102,7 @@ class ImportContactsViewModel @Inject constructor(
                     throw IllegalStateException("Attempting to save with no contacts selected")
                 }
                 savePlayersUseCase.execute(contactsToAdd)
-            }
-                .onFailure { exception -> mutableUiStateFlow.update { handleException(exception) } }
+            }.onFailure { exception -> mutableUiStateFlow.update { handleException(exception) } }
                 .onSuccess { mutableUiStateFlow.update { TerminalUiState } }
         }
     }
@@ -104,7 +113,8 @@ class ImportContactsViewModel @Inject constructor(
     ) {
         val contacts: MutableList<ContactItemUiState> =
             uiStateFlow.value
-                .contacts.toMutableList()
+                .contacts
+                .toMutableList()
         val index = contacts.indexOfFirst { it.contactId == contactId }
         if (index != -1) {
             val updatedList =
