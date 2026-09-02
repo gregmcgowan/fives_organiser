@@ -25,7 +25,6 @@ composePlugin = "2.3.10"
 material = "1.4.0"
 material_icons = "1.7.8"
 
-firebaseAuthVersion = "23.2.1"
 firebaseCrashlytics = "19.4.3"
 firebaseCrashlyticsGradleVersion = "3.0.3"
 googleServicesVersion = "4.4.2"
@@ -84,7 +83,6 @@ androidx-core-testing = { module = "androidx.arch.core:core-testing", version.re
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoVersion" }
 androidx-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espressoVersion" }
 
-firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerVersion" }
