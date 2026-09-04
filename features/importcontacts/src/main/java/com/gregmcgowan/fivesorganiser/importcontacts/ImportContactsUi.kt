@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,7 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -99,7 +100,7 @@ fun ImportContactsContent(
         }
 
         is ShowRequestPermissionDialogUiState -> {
-            SideEffect { launcher.launch(Manifest.permission.READ_CONTACTS) }
+            LaunchedEffect(true) { launcher.launch(Manifest.permission.READ_CONTACTS) }
         }
 
         is UserDeniedPermissionUiState -> {
@@ -132,7 +133,7 @@ fun ImportContactsContent(
         }
 
         is TerminalUiState -> {
-            SideEffect { exitScreenHandler.invoke() }
+            LaunchedEffect(true) { exitScreenHandler.invoke() }
         }
     }
 }
@@ -214,17 +215,15 @@ private fun ContactListUi(
                         .fillMaxSize()
                         .padding(it),
             ) {
-                Row(modifier = Modifier.weight(1.0f)) {
-                    LazyColumn {
-                        items(importContactsUiState.contacts) { contact ->
-                            ContactItem(contact, userEventHandler)
-                        }
+                LazyColumn {
+                    items(importContactsUiState.contacts) { contact ->
+                        ContactItem(contact = contact, eventHandler = userEventHandler)
                     }
                 }
             }
         },
         bottomBar = {
-            AnimatedVisibility(importContactsUiState.addContactsButtonEnabled) {
+            AnimatedVisibility(visible = importContactsUiState.addContactsButtonEnabled) {
                 Column {
                     HorizontalDivider()
                     Button(
@@ -247,40 +246,47 @@ fun ContactItem(
     eventHandler: (ImportContactsUserEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .semantics { contentDescription = "ContactItem-${contact.name}" }
-                .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        content = {
-            BiggerBadge(
-                backgroundColor = MaterialTheme.colorScheme.secondary,
-                content = {
-                    Text(
-                        text = contact.name.substring(0, 1).uppercase(),
-                        fontSize = 20.sp,
-                        color = Color.White,
-                    )
-                },
-            )
-            Text(
-                text = contact.name,
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp),
-            )
-            Checkbox(
-                checked = contact.isSelected,
-                modifier = Modifier.padding(start = 16.dp),
-                onCheckedChange = { selected ->
-                    eventHandler.invoke(ContactSelectedEvent(contact.contactId, selected))
-                },
-            )
-        },
-    )
+    if (contact.name.isNotEmpty()) {
+        Row(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .semantics { contentDescription = "ContactItem-${contact.name}" }
+                    .toggleable(contact.isSelected) { updated ->
+                        eventHandler.invoke(
+                            ContactSelectedEvent(
+                                contactId = contact.contactId,
+                                selected = updated,
+                            ),
+                        )
+                    }.padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = {
+                BiggerBadge(
+                    backgroundColor = MaterialTheme.colorScheme.secondary,
+                    content = {
+                        Text(
+                            text = contact.name.substring(0, 1).uppercase(),
+                            fontSize = 20.sp,
+                            color = Color.White,
+                        )
+                    },
+                )
+                Text(
+                    text = contact.name,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp),
+                )
+                Checkbox(
+                    checked = contact.isSelected,
+                    modifier = Modifier.padding(start = 16.dp),
+                    onCheckedChange = null,
+                )
+            },
+        )
+    }
 }
 
 @Composable
@@ -331,6 +337,7 @@ fun ContactListPreview() {
                         ContactItemUiState(name = "Greg", isSelected = true, contactId = 1),
                         ContactItemUiState(name = "Frances", isSelected = true, contactId = 2),
                         ContactItemUiState(name = "Joe Wicks", isSelected = true, contactId = 3),
+                        ContactItemUiState(name = "", isSelected = true, contactId = 3),
                     ),
                     addContactsButtonEnabled = true,
                 ),

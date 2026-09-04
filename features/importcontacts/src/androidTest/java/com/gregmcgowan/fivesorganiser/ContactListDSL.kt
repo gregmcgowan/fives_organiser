@@ -6,10 +6,9 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithText
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsContent
@@ -25,7 +24,9 @@ fun ComposeContentTestRule.assertContactListScreen(assertions: ContactListAssert
     ContactListAssertions(this).assertions()
 }
 
-class ContactListAssertions(private val composeTestRule: ComposeContentTestRule) {
+class ContactListAssertions(
+    private val composeTestRule: ComposeContentTestRule,
+) {
     private val items: SemanticsNodeInteractionCollection
         get() =
             composeTestRule.onAllNodesWithContentDescription(
@@ -61,15 +62,16 @@ class ContactListAssertions(private val composeTestRule: ComposeContentTestRule)
     }
 }
 
-class UserDeniedPermissionAssertions(private val composeTestRule: ComposeContentTestRule) {
+class UserDeniedPermissionAssertions(
+    private val composeTestRule: ComposeContentTestRule,
+) {
     fun messageShown() {
         composeTestRule
             .onNodeWithText(
                 "We need contact permission to import from your contacts.\n" +
                     "It will be quicker than entering it manually.\n" +
                     "We won't use it for anything bad.. honest",
-            )
-            .assertIsDisplayed()
+            ).assertIsDisplayed()
     }
 
     fun tryAgainButtonShown() {
@@ -85,18 +87,18 @@ class UserDeniedPermissionAssertions(private val composeTestRule: ComposeContent
     }
 }
 
-class ContactListItemAssertions(private val item: SemanticsNodeInteraction) {
+class ContactListItemAssertions(
+    private val item: SemanticsNodeInteraction,
+) {
     var name: String by setOnly {
-        item.onChildAt(1).assertTextEquals(it)
+        item.assertTextContains(it)
     }
 
     fun selected() {
-        checkbox().assertIsOn()
+        item.assertIsOn()
     }
 
     fun notSelected() {
-        checkbox().assertIsOff()
+        item.assertIsOff()
     }
-
-    private fun checkbox() = item.onChildAt(2)
 }

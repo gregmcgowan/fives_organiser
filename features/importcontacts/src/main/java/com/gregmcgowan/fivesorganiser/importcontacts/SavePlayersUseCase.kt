@@ -16,7 +16,8 @@ class SavePlayersUseCaseImpl @Inject constructor(
 ) : SavePlayersUseCase {
     override suspend fun execute(selectedContacts: Set<Long>) =
         withContext(coroutineDispatchers.io) {
-            contactsImporter.getAllContacts()
+            contactsImporter
+                .getAllContacts()
                 .filter { contact -> selectedContacts.contains(contact.contactId) }
                 .forEach { contact ->
                     playersRepo.addPlayer(
