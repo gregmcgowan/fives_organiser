@@ -17,16 +17,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 @Module(includes = [ImportContactsModule.Bindings::class])
 class ImportContactsModule {
     @Provides
-    fun contentResolver(app: Application): ContentResolver {
-        return app.contentResolver
-    }
+    fun contentResolver(app: Application): ContentResolver = app.contentResolver
 
     @Provides
     fun hasContactPermission(
         @ApplicationContext context: Context,
-    ): Permission {
-        return AndroidPermission(context, Manifest.permission.READ_CONTACTS)
-    }
+    ): Permission =
+        AndroidPermission(
+            context = context,
+            permissionName = Manifest.permission.READ_CONTACTS,
+        )
 
     @InstallIn(ViewModelComponent::class)
     @Module

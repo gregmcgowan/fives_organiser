@@ -22,8 +22,7 @@ class ImportContactsUiStateMapperImpl @Inject constructor() : ImportContactsUiSt
                     contactId = it.contactId,
                     isSelected = selectedContacts.contains(it.contactId),
                 )
-            }
-            .run {
+            }.run {
                 ContactsListUiState(
                     contacts = this,
                     addContactsButtonEnabled = selectedContacts.isNotEmpty(),
