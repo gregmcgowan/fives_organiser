@@ -39,8 +39,5 @@ class ImportContactsModule {
 
         @Binds
         fun bindSavePlayersUseCase(impl: SavePlayersUseCaseImpl): SavePlayersUseCase
-
-        @Binds
-        fun bindUiMapper(impl: ImportContactsUiStateMapperImpl): ImportContactsUiStateMapper
     }
 }

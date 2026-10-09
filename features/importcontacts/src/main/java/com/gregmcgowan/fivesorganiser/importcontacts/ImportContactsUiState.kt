@@ -27,11 +27,11 @@ sealed class ImportContactsUiState {
 
     object LoadingUiState : ImportContactsUiState()
 
-    class ErrorUiState(
+    data class ErrorUiState(
         @StringRes val errorMessage: Int = NO_STRING_RES_ID,
     ) : ImportContactsUiState()
 
-    class ContactsListUiState(
+    data class ContactsListUiState(
         val contacts: List<ContactItemUiState>,
         val addContactsButtonEnabled: Boolean,
     ) : ImportContactsUiState()
