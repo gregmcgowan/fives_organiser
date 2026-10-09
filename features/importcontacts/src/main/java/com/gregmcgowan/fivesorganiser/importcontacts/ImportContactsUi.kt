@@ -71,7 +71,7 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Try
 @Composable
 fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
     val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
-    val uiState by importContactsViewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState by importContactsViewModel.uiState.collectAsStateWithLifecycle()
 
     ImportContactsContent(
         importContactsUiState = uiState,
