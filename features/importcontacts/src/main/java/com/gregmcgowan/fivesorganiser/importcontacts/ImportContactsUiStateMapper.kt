@@ -1,7 +1,7 @@
 package com.gregmcgowan.fivesorganiser.importcontacts
 
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUiState.ContactsListUiState
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 interface ImportContactsUiStateMapper {
     fun map(
@@ -10,7 +10,8 @@ interface ImportContactsUiStateMapper {
     ): ImportContactsUiState
 }
 
-class ImportContactsUiStateMapperImpl @Inject constructor() : ImportContactsUiStateMapper {
+@Inject
+class ImportContactsUiStateMapperImpl : ImportContactsUiStateMapper {
     override fun map(
         contacts: List<Contact>,
         selectedContacts: Set<Long>,

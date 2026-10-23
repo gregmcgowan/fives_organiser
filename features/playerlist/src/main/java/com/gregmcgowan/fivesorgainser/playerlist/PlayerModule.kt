@@ -1,12 +1,12 @@
 package com.gregmcgowan.fivesorgainser.playerlist
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
 
-@InstallIn(ActivityRetainedComponent::class)
-@Module
+@ContributesTo(AppScope::class)
+@BindingContainer
 interface PlayerModule {
     @Binds
     fun bindGetPlayerListUseCase(impl: GetPlayerListUseCaseImpl): GetPlayerListUseCase

@@ -51,7 +51,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
 import com.gregmcgowan.fivesorganiser.core.compose.Loading
@@ -67,10 +66,11 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Con
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.DoNotTryPermissionAgainEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.TryPermissionAgainEvent
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun ImportContactsScreen(exitScreenHandler: () -> Unit) {
-    val importContactsViewModel: ImportContactsViewModel = hiltViewModel()
+    val importContactsViewModel: ImportContactsViewModel = metroViewModel()
     val uiState by importContactsViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     ImportContactsContent(

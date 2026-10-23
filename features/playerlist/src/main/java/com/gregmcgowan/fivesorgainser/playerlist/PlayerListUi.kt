@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gregmcgowan.fivesorgainser.playerlist.PlayerListUserEvent.AddPlayerSelectedEvent
 import com.gregmcgowan.fivesorganiser.core.compose.AppTheme
@@ -51,10 +50,11 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun PlayerListScreen(openImportContacts: () -> Unit) {
-    val playerListViewModel = hiltViewModel<PlayerListViewModel>()
+    val playerListViewModel: PlayerListViewModel = metroViewModel()
     LaunchedEffect(playerListViewModel) {
         playerListViewModel.init()
     }

@@ -15,7 +15,10 @@ import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.Con
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.ContactSelectedEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.DoNotTryPermissionAgainEvent
 import com.gregmcgowan.fivesorganiser.importcontacts.ImportContactsUserEvent.TryPermissionAgainEvent
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,10 +26,11 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class ImportContactsViewModel @Inject constructor(
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
+class ImportContactsViewModel(
     private val uiStateMapper: ImportContactsUiStateMapper,
     private val savePlayersUseCase: SavePlayersUseCase,
     private val getContactsUseCase: GetContactsUseCase,

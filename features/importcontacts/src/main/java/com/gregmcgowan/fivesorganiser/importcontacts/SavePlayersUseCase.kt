@@ -2,14 +2,15 @@ package com.gregmcgowan.fivesorganiser.importcontacts
 
 import com.gregmcgowan.fivesorganiser.core.CoroutineDispatchers
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 interface SavePlayersUseCase {
     suspend fun execute(selectedContacts: Set<Long>)
 }
 
-class SavePlayersUseCaseImpl @Inject constructor(
+@Inject
+class SavePlayersUseCaseImpl(
     private val playersRepo: PlayerRepo,
     private val contactsImporter: ContactImporter,
     private val coroutineDispatchers: CoroutineDispatchers,

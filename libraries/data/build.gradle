@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
+apply plugin: 'dev.zacsweers.metro'
 apply plugin: 'com.google.devtools.ksp'
-apply plugin: 'com.google.dagger.hilt.android'
 apply plugin: 'app.cash.sqldelight'
 
 android {
@@ -32,9 +32,6 @@ dependencies {
     implementation project(":foundation:core-test")
 
     implementation libs.sqldelight.android.driver
-
-    implementation libs.dagger.hilt.android
-    ksp libs.dagger.hilt.compiler
 
     testImplementation libs.sqldelight.sqlite.driver
 }

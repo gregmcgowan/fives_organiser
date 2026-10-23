@@ -3,18 +3,18 @@ minSdk = "23"
 compileSdk = "35"
 targetSdk = "35"
 
-kotlinStdlibVersion = "2.2.21"
+kotlinStdlibVersion = "2.4.20"
 kotlinxCoroutinesVersion = "1.10.2"
 kotlinxCoroutinesAndroid = "1.10.2"
 
 androidGradlePlugin = '8.10.0'
 
 activityCompose = "1.10.1"
-appcompat = "1.2.0"
+appcompat = "1.7.0"
 hiltNavigationCompose = "1.2.0"
 runtimeLivedata = "1.8.2"
 androidx-navigation_compose = "2.9.0"
-androidxActivityKtx = '1.2.0'
+androidxActivityKtx = "1.10.1"
 androidxLifecycle = '2.2.0'
 androidxLifecycleRuntimeKtx = '2.7.0'
 androidxCoreTestingVersion = "2.2.0"
@@ -31,6 +31,7 @@ googleServicesVersion = "4.4.2"
 
 kspVersion = "2.2.21-2.0.4"
 daggerVersion = "2.56.2"
+metroVersion = "1.4.5"
 
 detekVersion = "1.19.0"
 ktLintVersion = "12.3.0"
@@ -71,7 +72,6 @@ androidx-compose-material3 = { module = "androidx.compose.material3:material3", 
 androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "material_icons" }
 androidx-compose-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation_compose" }
 
 androidx-lifecycle-runtime-ktx = {module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref= "androidxLifecycleRuntimeKtx"}
@@ -85,11 +85,8 @@ androidx-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib"
 
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 
-dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerVersion" }
-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerVersion" }
-dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "daggerVersion" }
-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "daggerVersion" }
-
+metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metroVersion" }
+metrox-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metroVersion" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelightVersion" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelightVersion" }
 
@@ -102,9 +99,11 @@ junit = { module = "junit:junit", version.ref = "junitVersion" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
 truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
 
+
 [plugins]
 ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
-hilt-android-plugin = { id = "com.google.dagger.hilt.android", version.ref = "daggerVersion" }
+
+metro-plugin = { id = "dev.zacsweers.metro", version.ref = "metroVersion" }
 compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "composePlugin" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekVersion" }
 ktLint-plugin = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktLintVersion" }

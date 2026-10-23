@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -31,11 +30,12 @@ import com.gregmcgowan.fivesorganiser.core.ui.UiState.ErrorUiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.LoadingUiState
 import com.gregmcgowan.fivesorganiser.navigation.NavigationActions
 import com.gregmcgowan.fivesorganiser.navigation.NavigationGraph
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController: NavHostController = rememberNavController()
-    val mainViewModel: MainViewModel = hiltViewModel()
+    val mainViewModel: MainViewModel = metroViewModel()
     val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
     val navigationActions =
         NavigationActions(

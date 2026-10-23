@@ -1,9 +1,13 @@
 package com.gregmcgowan.fivesorganiser.data.player
 
 import com.gregmcgowan.fivesorganiser.data.FivesOrganiserDatabase
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
-class PlayersSqliteRepo @Inject constructor(
+@ContributesBinding(AppScope::class)
+@Inject
+class PlayersSqliteRepo(
     private val database: FivesOrganiserDatabase,
 ) : PlayerRepo {
     override suspend fun getPlayers(): List<Player> =

@@ -1,9 +1,10 @@
 package com.gregmcgowan.fivesorganiser.core
 
 import android.content.res.Resources
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
-class AndroidStrings @Inject constructor(private val resources: Resources) : Strings {
+@Inject
+class AndroidStrings (private val resources: Resources) : Strings {
     override fun getString(stringResId: Int): String = resources.getString(stringResId)
 
     @SuppressWarnings("SpreadOperator")
