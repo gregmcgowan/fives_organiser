@@ -3,13 +3,14 @@ package com.gregmcgowan.fivesorgainser.playerlist
 import com.gregmcgowan.fivesorganiser.core.ui.UiState
 import com.gregmcgowan.fivesorganiser.core.ui.UiState.ContentUiState
 import com.gregmcgowan.fivesorganiser.data.player.Player
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 interface PlayerListUiStateMapper {
     fun map(players: List<Player>): UiState<PlayerListUiState>
 }
 
-class PlayerListUiStateMapperImpl @Inject constructor() : PlayerListUiStateMapper {
+@Inject
+class PlayerListUiStateMapperImpl : PlayerListUiStateMapper {
     override fun map(players: List<Player>): UiState<PlayerListUiState> =
         ContentUiState(
             PlayerListUiState(players.map { map(it) }),

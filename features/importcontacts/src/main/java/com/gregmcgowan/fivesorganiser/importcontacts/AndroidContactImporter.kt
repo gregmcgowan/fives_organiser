@@ -4,9 +4,10 @@ import android.content.ContentResolver
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.provider.ContactsContract.Contacts
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
-class AndroidContactImporter @Inject constructor(
+@Inject
+class AndroidContactImporter(
     private val contentResolver: ContentResolver,
 ) : ContactImporter {
     override suspend fun getAllContacts(): List<Contact> {

@@ -2,7 +2,7 @@ package com.gregmcgowan.fivesorgainser.playerlist
 
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 interface GetPlayerListUseCase {
     suspend fun execute(): List<Player>
@@ -10,7 +10,8 @@ interface GetPlayerListUseCase {
 
 // Eventually will add in extra player data about reliability and more stats so there will be more
 // of a need for this to be a UseCase.
-class GetPlayerListUseCaseImpl @Inject constructor(
+@Inject
+class GetPlayerListUseCaseImpl(
     private val playerRepo: PlayerRepo,
 ) : GetPlayerListUseCase {
     override suspend fun execute(): List<Player> = playerRepo.getPlayers()

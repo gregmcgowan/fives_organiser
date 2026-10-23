@@ -2,9 +2,10 @@ package com.gregmcgowan.fivesorganiser
 
 import com.gregmcgowan.fivesorganiser.data.player.Player
 import com.gregmcgowan.fivesorganiser.data.player.PlayerRepo
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
-class FakePlayerRepo @Inject constructor() : PlayerRepo {
+@Inject
+class FakePlayerRepo : PlayerRepo {
     var players: MutableList<Player> = mutableListOf()
 
     var exception: RuntimeException? = null
