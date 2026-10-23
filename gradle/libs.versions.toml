@@ -3,18 +3,18 @@ minSdk = "23"
 compileSdk = "35"
 targetSdk = "35"
 
-kotlinStdlibVersion = "2.2.21"
+kotlinStdlibVersion = "2.4.20"
 kotlinxCoroutinesVersion = "1.10.2"
 kotlinxCoroutinesAndroid = "1.10.2"
 
 androidGradlePlugin = "9.4.1"
 
 activityCompose = "1.10.1"
-appcompat = "1.2.0"
+appcompat = "1.7.0"
 hiltNavigationCompose = "1.2.0"
 runtimeLivedata = "1.8.2"
 androidx-navigation_compose = "2.9.0"
-androidxActivityKtx = '1.2.0'
+androidxActivityKtx = "1.10.1"
 androidxLifecycle = '2.2.0'
 androidxLifecycleRuntimeKtx = '2.7.0'
 androidxCoreTestingVersion = "2.2.0"
@@ -29,8 +29,8 @@ firebaseCrashlytics = "19.4.3"
 firebaseCrashlyticsGradleVersion = "3.0.3"
 googleServicesVersion = "4.4.2"
 
-kspVersion = "2.3.6"
-daggerVersion = "2.56.2"
+kspVersion = "2.3.12"
+daggerVersion = "2.60.1"
 
 detekVersion = "1.19.0"
 ktLintVersion = "12.3.0"
