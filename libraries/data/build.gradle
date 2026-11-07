@@ -5,6 +5,11 @@ apply plugin: 'com.google.dagger.hilt.android'
 apply plugin: 'app.cash.sqldelight'
 
 android {
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/app_debug.kotlin_module']
+        }
+    }
     namespace = "com.gregmcgowan.fivesorganiser.data"
     beforeEvaluate {
         android.testOptions {
