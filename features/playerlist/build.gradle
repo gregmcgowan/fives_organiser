@@ -3,8 +3,8 @@ plugins {
 }
 apply plugin: 'com.android.library'
 apply from: "../../base-android-library.gradle"
+apply plugin: 'dev.zacsweers.metro'
 apply plugin: 'com.google.devtools.ksp'
-apply plugin: 'com.google.dagger.hilt.android'
 
 android {
 
@@ -21,9 +21,6 @@ android {
 dependencies {
     implementation project(":foundation:core-ui")
     implementation project(":libraries:data")
-
-    implementation libs.dagger.hilt.android
-    ksp libs.dagger.hilt.compiler
 
     testImplementation project(':foundation:core-test')
     androidTestImplementation project(':foundation:core-android-test')

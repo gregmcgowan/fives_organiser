@@ -1,13 +1,13 @@
 package com.gregmcgowan.fivesorganiser.data.player
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
 
-@InstallIn(ActivityRetainedComponent::class)
-@Module
+@BindingContainer
+@ContributesTo(AppScope::class)
 interface PlayerRepoModule {
     @Binds
-    fun playerRepo(firebasePlayerRepo: PlayersSqliteRepo): PlayerRepo
+    fun playerRepo(impl: PlayersSqliteRepo): PlayerRepo
 }

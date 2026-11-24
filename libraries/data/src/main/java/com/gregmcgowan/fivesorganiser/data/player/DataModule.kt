@@ -3,21 +3,18 @@ package com.gregmcgowan.fivesorganiser.data.player
 import android.content.Context
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.gregmcgowan.fivesorganiser.data.FivesOrganiserDatabase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
-@InstallIn(SingletonComponent::class)
-@Module
-class DataModule {
+@ContributesTo(AppScope::class)
+@BindingContainer
+object DataModule {
     @Provides
-    @Singleton
-    fun provideFivesDatabase(
-        @ApplicationContext context: Context,
-    ): FivesOrganiserDatabase =
+    @SingleIn(AppScope::class)
+    fun provideFivesDatabase(context: Context): FivesOrganiserDatabase =
         FivesOrganiserDatabase(
             driver =
                 AndroidSqliteDriver(

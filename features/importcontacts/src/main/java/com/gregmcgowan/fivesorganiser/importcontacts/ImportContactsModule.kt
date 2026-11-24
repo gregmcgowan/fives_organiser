@@ -6,30 +6,27 @@ import android.content.ContentResolver
 import android.content.Context
 import com.gregmcgowan.fivesorganiser.core.permissions.AndroidPermission
 import com.gregmcgowan.fivesorganiser.core.permissions.Permission
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 
-@InstallIn(ViewModelComponent::class)
-@Module(includes = [ImportContactsModule.Bindings::class])
+@ContributesTo(AppScope::class)
+@BindingContainer
 class ImportContactsModule {
     @Provides
     fun contentResolver(app: Application): ContentResolver = app.contentResolver
 
     @Provides
-    fun hasContactPermission(
-        @ApplicationContext context: Context,
-    ): Permission =
+    fun hasContactPermission(context: Context): Permission =
         AndroidPermission(
             context = context,
             permissionName = Manifest.permission.READ_CONTACTS,
         )
 
-    @InstallIn(ViewModelComponent::class)
-    @Module
+    @ContributesTo(AppScope::class)
+    @BindingContainer
     interface Bindings {
         @Binds
         fun bindContactImporter(impl: AndroidContactImporter): ContactImporter
